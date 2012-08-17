@@ -15,7 +15,7 @@ provides tools that can be used to build adminstrative interface of any complexi
 using consistent look and feel.
 
 
-Small example (Flask initialization omitted)::python
+Small example (Flask initialization omitted)::
 
     from flask.ext import superadmin
 
