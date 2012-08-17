@@ -17,7 +17,6 @@
         - Verify if it is working properly
     - WYSIWYG editor support?
 - File admin
-    - Header title
     - Mass-delete functionality
     - File size restriction
 - Unit tests
