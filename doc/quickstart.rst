@@ -1,7 +1,7 @@
 Quick Start
 ===========
 
-This page gives quick introduction to Flask-Admin library. It is assumed that reader has some prior
+This page gives quick introduction to Flask-SuperAdmin library. It is assumed that reader has some prior
 knowledge of the `Flask <http://flask.pocoo.org/>`_ framework.
 
 Introduction
@@ -27,8 +27,11 @@ Here is absolutely valid administrative piece::
 So, how does it help structuring administrative interface? With such building blocks, you're
 implementing reusable functional pieces that are highly customizable.
 
-For example, Flask-Admin provides ready-to-use SQLAlchemy model interface. It is implemented as a
-class which accepts two parameters: model and a database session. While it exposes some
+For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy, Mongoengine and Django model interface. 
+For SQLAlchemy it is implemented as a
+class which accepts two parameters: model and a database session, otherwise just the model parameter.
+
+While it exposes some
 class-level variables which change behavior of the interface (somewhat similar to django.contrib.admin),
 nothing prohibits you from overriding form creation logic, database access methods or extending existing
 functionality.
@@ -36,11 +39,11 @@ functionality.
 Initialization
 --------------
 
-To start using Flask-Admin, you have to create :class:`~flask.ext.admin.base.Admin` class instance and associate it with the Flask
+To start using Flask-SuperAdmin, you have to create :class:`~flask.ext.superadmin.base.Admin` class instance and associate it with the Flask
 application instance::
 
     from flask import Flask
-    from flask.ext.admin import Admin
+    from flask.ext.superadmin import Admin
 
     app = Flask(__name__)
 
@@ -55,13 +58,13 @@ you should see empty "Home" page with a navigation bar on top
     .. image:: images/quickstart/quickstart_1.png
         :target: ../_images/quickstart_1.png
 
-You can change application name by passing `name` parameter to the :class:`~flask.ext.admin.base.Admin` class constructor::
+You can change application name by passing `name` parameter to the :class:`~flask.ext.superadmin.base.Admin` class constructor::
 
     admin = Admin(app, name='My App')
 
 Name is displayed in the menu section.
 
-You don't have to pass Flask application object to the constructor - you can call :meth:`~flask.ext.admin.base.Admin.init_app` later::
+You don't have to pass Flask application object to the constructor - you can call :meth:`~flask.ext.superadmin.base.Admin.init_app` later::
 
     admin = Admin(name='My App')
     # Add views here
@@ -70,10 +73,10 @@ You don't have to pass Flask application object to the constructor - you can cal
 Adding views
 ------------
 
-Now, lets add an administrative view. To do this, you need to derive from :class:`~flask.ext.admin.base.BaseView` class::
+Now, lets add an administrative view. To do this, you need to derive from :class:`~flask.ext.superadmin.base.BaseView` class::
 
     from flask import Flask
-    from flask.ext.admin import Admin, BaseView, expose
+    from flask.ext.superadmin import Admin, BaseView, expose
 
     class MyView(BaseView):
         @expose('/')
@@ -115,7 +118,7 @@ You're not limited to top level menu. It is possible to pass category name and i
 top menu item. For example::
 
     from flask import Flask
-    from flask.ext.admin import Admin, BaseView, expose
+    from flask.ext.superadmin import Admin, BaseView, expose
 
     class MyView(BaseView):
         @expose('/')
@@ -139,7 +142,7 @@ Will look like this:
 Authentication
 --------------
 
-By default, administrative interface is visible to everyone, as Flask-Admin does not make
+By default, administrative interface is visible to everyone, as Flask-SuperAdmin does not make
 any assumptions about authentication system you're using.
 
 If you want to control who can access administrative views and who can not, derive from the
@@ -199,9 +202,9 @@ is not provided. Model-based views will be explained in the next section.
 Model Views
 -----------
 
-Flask-Admin comes with built-in SQLAlchemy model administrative interface. It is very easy to use::
+Flask-SuperAdmin comes with built-in SQLAlchemy model administrative interface. It is very easy to use::
 
-    from flask.ext.admin.contrib.sqlamodel import ModelView
+    from flask.ext.superadmin.contrib.sqlamodel import ModelView
 
     # Flask and Flask-SQLAlchemy initialization here
 
@@ -224,7 +227,7 @@ If you want to customize model views, you have two options:
 For example, if you want to disable model creation, show only 'login' and 'email' columns in the list view,
 you can do something like this::
 
-    from flask.ext.admin.contrib.sqlamodel import ModelView
+    from flask.ext.superadmin.contrib.sqlamodel import ModelView
 
     # Flask and Flask-SQLAlchemy initialization here
 
@@ -257,19 +260,19 @@ therefore should use a ``SelectField``::
             ))
 
 
-It is relatively easy to add support for different database backends (Mongo, etc) by inheriting from :class:`~flask.ext.admin.model.BaseModelView`.
+It is relatively easy to add support for different database backends (Mongo, etc) by inheriting from :class:`~flask.ext.superadmin.model.BaseModelView`.
 class and implementing database-related methods.
 
-Please refer to :mod:`flask.ext.admin.contrib.sqlamodel` documentation on how to customize behavior of model-based administrative views.
+Please refer to :mod:`flask.ext.superadmin.contrib.sqlamodel` documentation on how to customize behavior of model-based administrative views.
 
 File Admin
 ----------
 
-Flask-Admin comes with another handy battery - file admin. It gives you ability to manage files on your server (upload, delete, rename, etc).
+Flask-SuperAdmin comes with another handy battery - file admin. It gives you ability to manage files on your server (upload, delete, rename, etc).
 
 Here is simple example::
 
-    from flask.ext.admin.contrib.fileadmin import FileAdmin
+    from flask.ext.superadmin.contrib.fileadmin import FileAdmin
 
     import os.path as op
 
@@ -287,14 +290,16 @@ Sample screenshot:
         :target: ../_images/quickstart_5.png
 
 You can disable uploads, disable file or directory deletion, restrict file uploads to certain types and so on.
-Check :mod:`flask.ext.admin.contrib.fileadmin` documentation on how to do it.
+Check :mod:`flask.ext.superadmin.contrib.fileadmin` documentation on how to do it.
 
 Examples
 --------
 
-Flask-Admin comes with four samples:
+Flask-SuperAdmin comes with a lot of samples:
 
-- `Simple administrative interface <https://github.com/MrJoes/Flask-Admin/tree/master/examples/simple>`_ with custom administrative views
-- `SQLAlchemy model example <https://github.com/MrJoes/Flask-Admin/tree/master/examples/sqla>`_
-- `Flask-Login integration example <https://github.com/MrJoes/Flask-Admin/tree/master/examples/auth>`_
-- `File management interface <https://github.com/MrJoes/Flask-Admin/tree/master/examples/file>`_
+- `Simple administrative interface <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/simple>`_ with custom administrative views
+- `SQLAlchemy model example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/sqla>`_
+- `Mongoengine document example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/mongoengine>`_
+- `Django document example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/django>`_
+- `Flask-Login integration example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/auth>`_
+- `File management interface <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/file>`_

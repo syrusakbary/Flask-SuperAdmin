@@ -16,13 +16,13 @@ def desc():
         return info
 
 setup(
-    name='Flask-Admin',
-    version='1.0.1',
-    url='https://github.com/mrjoes/flask-admin/',
+    name='Flask-SuperAdmin',
+    version='1.0',
+    url='https://github.com/syrusakbary/flask-superadmin/',
     license='BSD',
-    author='Serge S. Koval',
-    author_email='serge.koval+github@gmail.com',
-    description='Simple and extensible admin interface framework for Flask',
+    author='Syrus Akbary',
+    author_email='me@syrusakbary.com',
+    description='The best admin interface framework for Flask. With scaffolding for Mongoengine, Django and SQLAlchemy.',
     long_description=desc(),
     packages=find_packages(),
     include_package_data=True,

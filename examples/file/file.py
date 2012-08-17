@@ -3,8 +3,8 @@ import os.path as op
 
 from flask import Flask
 
-from flask.ext import admin
-from flask.ext.admin.contrib import fileadmin
+from flask.ext import superadmin
+from flask.ext.superadmin.contrib import fileadmin
 
 
 # Create flask app
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         pass
 
     # Create admin interface
-    admin = admin.Admin(app)
+    admin = superadmin.Admin(app)
     admin.add_view(fileadmin.FileAdmin(path, '/files/', name='Files'))
 
     # Start app

@@ -1,9 +1,9 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from flask.ext import admin, wtf
-from flask.ext.admin.contrib import sqlamodel
-from flask.ext.admin.contrib.sqlamodel import filters
+from flask.ext import superadmin, wtf
+from flask.ext.superadmin.contrib import sqlamodel
+from flask.ext.superadmin.contrib.sqlamodel import filters
 
 # Create application
 app = Flask(__name__)
@@ -96,7 +96,7 @@ class PostAdmin(sqlamodel.ModelView):
 
 if __name__ == '__main__':
     # Create admin
-    admin = admin.Admin(app, 'Simple Models')
+    admin = superadmin.Admin(app, 'Simple Models')
 
     # Add views
     admin.add_view(sqlamodel.ModelView(User, db.session))

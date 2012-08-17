@@ -1,8 +1,8 @@
 from flask import Flask, url_for, redirect, render_template, request
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from flask.ext import admin, login, wtf
-from flask.ext.admin.contrib import sqlamodel
+from flask.ext import superadmin, login, wtf
+from flask.ext.superadmin.contrib import sqlamodel
 
 # Create application
 app = Flask(__name__)
@@ -88,7 +88,7 @@ class MyModelView(sqlamodel.ModelView):
 
 
 # Create customized index view class
-class MyAdminIndexView(admin.AdminIndexView):
+class MyAdminIndexView(superadmin.AdminIndexView):
     def is_accessible(self):
         return login.current_user.is_authenticated()
 
@@ -137,7 +137,7 @@ if __name__ == '__main__':
     init_login()
 
     # Create admin
-    admin = admin.Admin(app, 'Auth', index_view=MyAdminIndexView())
+    admin = superadmin.Admin(app, 'Auth', index_view=MyAdminIndexView())
 
     # Add view
     admin.add_view(MyModelView(User, db.session))

@@ -1,42 +1,59 @@
-Flask-Admin
-===========
+Flask-SuperAdmin
+================
+
+The best admin interface framework for Flask. Better than Django admin.
+With scaffolding for Mongoengine, Django and SQLAlchemy.
 
 Introduction
 ------------
 
 This is library for building adminstrative interface on top of Flask framework.
 
-Instead of providing simple scaffolding for the SQLAlchemy models, Flask-Admin
+Instead of providing simple scaffolding for SQLAlchemy, Mongoengine or Django models, Flask-SuperAdmin
 provides tools that can be used to build adminstrative interface of any complexity,
 using consistent look and feel.
 
+
 Small example (Flask initialization omitted)::
 
-    app = Flask(__name__)
+    from flask.ext import superadmin
 
-    admin = Admin()
-    admin.add_view(ModelView(User, db.session))
+    app = Flask(__name__)
+    admin = superadmin.Admin()
+
+    # For SQLAlchemy
+    from flask.ext.superadmin.contrib import sqlamodel
+    admin.add_view(sqlamodel.ModelView(User, db.session)) # User is a SQLAlchemy Model, db.session is the session of our db
+
+    # For Mongoengine Documents
+    from flask.ext.superadmin.contrib import mongoenginemodel
+    admin.add_view(mongoenginemodel.ModelView(User)) # User is a Mongoengine Document Model
+
+    # For Django Models
+    from flask.ext.superadmin.contrib import djangomodel
+    admin.add_view(djangomodel.ModelView(User)) # User is a Django Document Model
+
     admin.add_view(GalleryManager(name='Photos', category='Cats'))
     admin.setup_app(app)
-
-If you're looking for 0.x version of the Flask-Admin written by Andy Wilson, check `here <http://github.com/wilsaj/flask-admin-old>`_.
-
-Documentation
--------------
-
-Flask-Admin is extensively documented, you can find `documentation here <http://readthedocs.org/docs/flask-admin>`_.
-
-3rd Party Stuff
----------------
-
-Flask-Admin is built with help of `Twitter Bootstrap <http://twitter.github.com/bootstrap/>`_ and `Chosen <http://harvesthq.github.com/chosen/>`_.
-
-Kudos
------
-
-Some ideas were taken from the `Flask-Admin <https://github.com/wilsaj/flask-admin-old>`_ by Andy Wilson.
 
 Examples
 --------
 
-Library comes with few examples, you can find them in `examples` directory.
+Library comes with a lot of examples, you can find them in `examples <https://github.com/SyrusAkbary/Flask-SuperAdmin/examples/>` directory.
+
+
+Documentation
+-------------
+
+Flask-SuperAdmin is extensively documented, you can find `documentation here <http://readthedocs.org/docs/Flask-SuperAdmin>`_.
+
+3rd Party Stuff
+---------------
+
+Flask-SuperAdmin is built with help of `Twitter Bootstrap <http://twitter.github.com/bootstrap/>`_, `Chosen <http://harvesthq.github.com/chosen/>`_, and `jQuery <http://jquery.com/>`_.
+
+
+Kudos
+-----
+
+This library is a vitamined fork of the `Flask-Admin <https://github.com/mrjoes/flask-admin/>`_ package by Serge S. Koval.

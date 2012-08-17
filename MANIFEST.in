@@ -1,5 +1,5 @@
 include LICENSE
 include README.rst
-recursive-include flask_admin/static *
-recursive-include flask_admin/templates *
-recursive-include flask_admin/translations *
+recursive-include flask_superadmin/static *
+recursive-include flask_superadmin/templates *
+recursive-include flask_superadmin/translations *

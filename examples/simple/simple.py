@@ -1,21 +1,21 @@
 from flask import Flask, render_template
 
-from flask.ext import admin
+from flask.ext import superadmin
 
 
 # Create custom admin view
-class MyAdminView(admin.BaseView):
-    @admin.expose('/')
+class MyAdminView(superadmin.BaseView):
+    @superadmin.expose('/')
     def index(self):
         return self.render('myadmin.html')
 
 
-class AnotherAdminView(admin.BaseView):
-    @admin.expose('/')
+class AnotherAdminView(superadmin.BaseView):
+    @superadmin.expose('/')
     def index(self):
         return self.render('anotheradmin.html')
 
-    @admin.expose('/test/')
+    @superadmin.expose('/test/')
     def test(self):
         return self.render('test.html')
 
@@ -32,7 +32,7 @@ def index():
 
 if __name__ == '__main__':
     # Create admin interface
-    admin = admin.Admin()
+    admin = superadmin.Admin()
     admin.add_view(MyAdminView(category='Test'))
     admin.add_view(AnotherAdminView(category='Test'))
     admin.init_app(app)

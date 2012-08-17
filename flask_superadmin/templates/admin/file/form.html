@@ -1,0 +1,9 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/lib.html' as lib with context %}
+
+{% block body %}
+    <h1 id="main-title">{{_gettext('Files')}}</h1>
+    <div class="clearfix"></div>
+    <hr />
+    {{ lib.render_form(form, dir_url) }}
+{% endblock %}

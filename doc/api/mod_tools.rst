@@ -1,7 +1,7 @@
-``flask.ext.admin.tools``
+``flask.ext.superadmin.tools``
 =========================
 
-.. automodule:: flask.ext.admin.tools
+.. automodule:: flask.ext.superadmin.tools
 
     .. autofunction:: import_module
     .. autofunction:: import_attribute
