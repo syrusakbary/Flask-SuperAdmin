@@ -10,11 +10,11 @@ Screenshots
 -----------
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
-    :width: 640
+    :width: 640px
     :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
-    :width: 640
+    :width: 640px
     :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
 
 Introduction
