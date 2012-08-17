@@ -39,7 +39,7 @@ Small example (Flask initialization omitted)::
 Examples
 --------
 
-Library comes with a lot of examples, you can find them in `examples <https://github.com/SyrusAkbary/Flask-SuperAdmin/examples/>` directory.
+Library comes with a lot of examples, you can find them in `examples <https://github.com/SyrusAkbary/Flask-SuperAdmin/examples/>`_ directory.
 
 
 Documentation
