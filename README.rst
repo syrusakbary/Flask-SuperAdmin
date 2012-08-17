@@ -5,6 +5,15 @@ The **best** admin interface framework for Flask. Better than Django admin.
 
 With **scaffolding for Mongoengine, Django and SQLAlchemy**.
 
+
+Screenshots
+-----------
+
+    .. image:: doc/images/quickstart/quickstart_4.png
+        :width: 640
+        :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/doc/images/quickstart/quickstart_4.png
+
+
 Introduction
 ------------
 
