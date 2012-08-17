@@ -9,10 +9,13 @@ With **scaffolding for Mongoengine, Django and SQLAlchemy**.
 Screenshots
 -----------
 
-    .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/doc/images/quickstart/quickstart_4.png
+    .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
         :width: 640
-        :target: doc/images/quickstart/quickstart_4.png
+        :target: screenshots/model-list.png
 
+    .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
+        :width: 640
+        :target: screenshots/model-edit.png
 
 Introduction
 ------------
