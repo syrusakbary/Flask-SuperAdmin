@@ -58,7 +58,7 @@ Library comes with a lot of examples, you can find them in `examples <https://gi
 Documentation
 -------------
 
-Flask-SuperAdmin is extensively documented, you can find `documentation here <http://readthedocs.org/docs/Flask-SuperAdmin>`_.
+Flask-SuperAdmin is extensively documented, you can find `documentation here <http://flask-superadmin.readthedocs.org/>`_.
 
 3rd Party Stuff
 ---------------
