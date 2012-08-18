@@ -1,7 +1,7 @@
 Flask-SuperAdmin
 ================
 
-The **best** admin interface framework for Flask. Better than Django admin.
+The **best** admin interface framework for Flask. As good as Django admin.
 
 With **scaffolding for Mongoengine, Django and SQLAlchemy**.
 
