@@ -6,8 +6,24 @@ The **best** admin interface framework for Flask. As good as Django admin.
 With **scaffolding for Mongoengine, Django and SQLAlchemy**.
 
 
-Screenshots
------------
+Installation
+------------
+
+First, you must do::
+
+    pip install Flask-SuperAdmin
+
+Or::
+
+    python setup.py install
+
+
+Admin interface
+---------------
+
+Influenced heavily by the Django admin, **provides easy create/edit/delete functionality** for your 
+project's models (Mongoengine, Django or SQLAlchemy).
+
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
     :width: 640px
@@ -15,7 +31,7 @@ Screenshots
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
     :width: 640px
-    :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
+    :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
 
 Introduction
 ------------
