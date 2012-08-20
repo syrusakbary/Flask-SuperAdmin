@@ -125,3 +125,15 @@ class DateTimePickerWidget(widgets.TextInput):
     def __call__(self, field, **kwargs):
         kwargs['data-role'] = u'datetimepicker'
         return super(DateTimePickerWidget, self).__call__(field, **kwargs)
+
+# def format_form(form):
+#     for field in form:
+#         if isinstance(field,fields.SelectField):
+#             field.widget = ChosenSelectWidget(multiple=field.widget.multiple)
+#         elif isinstance(field, fields.DateTimeField):
+#             field.widget = DatePickerWidget()
+#         elif isinstance(field, fields.FormField):
+#             format_form(field.form)
+#     return form
+#         # elif isinstance(field, fields.FieldList):
+#         #     for f in field.entries: format_form

@@ -1,17 +1,17 @@
 from wtforms.form import Form
 
 
-import mongoengine as db
+import mongoengine.fields as fields
 
 def data_to_field (field,data):
-    if isinstance(field,db.EmbeddedDocumentField):
+    if isinstance(field,fields.EmbeddedDocumentField):
         return data_to_document(field.document_type_obj,data)
-    elif isinstance(field,(db.ListField, db.SequenceField, db.SortedListField)):
+    elif isinstance(field,(fields.ListField, fields.SequenceField, fields.SortedListField)):
         l = []
         for d in data:
             l.append(data_to_field(field.field,d))
         return l
-    elif isinstance(field,(db.ReferenceField, db.ObjectIdField)) and isinstance(data,basestring):
+    elif isinstance(field,(fields.ReferenceField, fields.ObjectIdField)) and isinstance(data,basestring):
         from bson.objectid import ObjectId
         return ObjectId(data)
     else:

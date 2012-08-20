@@ -6,6 +6,24 @@ from flask.ext.superadmin.base import BaseView, expose
 from flask.ext.superadmin.tools import rec_getattr
 from flask.ext.superadmin.model import filters
 
+# from flask.ext.superadmin.form import format_form
+
+from flask.ext.superadmin.form import ChosenSelectWidget, DatePickerWidget, DateTimePickerWidget
+
+from wtforms import fields,widgets
+
+class AdminModelConverter(object):
+    def convert(self,*args,**kwargs):
+        field = super(AdminModelConverter,self).convert(*args,**kwargs)
+        if field:
+            widget = field.kwargs.get('widget',field.field_class.widget)
+            if isinstance(widget,widgets.Select):
+                field.kwargs['widget'] = ChosenSelectWidget(multiple=widget.multiple)
+            elif issubclass(field.field_class, fields.DateTimeField):
+                field.kwargs['widget'] = DateTimePickerWidget()
+            elif issubclass(field.field_class, fields.DateField):
+                field.kwargs['widget'] = DatePickerWidget()
+        return field
 
 class BaseModelView(BaseView):
     """

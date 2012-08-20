@@ -4,7 +4,7 @@ from flask.ext.superadmin.babel import gettext
 from flask.ext.superadmin.form import BaseForm
 from flask.ext.superadmin.model import BaseModelView
 
-from flask.ext.superadmin.contrib.mongoenginemodel import form #, filters, tools
+from flask.ext.superadmin.contrib.mongoenginemodel import orm as form #, filters, tools
 
 import mongoengine
 
