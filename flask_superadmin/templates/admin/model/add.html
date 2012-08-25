@@ -9,13 +9,14 @@
 {% endblock %}
 
 {% block body %}
-    <h1 id="main-title">{{ _gettext('Edit %(model)s',model=name|capitalize) }}</h1>
+    <h1 id="main-title">{{ _gettext('Add %(model)s',model=name|capitalize) }}</h1>
     <div class="clearfix"></div>
     <hr />
   {% macro extra() %}
-    <a href="{{ url_for('.delete', pk=pk, next=return_url) }}" class="btn">{{ _gettext('Delete') }}</a>
+    <input name="_add_another" type="submit" class="btn btn-primary" value="{{ _gettext('Save and create other') }}" />
   {% endmacro %}
-  	{{ lib.render_form(form, return_url,extra()) }}
+
+  {{ lib.render_form(form, return_url, extra()) }}
 {% endblock %}
 
 {% block tail %}

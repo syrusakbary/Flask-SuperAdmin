@@ -1,1 +1,1 @@
-from .base import BaseModelView, AdminModelConverter
+from .base import ModelAdmin, AdminModelConverter

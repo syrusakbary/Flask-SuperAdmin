@@ -1,14 +1,14 @@
-from flask import request, url_for, redirect, flash
+from flask import request, url_for, redirect, flash, abort
 
-from flask.ext.superadmin.babel import gettext
+from flask_superadmin.babel import gettext
 
-from flask.ext.superadmin.base import BaseView, expose
-from flask.ext.superadmin.tools import rec_getattr
-from flask.ext.superadmin.model import filters
+from flask_superadmin.base import BaseView, expose
+from flask_superadmin.tools import rec_getattr
+from flask_superadmin.model import filters
 
-# from flask.ext.superadmin.form import format_form
+# from flask_superadmin.form import format_form
 
-from flask.ext.superadmin.form import ChosenSelectWidget, DatePickerWidget, DateTimePickerWidget
+from flask_superadmin.form import ChosenSelectWidget, DatePickerWidget, DateTimePickerWidget
 
 from wtforms import fields,widgets
 
@@ -17,6 +17,7 @@ class AdminModelConverter(object):
         field = super(AdminModelConverter,self).convert(*args,**kwargs)
         if field:
             widget = field.kwargs.get('widget',field.field_class.widget)
+            print field, widget
             if isinstance(widget,widgets.Select):
                 field.kwargs['widget'] = ChosenSelectWidget(multiple=widget.multiple)
             elif issubclass(field.field_class, fields.DateTimeField):
@@ -25,633 +26,146 @@ class AdminModelConverter(object):
                 field.kwargs['widget'] = DatePickerWidget()
         return field
 
-class BaseModelView(BaseView):
+def prettify(str):
+    return str.replace('_', ' ').title()
+
+class BaseModelAdmin(BaseView):
     """
-        Base model view.
-
-        View does not make any assumptions on how models are stored or managed, but expects following:
-
-            1. Model is an object
-            2. Model contains properties
-            3. Each model contains attribute which uniquely identifies it (i.e. primary key for database model)
-            4. You can get list of sorted models with pagination applied from a data source
-            5. You can get one model by its identifier from the data source
-
-        Essentially, if you want to support new data store, all you have to do:
-
-            1. Derive from `BaseModelView` class
-            2. Implement various data-related methods (`get_list`, `get_one`, `create_model`, etc)
-            3. Implement automatic form generation from the model representation (`scaffold_form`)
+    BaseModelView provides create/edit/delete functionality for a peewee Model.
     """
+    # columns to display in the list index - can be field names or callables on
+    # a model instance, though in the latter case they will not be sortable
+    list_per_page = 20
+    list_display = tuple()
 
-    # Permissions
-    can_create = True
-    """Is model creation allowed"""
-
-    can_edit = True
-    """Is model editing allowed"""
-
-    can_delete = True
-    """Is model deletion allowed"""
-
-    # Templates
-    list_template = 'admin/model/list.html'
-    """Default list view template"""
-
-    edit_template = 'admin/model/edit.html'
-    """Default edit template"""
-
-    create_template = 'admin/model/create.html'
-    """Default create template"""
-
-    delete_template = 'admin/model/delete.html'
-    """Default delete template"""
-
-    # Customizations
-    list_columns = None
-    """
-        Collection of the model field names for the list view.
-        If set to `None`, will get them from the model.
-
-        For example::
-
-            class MyModelView(BaseModelView):
-                list_columns = ('name', 'last_name', 'email')
-    """
-
-    excluded_list_columns = None
-    """
-        Collection of excluded list column names.
-
-        For example::
-
-            class MyModelView(BaseModelView):
-                excluded_list_columns = ('last_name', 'email')
-    """
-
-    rename_columns = None
-    """
-        Dictionary where key is column name and value is string to display.
-
-        For example::
-
-            class MyModelView(BaseModelView):
-                rename_columns = dict(name='Name', last_name='Last Name')
-    """
-
-    sortable_columns = None
-    """
-        Collection of the sortable columns for the list view.
-        If set to `None`, will get them from the model.
-
-        For example::
-
-            class MyModelView(BaseModelView):
-                sortable_columns = ('name', 'last_name')
-
-        If you want to explicitly specify field/column to be used while
-        sorting, you can use tuple::
-
-            class MyModelView(BaseModelView):
-                sortable_columns = ('name', ('user', 'user.username'))
-
-        When using SQLAlchemy models, model attributes can be used instead
-        of the string::
-
-            class MyModelView(BaseModelView):
-                sortable_columns = ('name', ('user', User.username))
-    """
-
-    searchable_columns = None
-    """
-        Collection of the searchable columns. It is assumed that only
-        text-only fields are searchable, but it is up for a model
-        implementation to make decision.
-
-        Example::
-
-            class MyModelView(BaseModelView):
-                searchable_columns = ('name', 'email')
-    """
-
-    column_filters = None
-    """
-        Collection of the column filters.
-
-        Can contain either field names or instances of :class:`~flask.ext.superadmin.model.filters.BaseFilter` classes.
-
-        Example::
-
-            class MyModelView(BaseModelView):
-                column_filters = ('user', 'email')
-    """
+    # form parameters, lists of fields
+    exclude = None
+    only = None
+    fields = None
 
     form = None
-    """
-        Form class. Override if you want to use custom form for your model.
 
-        For example::
+    can_edit = True
+    can_create = True
+    can_delete = True
 
-            class MyForm(wtf.Form):
-                pass
+    list_template = 'admin/model/list.html'
+    edit_template = 'admin/model/edit.html'
+    add_template = 'admin/model/add.html'
+    delete_template = 'admin/model/delete.html'
 
-            class MyModelView(BaseModelView):
-                form = MyForm
-    """
+    search_fields = None
+    actions = None
 
-    form_args = None
-    """
-        Dictionary of form field arguments. Refer to WTForms documentation for
-        list of possible options.
+    field_args = None
 
-        Example::
+    @staticmethod
+    def model_detect(model):
+        return False
 
-            class MyModelView(BaseModelView):
-                form_args = dict(
-                    name=dict(label='First Name', validators=[wtf.required()])
-                )
-    """
-
-
-    form_columns = None
-    """
-        Collection of the model field names for the form. If set to `None` will
-        get them from the model.
-
-        Example::
-
-            class MyModelView(BaseModelView):
-                form_columns = ('name', 'email')
-    """
-
-    excluded_form_columns = None
-    """
-        Collection of excluded form field names.
-
-        For example::
-
-            class MyModelView(BaseModelView):
-                excluded_form_columns = ('last_name', 'email')
-    """
-
-    form_overrides = None
-    """
-        Dictionary of form column overrides.
-
-        Example::
-
-            class MyModelView(BaseModelView):
-                form_overrides = dict(name=wtf.FileField)
-    """
-
-    # Various settings
-    page_size = 20
-    """
-        Default page size.
-    """
-
-    def __init__(self, model,
-                 name=None, category=None, endpoint=None, url=None):
-        """
-            Constructor.
-
-            `model`
-                Model class
-            `name`
-                View name. If not provided, will use model class name
-            `category`
-                View category
-            `endpoint`
-                Base endpoint. If not provided, will use model name + 'view'.
-                For example if model name was 'User', endpoint will be
-                'userview'
-            `url`
-                Base URL. If not provided, will use endpoint as a URL.
-        """
-
-        # If name not provided, it is model name
+    def __init__(self, model=None, name=None, category=None, endpoint=None, url=None):
         if name is None:
-            name = '%s' % self._prettify_name(model.__name__)
+            name = '%s' % prettify(model.__name__)
 
-        # If endpoint not provided, it is model name + 'view'
         if endpoint is None:
             endpoint = ('%s' % model.__name__).lower()
 
-        super(BaseModelView, self).__init__(name, category, endpoint, url)
+        super(BaseModelAdmin, self).__init__(name, category, endpoint, url)
 
-        self.model = model
+        if model: self.model = model
 
-        # Scaffolding
-        self._refresh_cache()
+    def get_display_name(self):
+        return self.model.__name__
 
-    # Caching
-    def _refresh_cache(self):
-        """
-            Refresh various cached variables.
-        """
-        # List view
-        self._list_columns = self.get_list_columns()
-        self._sortable_columns = self.get_sortable_columns()
+    def allow_pk(self):
+        return not self.model._meta.auto_increment
 
-        # Forms
-        self._create_form_class = self.get_create_form()
-        self._edit_form_class = self.get_edit_form()
+    def get_form(self, adding=False):
+        allow_pk = adding and self.allow_pk()
+        return model_form(self.model, only=self.fields, exclude=self.exclude, converter=CustomModelConverter(self))
 
-        # Search
-        self._search_supported = self.init_search()
-
-        # Filters
-        self._filters = self.get_filters()
-
-        if self._filters:
-            self._filter_groups = []
-            self._filter_dict = dict()
-
-            for i, n in enumerate(self._filters):
-                if n.name not in self._filter_dict:
-                    group = []
-                    self._filter_dict[n.name] = group
-                    self._filter_groups.append((n.name, group))
-                else:
-                    group = self._filter_dict[n.name]
-
-                group.append((i, n.operation()))
-
-            self._filter_types = dict((i, f.data_type)
-                                      for i, f in enumerate(self._filters)
-                                      if f.data_type)
-        else:
-            self._filter_groups = None
-            self._filter_types = None
-
-    # Primary key
-    def get_pk_value(self, model):
-        """
-            Return PK value from a model object.
-        """
-        raise NotImplemented()
-
-    # List view
-    def scaffold_list_columns(self):
-        """
-            Return list of the model field names. Must be implemented in
-            the child class.
-
-            Expected return format is list of tuples with field name and
-            display text. For example::
-
-                ['name', 'first_name', 'last_name']
-        """
-        raise NotImplemented('Please implement scaffold_list_columns method')
-
-    def get_column_name(self, field):
-        """
-            Return human-readable column name.
-
-            `field`
-                Model field name.
-        """
-        if self.rename_columns and field in self.rename_columns:
-            return self.rename_columns[field]
-        else:
-            return self.prettify_name(field)
-
-    def get_list_columns(self):
-        """
-            Returns list of the model field names. If `list_columns` was
-            set, returns it. Otherwise calls `scaffold_list_columns`
-            to generate list from the model.
-        """
-        if self.list_columns is None:
-            columns = self.scaffold_list_columns()
-        else:
-            columns = self.list_columns
-
-        return [(c, self.get_column_name(c)) for c in columns]
-
-    def scaffold_sortable_columns(self):
-        """
-            Returns dictionary of sortable columns. Must be implemented in
-            the child class.
-
-            Expected return format is dictionary, where key is field name and
-            value is property name.
-        """
-        raise NotImplemented('Please implement scaffold_sortable_columns method')
-
-    def get_sortable_columns(self):
-        """
-            Returns dictionary of the sortable columns. Key is a model
-            field name and value is sort column (for example - attribute).
-
-            If `sortable_columns` is set, will use it. Otherwise, will call
-            `scaffold_sortable_columns` to get them from the model.
-        """
-        if self.sortable_columns is None:
-            return self.scaffold_sortable_columns() or dict()
-        else:
-            result = dict()
-
-            for c in self.sortable_columns:
-                if isinstance(c, tuple):
-                    result[c[0]] = c[1]
-                else:
-                    result[c] = c
-
-            return result
-
-    def init_search(self):
-        """
-            Initialize search. If data provider does not support search,
-            `init_search` will return `False`.
-        """
-        return False
-
-    def scaffold_filters(self, name):
-        """
-            Generate filter object for the given name
-
-            `name`
-                Name of the field
-        """
-        return None
-
-    def is_valid_filter(self, filter):
-        """
-            Verify that provided filter object is valid.
-
-            Override in model backend implementation to verify if
-            provided filter type is allowed.
-
-            `filter`
-                Filter object to verify.
-        """
-        return isinstance(filter, filters.BaseFilter)
-
-    def get_filters(self):
-        """
-            Return list of filter objects.
-
-            If your model backend implementation does not support filters,
-            override this method and return `None`.
-        """
-        if self.column_filters:
-            collection = []
-
-            for n in self.column_filters:
-                if not self.is_valid_filter(n):
-                    flt = self.scaffold_filters(n)
-                    if flt:
-                        collection.extend(flt)
-                    else:
-                        raise Exception('Unsupported filter type %s' % n)
-                else:
-                    collection.append(n)
-
-            return collection
-        else:
-            return None
-
-    def scaffold_form(self):
-        """
-            Create `form.BaseForm` inherited class from the model. Must be
-            implemented in the child class.
-        """
-        raise NotImplemented('Please implement scaffold_form method')
-
-    def get_form(self):
-        """
-            Get form class.
-
-            If ``self.form`` is set, will return it and will call
-            ``self.scaffold_form`` otherwise.
-
-            Override to implement customized behavior.
-        """
-        if self.form is not None:
-            return self.form
-
-        return self.scaffold_form()
-
-    def get_create_form(self):
-        """
-            Create form class for model creation view.
-
-            Override to implement customized behavior.
-        """
-        return self.get_form()
+    def get_add_form(self):
+        return self.get_form(adding=True)
 
     def get_edit_form(self):
-        """
-            Create form class for model editing view.
-
-            Override to implement customized behavior.
-        """
         return self.get_form()
 
-    def create_form(self, form, obj=None):
-        """
-            Instantiate model creation form and return it.
-
-            Override to implement custom behavior.
-        """
-        return self._create_form_class(form, obj or self.model())
-
-    def edit_form(self, form, obj=None):
-        """
-            Instantiate model editing form and return it.
-
-            Override to implement custom behavior.
-        """
-        return self._edit_form_class(form, obj)
-
-    # Helpers
-    def is_sortable(self, name):
-        """
-            Verify if column is sortable.
-
-            `name`
-                Column name.
-        """
-        return name in self._sortable_columns
-
-    def _get_column_by_idx(self, idx):
-        """
-            Return column index by
-        """
-        if idx is None or idx < 0 or idx >= len(self._list_columns):
-            return None
-
-        return self._list_columns[idx]
-
-    # Database-related API
-    def get_list(self, page, sort_field, sort_desc, search, filters):
-        """
-            Return list of models from the data source with applied pagination
-            and sorting.
-
-            Must be implemented in child class.
-
-            `page`
-                Page number, 0 based. Can be set to None if it is first page.
-            `sort_field`
-                Sort column name or None.
-            `sort_desc`
-                If set to True, sorting is in descending order.
-            `search`
-                Search query
-            `filters`
-                List of filter tuples. First value in a tuple is a search
-                index, second value is a search value.
-        """
-        raise NotImplemented('Please implement get_list method')
-
-    def get_one(self, id):
-        """
-            Return one model by its id.
-
-            Must be implemented in the child class.
-
-            `id`
-                Model id
-        """
-        raise NotImplemented('Please implement get_one method')
-
-    def get_multiple(self, ids):
-        return [self.get_one(id) for id in ids]
-    # Model handlers
-    def create_model(self, form):
-        """
-            Create model from the form.
-
-            Returns `True` if operation succeeded.
-
-            Must be implemented in the child class.
-
-            `form`
-                Form instance
-        """
+    def get_objects(self,*pks):
         raise NotImplemented()
 
-    def update_model(self, form, model):
-        """
-            Update model from the form.
-
-            Returns `True` if operation succeeded.
-
-            Must be implemented in the child class.
-
-            `form`
-                Form instance
-            `model`
-                Model instance
-        """
+    def get_object(self,pk):
         raise NotImplemented()
 
-    def delete_model(self, model):
-        """
-            Delete model.
+    def get_pk (self,instance):
+        return
 
-            Returns `True` if operation succeeded.
-
-            Must be implemented in the child class.
-
-            `model`
-                Model instance
-        """
+    def save_model(self, instance, form, adding=False):
         raise NotImplemented()
 
-    def delete_models(self, models):
-        for model in models: self.delete_model(model)
-    # Various helpers
-    def prettify_name(self, name):
-        """
-            Prettify pythonic variable name.
+    def delete_models(self, *pks):
+        raise NotImplemented()
 
-            For example, 'hello_world' will be converted to 'Hello World'
+    def is_sortable(self, column):
+        return False
 
-            `name`
-                Name to prettify
-        """
-        return name.replace('_', ' ').title()
+    def field_name(self, field):
+        return prettify(field)
 
-    # URL generation helper
-    def _get_extra_args(self):
-        """
-            Return arguments from query string.
-        """
-        page = request.args.get('page', 0, type=int)
-        sort = request.args.get('sort', None, type=int)
-        sort_desc = request.args.get('desc', None, type=int)
-        search = request.args.get('search', None)
+    def get_list(sel):
+        raise NotImplemented()
 
-        # Gather filters
-        if self._filters:
-            sfilters = []
+    def get_url_name(self,name):
+        URLS = {
+            'index':'.list',
+            'add':'.add',
+            'delete':'.delete',
+            'edit':'.edit'
+        }
+        return URLS[name]
 
-            for n in request.args:
-                if n.startswith('flt'):
-                    ofs = n.find('_')
-                    if ofs == -1:
-                        continue
-
-                    try:
-                        pos = int(n[3:ofs])
-                        idx = int(n[ofs + 1:])
-                    except ValueError:
-                        continue
-
-                    if idx >= 0 and idx < len(self._filters):
-                        flt = self._filters[idx]
-
-                        value = request.args[n]
-
-                        if flt.validate(value):
-                            sfilters.append((pos, (idx, flt.clean(value))))
-
-            filters = [v[1] for v in sorted(sfilters, key=lambda n: n[0])]
+    def dispatch_save_redirect(self, instance):
+        return_url = request.args.get('next',None) or self.get_url_name('index')
+        if 'save' in request.form:
+            return redirect(url_for(self.get_url_name('index')))
+        elif 'save_add' in request.form:
+            return redirect(url_for(self.get_url_name('add')))
         else:
-            filters = None
+            return redirect(
+                url_for(self.get_url_name('edit'), pk=self.get_pk(instance))
+            )
 
-        return page, sort, sort_desc, search, filters
+    @expose('/add/', methods=('GET', 'POST'))
+    def add(self):
+        Form = self.get_add_form()
+        if request.method == 'POST':
+            form = Form(request.form)
+            if form.validate():
+                try:
+                    instance = self.save_model(self.model(), form, True)
+                    flash(gettext('New %(model)s saved successfully', model= self.get_display_name()), 'success')
+                    return self.dispatch_save_redirect(instance)
+                except Exception, ex:
+                    self.session.rollback()
+                    flash(gettext('Failed to add model. %(error)s', error=str(ex)), 'error')
+        else:
+            form = Form(obj=self.model())
 
-    def _get_url(self, view=None, page=None, sort=None, sort_desc=None,
-                 search=None, filters=None):
-        """
-            Generate page URL with current page, sort column and
-            other parameters.
+        return self.render(self.add_template, model=self.model, form=form)
 
-            `view`
-                View name
-            `page`
-                Page number
-            `sort`
-                Sort column index
-            `sort_desc`
-                Use descending sorting order
-            `search`
-                Search query
-            `filters`
-                List of active filters
-        """
-        if not search:
-            search = None
+    @property
+    def page (self):
+        return request.args.get('page', 0, type=int)
 
-        if not page:
-            page = None
+    @property
+    def sort (self):
+        return request.args.get('sort', None, type=int), request.args.get('desc', None, type=bool)
 
-        kwargs = dict(page=page, sort=sort, desc=sort_desc, search=search)
+    @property
+    def search (self):
+        return request.args.get('search', None)
 
-        if filters:
-            for i, flt in enumerate(filters):
-                key = 'flt%d_%d' % (i, flt[0])
-                kwargs[key] = flt[1]
-
-        return url_for(view, **kwargs)
-
-    # Views
     @expose('/', methods=('GET','POST',))
-    def index_view(self):
+    def list(self):
         """
             List view
         """
@@ -659,173 +173,65 @@ class BaseModelView(BaseView):
         if request.method == 'POST':
             id_list = request.form.getlist('_selected_action')
             if id_list and (request.form.get('action-delete') or request.form.get('action',None)=='delete'):
-                return self.delete_view(id_list)
+                return self.delete(*id_list)
+        count, data = self.get_list()
+        return self.render(self.list_template, data=data, count=count, modeladmin=self)
 
-        page, sort_idx, sort_desc, search, filters = self._get_extra_args()
+    @expose('/<pk>/', methods=('GET', 'POST'))
+    def edit(self,pk):
+        try:
+            instance = self.get_object(pk)
+        except self.DoesNotExist:
+            abort(404)
 
-        # Map column index to column name
-        sort_column = self._get_column_by_idx(sort_idx)
-        if sort_column is not None:
-            sort_column = sort_column[0]
+        Form = self.get_edit_form()
 
-        # Get count and data
-        count, data = self.get_list(page, sort_column, sort_desc,
-                                    search, filters)
-
-        # Calculate number of pages
-        num_pages = count / self.page_size
-        if count % self.page_size != 0:
-            num_pages += 1
-
-        # Pregenerate filters
-        if self._filters:
-            filters_data = dict()
-
-            for idx, f in enumerate(self._filters):
-                flt_data = f.get_options(self)
-
-                if flt_data:
-                    filters_data[idx] = flt_data
+        if request.method == 'POST':
+            form = Form(request.form, obj=instance)
+            if form.validate():
+                try:
+                    self.save_model(instance, form, False)
+                    flash('Changes to %s saved successfully' % self.get_display_name(), 'success')
+                    return self.dispatch_save_redirect(instance)
+                except Exception, ex:
+                    flash(gettext('Failed to edit model. %(error)s', error=str(ex)), 'error')
         else:
-            filters_data = None
+            form = Form(obj=instance)
 
-        # Various URL generation helpers
-        def pager_url(p):
-            # Do not add page number if it is first page
-            if p == 0:
-                p = None
+        return self.render(self.edit_template, model=self.model, form=form, pk=self.get_pk(instance))
 
-            return self._get_url('.index_view', p, sort_idx, sort_desc,
-                                 search, filters)
 
-        def sort_url(column, invert=False):
-            desc = None
+    @expose('/<pk>/delete', methods=('GET', 'POST'))
+    def delete(self,pk=None,*pks):
+        if pk: pks += pk,
+            # collected = {}
+            # if self.delete_collect_objects:
+            #     for obj in query:
+            #         collected[obj.get_pk()] = self.collect_objects(obj)
 
-            if invert and not sort_desc:
-                desc = 1
+        if request.method == 'POST' and 'confirm_delete' in request.form:
+            count = len(pks)
+            self.delete_models(*pks)
 
-            return self._get_url('.index_view', page, column, desc,
-                                 search, filters)
-
-        return self.render(self.list_template,
-                               data=data,
-                               # List
-                               list_columns=self._list_columns,
-                               sortable_columns=self._sortable_columns,
-                               # Stuff
-                               enumerate=enumerate,
-                               get_pk_value=self.get_pk_value,
-                               get_value=rec_getattr,
-                               return_url=self._get_url('.index_view',
-                                                        page,
-                                                        sort_idx,
-                                                        sort_desc,
-                                                        search,
-                                                        filters),
-                               # Pagination
-                               count=count,
-                               pager_url=pager_url,
-                               num_pages=num_pages,
-                               page=page,
-                               # Sorting
-                               sort_column=sort_idx,
-                               sort_desc=sort_desc,
-                               sort_url=sort_url,
-                               # Search
-                               search_supported=self._search_supported,
-                               clear_search_url=self._get_url('.index_view',
-                                                              None,
-                                                              sort_idx,
-                                                              sort_desc),
-                               search=search,
-                               name=self.name,
-                               # Filters
-                               filters=self._filters,
-                               filter_groups=self._filter_groups,
-                               filter_types=self._filter_types,
-                               filter_data=filters_data,
-                               active_filters=filters
-                               )
-
-    @expose('/add/', methods=('GET', 'POST'))
-    def create_view(self):
-        """
-            Create model view
-        """
-        return_url = request.args.get('next') or url_for('.index_view')
-
-        if not self.can_create:
-            return redirect(return_url)
-
-        form = self.create_form(request.form)
-        # print form.data
-        if form.validate_on_submit():
-            if self.create_model(form):
-                if '_add_another' in request.form:
-                    flash(gettext('Model was successfully created.'))
-                    return redirect(url_for('.create_view', url=return_url))
-                else:
-                    return redirect(return_url)
-
-        return self.render(self.create_template,
-                           form=form,
-                           name=self.name,
-                           return_url=return_url)
-
-    @expose('/<id>/', methods=('GET', 'POST'))
-    def edit_view(self,id):
-        """
-            Edit model view
-        """
-        return_url = request.args.get('next') or url_for('.index_view')
-
-        if not self.can_edit:
-            return redirect(return_url)
-
-        # id = request.args.get('id')
-        # if id is None:
-        #     return redirect(return_url)
-
-        model = self.get_one(id)
-
-        if model is None:
-            return redirect(return_url)
-
-        form = self.edit_form(request.form, model)
-        if form.validate_on_submit():
-            if self.update_model(form, model):
-                return redirect(return_url)
-
-        return self.render(self.edit_template,
-                               form=form,
-                               id=id,
-                               name=self.name,
-                               return_url=return_url)
-
-    @expose('/<id>/delete/', methods=('GET','POST',))
-    def delete_view(self,id):
-        """
-            Delete model view. Only POST method is allowed.
-        """
-        
-
-        return_url = request.args.get('next') or url_for('.index_view')
-
-        # TODO: Use post
-        if not self.can_delete:
-            return redirect(return_url)
-
-        # id = request.args.get('id')
-        # if id is None:
-        #     return redirect(return_url)
-        if not getattr(id, '__iter__', False): id = [id]
-        models = self.get_multiple(id)
-        if request.method == 'POST' and request.form.get('confirm_delete'):
-            results = self.delete_models(models)
+            flash('Successfully deleted %s %ss' % (count, self.get_display_name()), 'success')
+            return redirect(url_for(self.get_url_name('index')))
         else:
-            return self.render(self.delete_template,models=models,get_pk_value=self.get_pk_value,name=self.name,cancel_url=return_url)
+            instances = self.get_objects(*pks)
 
-        # if models:
-        #     self.delete_models(models)
+        return self.render(self.delete_template,
+            instances=instances
+            # query=query,
+            # collected=collected,
+        )
 
-        return redirect(return_url)
+class ModelAdmin(object):
+    def __new__ (cls, admin, model,*args,**kwargs):
+        backend_model_class = admin.model_backend(model)
+        d = dict(cls.__dict__)
+        if cls != ModelAdmin:
+            bases = tuple(map(lambda x: x if x != ModelAdmin else backend_model_class,cls.__bases__))
+            new_class = type(cls.__name__, bases, d)
+            # print d,bases
+        else: new_class = backend_model_class
+        # print new_class,new_class.__class__,backend_model_class
+        return new_class(model,*args,**kwargs)

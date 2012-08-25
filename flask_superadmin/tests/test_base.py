@@ -1,7 +1,7 @@
 from nose.tools import ok_, eq_, raises
 
 from flask import Flask
-from flask.ext.superadmin import base
+from flask_superadmin import base
 
 
 class MockView(base.BaseView):

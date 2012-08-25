@@ -1,7 +1,7 @@
-from flask.ext.superadmin.babel import gettext
+from flask_superadmin.babel import gettext
 
-from flask.ext.superadmin.model import filters
-from flask.ext.superadmin.contrib.sqlamodel import tools
+from flask_superadmin.model import filters
+from flask_superadmin.contrib.sqlamodel import tools
 
 
 class BaseSQLAFilter(filters.BaseFilter):

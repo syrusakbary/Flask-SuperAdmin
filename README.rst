@@ -1,28 +1,25 @@
 Flask-SuperAdmin
 ================
 
-The **best** admin interface framework for Flask. As good as Django admin.
+Flask-Superadmin he **best** admin interface framework for `Flask <http://flask.pocoo.org/>`_. As good as Django admin.
 
-With **scaffolding for Mongoengine, Django and SQLAlchemy**.
+Batteries included:
 
+* Admin interface
+* **Scaffolding for MongoEngine, Django and SQLAlchemy**
+* File administrator (optional)
 
-Installation
-------------
+Requirements:
 
-First, you must do::
-
-    pip install Flask-SuperAdmin
-
-Or::
-
-    python setup.py install
+* `Flask <https://github.com/mitsuhiko/flask>`_
+* `WTForms <https://bitbucket.org/simplecodes/wtforms>`_
 
 
 Admin interface
 ---------------
 
 Influenced heavily by the Django admin, **provides easy create/edit/delete functionality** for your 
-project's models (Mongoengine, Django or SQLAlchemy).
+project's models (MongoEngine, Django or SQLAlchemy).
 
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
@@ -32,6 +29,7 @@ project's models (Mongoengine, Django or SQLAlchemy).
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
     :width: 640px
     :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
+
 
 Introduction
 ------------
@@ -45,25 +43,35 @@ using consistent look and feel.
 
 Small example (Flask initialization omitted)::
 
-    from flask.ext import superadmin
+    from flask.ext.superadmin import Admin, model
 
     app = Flask(__name__)
-    admin = superadmin.Admin()
+    admin = Admin(app)
 
-    # For SQLAlchemy
-    from flask.ext.superadmin.contrib import sqlamodel
-    admin.add_view(sqlamodel.ModelView(User, db.session)) # User is a SQLAlchemy Model, db.session is the session of our db
+    # For SQLAlchemy (User is a SQLAlchemy Model/Table)
+    admin.register(User, session=db.session) 
 
-    # For Mongoengine Documents
-    from flask.ext.superadmin.contrib import mongoenginemodel
-    admin.add_view(mongoenginemodel.ModelView(User)) # User is a Mongoengine Document Model
+    # For Mongoengine Documents (User is a MongoEngine Document)
+    admin.register(User)
 
-    # For Django Models
-    from flask.ext.superadmin.contrib import djangomodel
-    admin.add_view(djangomodel.ModelView(User)) # User is a Django Document Model
+    # For Django Models (User is a Django Model)
+    admin.register(User
 
-    admin.add_view(GalleryManager(name='Photos', category='Cats'))
+    admin.add_view(CustomView(name='Photos', category='Cats'))
     admin.setup_app(app)
+
+
+Installation
+------------
+
+For installing you have to do::
+
+    pip install Flask-SuperAdmin
+
+Or::
+
+    python setup.py install
+
 
 Examples
 --------
@@ -76,6 +84,7 @@ Documentation
 
 Flask-SuperAdmin is extensively documented, you can find `documentation here <http://flask-superadmin.readthedocs.org/>`_.
 
+
 3rd Party Stuff
 ---------------
 
@@ -85,4 +94,4 @@ Flask-SuperAdmin is built with help of `Twitter Bootstrap <http://twitter.github
 Kudos
 -----
 
-This library is a vitamined fork of the `Flask-Admin <https://github.com/mrjoes/flask-admin/>`_ package by Serge S. Koval.
+This library is a supervitamined fork of the `Flask-Admin <https://github.com/mrjoes/flask-admin/>`_ package by Serge S. Koval.

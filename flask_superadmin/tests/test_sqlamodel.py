@@ -5,8 +5,8 @@ from flask import Flask
 from flask.ext import wtf
 
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.superadmin import Admin
-from flask.ext.superadmin.contrib.sqlamodel import ModelView
+from flask_superadmin import Admin
+from flask_superadmin.contrib.sqlamodel import ModelView
 
 
 class CustomModelView(ModelView):

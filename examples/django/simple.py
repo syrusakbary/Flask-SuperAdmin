@@ -1,7 +1,5 @@
 from flask import Flask
-
-from flask.ext import superadmin, wtf
-from flask.ext.superadmin.contrib import djangomodel
+from flask.ext.superadmin import Admin, model
 
 from utils import install_models
 
@@ -62,11 +60,11 @@ except:
 
 if __name__ == '__main__':
     # Create admin
-    admin = superadmin.Admin(app, 'Simple Models')
+    admin = Admin(app, 'Simple Models')
 
     # Add views
-    admin.add_view(djangomodel.ModelView(User))
-    admin.add_view(djangomodel.ModelView(Post))
+    admin.register(User)
+    admin.register(Post)
 
 
     # Start app

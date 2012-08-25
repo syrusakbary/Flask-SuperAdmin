@@ -1,10 +1,9 @@
 from flask import Flask, request, session
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from flask.ext import superadmin
+from flask.ext.superadmin import Admin, model
 from flask.ext.babel import Babel
 
-from flask.ext.superadmin.contrib import sqlamodel
 
 # Create application
 app = Flask(__name__)
@@ -62,13 +61,13 @@ def index():
 
 if __name__ == '__main__':
     # Create admin
-    admin = superadmin.Admin(app, 'Simple Models')
+    admin = Admin(app, 'Simple Models')
 
     admin.locale_selector(get_locale)
 
     # Add views
-    admin.add_view(sqlamodel.ModelView(User, db.session))
-    admin.add_view(sqlamodel.ModelView(Post, db.session))
+    admin.register(User, session=db.session)
+    admin.register(Post, session=db.session)
 
     # Create DB
     db.create_all()

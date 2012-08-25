@@ -3,7 +3,7 @@ from wtforms import Form
 from wtforms import validators
 from wtforms.ext.django.fields import ModelSelectField
 
-from flask.ext.superadmin import form
+from flask_superadmin import form
 
 __all__ = (
     'AdminModelConverter','model_fields', 'model_form',

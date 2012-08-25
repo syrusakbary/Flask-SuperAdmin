@@ -3,6 +3,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from wtforms import ValidationError, fields, validators
 from wtforms.ext.sqlalchemy.orm import converts, ModelConverter
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
+from wtforms.ext.sqlalchemy.orm import model_form
 
 from flask.ext.superadmin import form
 
@@ -53,14 +54,14 @@ class AdminModelConverter(ModelConverter):
         if 'label' in field_args:
             return field_args['label']
 
-        if self.view.rename_columns:
-            return self.view.rename_columns.get(name)
+        # if self.view.rename_columns:
+        #     return self.view.rename_columns.get(name)
 
         return None
 
     def _get_field_override(self, name):
-        if self.view.form_overrides:
-            return self.view.form_overrides.get(name)
+        # if self.view.form_overrides:
+        #     return self.view.form_overrides.get(name)
 
         return None
 
@@ -82,10 +83,9 @@ class AdminModelConverter(ModelConverter):
                 'label': self._get_label(prop.key, kwargs),
                 'query_factory': lambda: self.view.session.query(remote_model)
             })
-
             if local_column.nullable:
                 kwargs['validators'].append(validators.Optional())
-            elif prop.direction.name != 'MANYTOMANY':
+            elif prop.direction.name not in ('MANYTOMANY','ONETOMANY'):
                 kwargs['validators'].append(validators.Required())
 
             # Override field type if necessary
@@ -121,11 +121,11 @@ class AdminModelConverter(ModelConverter):
 
                 if column.primary_key:
                     # By default, don't show primary keys either
-                    if self.view.form_columns is None:
+                    if self.view.fields is None:
                         return None
 
                     # If PK is not explicitly allowed, ignore it
-                    if prop.key not in self.view.form_columns:
+                    if prop.key not in self.view.fields:
                         return None
 
                     kwargs['validators'].append(Unique(self.view.session,
