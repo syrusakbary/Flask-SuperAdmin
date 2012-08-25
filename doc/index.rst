@@ -1,9 +1,21 @@
 Flask-SuperAdmin
 ================
 
-Flask-SuperAdmin The best admin interface framework for `Flask <http://flask.pocoo.org/>`_. With scaffolding for mongoengine, django and sqlalchemy.
+Flask-Superadmin he **best** admin interface framework for `Flask <http://flask.pocoo.org/>`_. As good as Django admin.
 
-This package is a supervitamined fork of `Flask-Admin <http://pypi.python.org/pypi/Flask-Admin/>`_.
+Batteries included:
+
+* Admin interface
+* **Scaffolding for MongoEngine, Django and SQLAlchemy**
+* File administrator (optional)
+
+Requirements:
+
+* `Flask <https://github.com/mitsuhiko/flask>`_
+* `WTForms <https://bitbucket.org/simplecodes/wtforms>`_
+
+
+This package is a vitamined fork of `Flask-Admin <http://pypi.python.org/pypi/Flask-Admin/>`_.
 
 .. toctree::
    :maxdepth: 2

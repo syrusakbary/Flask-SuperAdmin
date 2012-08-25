@@ -204,12 +204,12 @@ Model Views
 
 Flask-SuperAdmin comes with built-in SQLAlchemy model administrative interface. It is very easy to use::
 
-    from flask.ext.superadmin.contrib.sqlamodel import ModelView
+    from flask.ext.superadmin import Admin
 
     # Flask and Flask-SQLAlchemy initialization here
 
     admin = Admin(app)
-    admin.add_view(ModelView(User, db.session))
+    admin.register(User, session=db.session)
 
 This will create administrative interface for `User` model with default settings.
 
@@ -227,43 +227,22 @@ If you want to customize model views, you have two options:
 For example, if you want to disable model creation, show only 'login' and 'email' columns in the list view,
 you can do something like this::
 
-    from flask.ext.superadmin.contrib.sqlamodel import ModelView
+    from flask.ext.superadmin import Admin, model
 
     # Flask and Flask-SQLAlchemy initialization here
 
-    class MyView(ModelView):
-        # Disable model creation
-        can_create = False
-
-        # Override displayed fields
-        list_columns = ('login', 'email')
-
-        def __init__(self, session, **kwargs):
-            # You can pass name and other parameters if you want to
-            super(MyView, self).__init__(User, session, **kwargs)
+    class UserModel(model.ModelAdmin):
+        session = db.session
+        list_display = ('username','email')
 
     admin = Admin(app)
-    admin.add_view(MyView(db.session))
-
-Overriding form elements can be a bit trickier, but it is still possible. Here's an example of
-how to set up a form that includes a column named ``status`` that allows only predefined values and
-therefore should use a ``SelectField``::
-
-    from wtforms.fields import SelectField
-
-    class MyView(ModelView):
-        form_overrides = dict(status=SelectField)
-        form_args = dict(
-            # Pass the choices to the `SelectField`
-            status=dict(
-                choices=[(0, 'waiting'), (1, 'in_progress'), (2, 'finished')]
-            ))
+    admin.register(User, UserModel)
 
 
-It is relatively easy to add support for different database backends (Mongo, etc) by inheriting from :class:`~flask.ext.superadmin.model.BaseModelView`.
+It is relatively easy to add support for different database backends by inheriting from :class:`~flask.ext.superadmin.model.BaseModelAdmin`.
 class and implementing database-related methods.
 
-Please refer to :mod:`flask.ext.superadmin.contrib.sqlamodel` documentation on how to customize behavior of model-based administrative views.
+Please refer to :mod:`flask.ext.superadmin.model.mongoengine` documentation on how to customize behavior of model-based administrative views.
 
 File Admin
 ----------
@@ -272,6 +251,7 @@ Flask-SuperAdmin comes with another handy battery - file admin. It gives you abi
 
 Here is simple example::
 
+    from flask.ext.superadmin import Admin
     from flask.ext.superadmin.contrib.fileadmin import FileAdmin
 
     import os.path as op
@@ -298,7 +278,7 @@ Examples
 Flask-SuperAdmin comes with a lot of samples:
 
 - `Simple administrative interface <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/simple>`_ with custom administrative views
-- `SQLAlchemy model example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/sqla>`_
+- `SQLAlchemy model example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/sqlalchemy>`_
 - `Mongoengine document example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/mongoengine>`_
 - `Django document example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/django>`_
 - `Flask-Login integration example <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/auth>`_
