@@ -3,7 +3,7 @@
 
 .. automodule:: flask.ext.superadmin.model
 
-    .. autoclass:: BaseModelView
+    .. autoclass:: BaseModelAdmin
         :members:
         :exclude-members: can_create, can_edit, can_delete, list_template, edit_template,
                           create_template, list_columns, excluded_list_columns, rename_columns,
@@ -18,20 +18,10 @@
         .. autoattribute:: edit_template
         .. autoattribute:: create_template
 
-        .. autoattribute:: list_columns
-        .. autoattribute:: excluded_list_columns
-        .. autoattribute:: rename_columns
-
-        .. autoattribute:: sortable_columns
-
-        .. autoattribute:: searchable_columns
-
-        .. autoattribute:: column_filters
+        .. autoattribute:: list_display
 
         .. autoattribute:: form
-        .. autoattribute:: form_columns
-        .. autoattribute:: excluded_form_columns
-        .. autoattribute:: form_args
-        .. autoattribute:: form_overrides
+
+        .. autoattribute:: fields
 
         .. autoattribute:: page_size
