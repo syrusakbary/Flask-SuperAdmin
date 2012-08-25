@@ -55,7 +55,7 @@ Small example (Flask initialization omitted)::
     admin.register(User)
 
     # For Django Models (User is a Django Model)
-    admin.register(User
+    admin.register(User)
 
     admin.add_view(CustomView(name='Photos', category='Cats'))
     admin.setup_app(app)
