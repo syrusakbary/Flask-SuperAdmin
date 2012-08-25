@@ -11,7 +11,7 @@ Batteries included:
 
 Requirements:
 
-* `Flask <https://github.com/mitsuhiko/flask>`_
+* `Flask`_
 * `WTForms <https://bitbucket.org/simplecodes/wtforms>`_
 
 
