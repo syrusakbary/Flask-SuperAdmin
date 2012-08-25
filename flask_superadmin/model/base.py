@@ -17,7 +17,7 @@ class AdminModelConverter(object):
         field = super(AdminModelConverter,self).convert(*args,**kwargs)
         if field:
             widget = field.kwargs.get('widget',field.field_class.widget)
-            print field, widget
+            # print field, widget
             if isinstance(widget,widgets.Select):
                 field.kwargs['widget'] = ChosenSelectWidget(multiple=widget.multiple)
             elif issubclass(field.field_class, fields.DateTimeField):
