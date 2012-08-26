@@ -138,7 +138,7 @@
 
 {% macro render_form(form, cancel_url, extra=None) -%}
     <form action="" method="POST"{% if form.has_file_field %} enctype="multipart/form-data"{% endif %}>
-    {{ form.hidden_tag() }}
+    {{ form.hidden_tag() if hidden_tag is defined }}
     {{render_formfield(form)}}
 
         {#% for f in form if f.name != 'csrf_token' and f.name != 'csrf' %}
