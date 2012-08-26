@@ -167,7 +167,7 @@
         </tr>
         {% endfor %}
     </table>
-    {#{ lib.pager(page, num_pages, pager_url) }#}
+    {{ lib.pager(page, total_pages, admin_view.page_url) }}
 </form>
 {% endblock %}
 

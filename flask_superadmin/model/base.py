@@ -12,6 +12,8 @@ from flask_superadmin.form import ChosenSelectWidget, DatePickerWidget, DateTime
 
 from wtforms import fields,widgets
 
+import math
+
 class AdminModelConverter(object):
     def convert(self,*args,**kwargs):
         field = super(AdminModelConverter,self).convert(*args,**kwargs)
@@ -156,6 +158,9 @@ class BaseModelAdmin(BaseView):
     def page (self):
         return request.args.get('page', 0, type=int)
 
+    def total_pages (self, count):
+        return int(math.ceil(float(count)/self.list_per_page))
+
     @property
     def sort (self):
         return request.args.get('sort', None, type=int), request.args.get('desc', None, type=bool)
@@ -163,6 +168,10 @@ class BaseModelAdmin(BaseView):
     @property
     def search (self):
         return request.args.get('search', None)
+
+    def page_url (self, page):
+        sort,desc = self.sort
+        return url_for(self.get_url_name('index'),page=page,sort=sort,desc=desc)
 
     @expose('/', methods=('GET','POST',))
     def list(self):
@@ -175,7 +184,7 @@ class BaseModelAdmin(BaseView):
             if id_list and (request.form.get('action-delete') or request.form.get('action',None)=='delete'):
                 return self.delete(*id_list)
         count, data = self.get_list()
-        return self.render(self.list_template, data=data, count=count, modeladmin=self)
+        return self.render(self.list_template, data=data, page=self.page, total_pages=self.total_pages(count), count=count, modeladmin=self)
 
     @expose('/<pk>/', methods=('GET', 'POST'))
     def edit(self,pk):
