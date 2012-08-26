@@ -9,7 +9,6 @@ from sqlalchemy import or_, Column, schema
 
 from orm import model_form, AdminModelConverter
 
-from bson.objectid import ObjectId
 
 class ModelAdmin(BaseModelAdmin):
     hide_backrefs = False
