@@ -110,13 +110,12 @@
         <thead>
             <tr>
                 <th class="model-check"><input type="checkbox" name="selected_all_instances" value="all"></th>
-                {% set column = 0 %}
                 {% for c in admin_view.list_display %}
                 <th>
                     {% set name = admin_view.field_name(c) %}
                     {% if admin_view.is_sortable(c)%}
-                    {% if sort_column == column %}
-                    <a href="{{ sort_url(column if not sort_desc else None, True) }}">
+                    {% if sort == c %}
+                    <a href="{{ admin_view.sort_url(c if not sort_desc else None, True) }}">
                         {{ name }}
                         {% if sort_desc %}
                         <i class="icon-chevron-up"></i>
@@ -125,13 +124,12 @@
                         {% endif %}
                     </a>
                     {% else %}
-                    <a href="{{ sort_url(column) }}">{{ name }}</a>
+                    <a href="{{ admin_view.sort_url(c) }}">{{ name }}</a>
                     {% endif %}
                     {% else %}
                     {{ name }}
                     {% endif %}
                 </th>
-                {% set column = column + 1 %}
                 {% else %}
                 <th>
                     {{name|capitalize}}

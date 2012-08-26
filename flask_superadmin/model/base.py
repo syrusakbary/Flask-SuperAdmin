@@ -163,7 +163,13 @@ class BaseModelAdmin(BaseView):
 
     @property
     def sort (self):
-        return request.args.get('sort', None, type=int), request.args.get('desc', None, type=bool)
+        sort = request.args.get('sort', None)
+        if sort and sort.startswith('-'):
+            desc = True
+            sort = sort[1:]
+        else:
+            desc = False
+        return sort, desc
 
     @property
     def search (self):
@@ -171,7 +177,13 @@ class BaseModelAdmin(BaseView):
 
     def page_url (self, page):
         sort,desc = self.sort
-        return url_for(self.get_url_name('index'),page=page,sort=sort,desc=desc)
+        if sort and desc: sort = '-'+sort
+        if page==0: page = None
+        return url_for(self.get_url_name('index'),page=page,sort=sort)
+
+    def sort_url (self, sort, desc=None):
+        if sort and desc: sort = '-'+sort
+        return url_for(self.get_url_name('index'),sort=sort)
 
     @expose('/', methods=('GET','POST',))
     def list(self):
@@ -183,8 +195,12 @@ class BaseModelAdmin(BaseView):
             id_list = request.form.getlist('_selected_action')
             if id_list and (request.form.get('action-delete') or request.form.get('action',None)=='delete'):
                 return self.delete(*id_list)
-        count, data = self.get_list()
-        return self.render(self.list_template, data=data, page=self.page, total_pages=self.total_pages(count), count=count, modeladmin=self)
+
+        sort, sort_desc = self.sort
+        page = self.page
+        count, data = self.get_list(page=page,sort=sort,sort_desc=sort_desc)
+        sort, sort_desc = self.sort
+        return self.render(self.list_template, data=data, page=page, total_pages=self.total_pages(count), sort=sort,sort_desc=sort_desc,count=count, modeladmin=self)
 
     @expose('/<pk>/', methods=('GET', 'POST'))
     def edit(self,pk):

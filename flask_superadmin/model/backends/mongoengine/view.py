@@ -5,7 +5,18 @@ from flask_superadmin.model.base import BaseModelAdmin
 from orm import model_form, AdminModelConverter
 
 import mongoengine
+
 from bson.objectid import ObjectId
+
+SORTABLE_FIELDS = (
+    mongoengine.BooleanField,
+    mongoengine.DateTimeField,
+    mongoengine.DecimalField,
+    mongoengine.FloatField,
+    mongoengine.IntField,
+    mongoengine.StringField,
+    mongoengine.ReferenceField
+)
 
 class ModelAdmin(BaseModelAdmin):
     @staticmethod
@@ -15,6 +26,9 @@ class ModelAdmin(BaseModelAdmin):
     def allow_pk(self):
         return False
     
+    def is_sortable(self, column):
+        return isinstance(self.get_column(self.model,column), SORTABLE_FIELDS)
+
     def get_column(self, instance, name):
     	return getattr(instance,name,None)
 
@@ -44,20 +58,20 @@ class ModelAdmin(BaseModelAdmin):
         for obj in self.get_objects(*pks): obj.delete()
         return True
 
-    def get_list(self,execute=False):
+    def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
         query = self.model.objects
+
         #Select only the columns listed
         cols = self.list_display
         # if cols:
         #     query = query.only(*cols)
+
         #Calculate number of rows
         count = query.count()
-        #Order query
-        sort_column, sort_desc = self.sort
-        page = self.page
 
-        if sort_column:
-            query = query.order_by('%s%s'% ('-' if sort_desc else'', sort_column))
+        #Order query
+        if sort:
+            query = query.order_by('%s%s'% ('-' if sort_desc else'', sort))
         
         # Pagination
         if page is not None:

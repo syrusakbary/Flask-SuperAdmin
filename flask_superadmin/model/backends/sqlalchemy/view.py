@@ -80,17 +80,16 @@ class ModelAdmin(BaseModelAdmin):
         #for obj in self.get_objects(*pks): obj.delete()
         return True
 
-    def get_list(self,execute=False):
+    def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
         joins = set()
 
         query = self.session.query(self.model)
         count = query.count()
         #Order query
-        sort_column, sort_desc = self.sort
-        page = self.page
-
-        # if sort_column:
-        #     query = query.order_by('%s%s'% ('-' if sort_desc else'', sort_column))
+        if sort:
+            if sort_desc:
+                sort = desc(sort)
+            query = query.order_by(sort)
         
         # Pagination
         if page is not None:
