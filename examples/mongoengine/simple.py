@@ -1,15 +1,12 @@
 from flask import Flask
-
-from flask.ext.superadmin.contrib import mongoenginemodel
-
 from flask.ext.superadmin import Admin, model
 
 try:
     from mongoengine import *
 except ImportError:
     exit('You must have mongoengine installed. Install it with the command:\n\t$> easy_install mongoengine')
-# Create application
 
+# Create application
 app = Flask(__name__)
 
 # Create dummy secrey key so we can use sessions
@@ -25,6 +22,9 @@ mongodb_settings = {
 
 # Connect to mongodb
 connect(**mongodb_settings)
+
+
+# Defining MongoEngine Documents
 
 class User(Document):
     username = StringField(unique=True)
@@ -43,15 +43,14 @@ class Post(Document):
     date = DateTimeField()
     complex = ListField(EmbeddedDocumentField(ComplexEmbedded))
 
+
 # Flask views
 @app.route('/')
 def index():
     return '<a href="/admin/">Click me to get to Admin!</a>'
 
-
-# Customized Post model admin
-
 if __name__ == '__main__':
+    
     # Create admin
     admin = Admin(app, 'Simple Models')
 

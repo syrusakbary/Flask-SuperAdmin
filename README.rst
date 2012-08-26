@@ -36,7 +36,7 @@ Introduction
 
 This is library for building adminstrative interface on top of Flask framework.
 
-Instead of providing simple scaffolding for SQLAlchemy, Mongoengine or Django models, Flask-SuperAdmin
+Instead of providing simple scaffolding for SQLAlchemy, MongoEngine or Django models, Flask-SuperAdmin
 provides tools that can be used to build adminstrative interface of any complexity,
 using consistent look and feel.
 
@@ -51,13 +51,16 @@ Small example (Flask initialization omitted)::
     # For SQLAlchemy (User is a SQLAlchemy Model/Table)
     admin.register(User, session=db.session) 
 
-    # For Mongoengine Documents (User is a MongoEngine Document)
+    # For MongoEngine Documents (User is a MongoEngine Document)
     admin.register(User)
 
     # For Django Models (User is a Django Model)
     admin.register(User)
 
+
+    # Adding a custom view
     admin.add_view(CustomView(name='Photos', category='Cats'))
+
     admin.setup_app(app)
 
 

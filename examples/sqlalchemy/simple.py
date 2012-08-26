@@ -3,8 +3,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 from flask.ext import wtf
 from flask.ext.superadmin import Admin, model
-# from flask.ext.superadmin.contrib import sqlamodel
-# from flask.ext.superadmin.contrib.sqlamodel import filters
 
 # Create application
 app = Flask(__name__)
@@ -64,36 +62,6 @@ class Tag(db.Model):
 def index():
     return '<a href="/admin/">Click me to get to Admin!</a>'
 
-
-# Customized Post model admin
-# class PostAdmin(sqlamodel.ModelView):
-#     # Visible columns in the list view
-#     #list_columns = ('title', 'user')
-#     excluded_list_columns = ['text']
-
-#     # List of columns that can be sorted. For 'user' column, use User.username as
-#     # a column.
-#     sortable_columns = ('title', ('user', User.username), 'date')
-
-#     # Rename 'title' columns to 'Post Title' in list view
-#     rename_columns = dict(title='Post Title')
-
-#     searchable_columns = ('title', User.username)
-
-#     column_filters = ('user',
-#                       'title',
-#                       'date',
-#                       filters.FilterLike(Post.title, 'Fixed Title', options=(('test1', 'Test 1'), ('test2', 'Test 2'))))
-
-#     # Pass arguments to WTForms. In this case, change label for text field to
-#     # be 'Big Text' and add required() validator.
-#     form_args = dict(
-#                     text=dict(label='Big Text', validators=[wtf.required()])
-#                 )
-
-#     def __init__(self, session):
-#         # Just call parent class with predefined model.
-#         super(PostAdmin, self).__init__(Post, session)
 
 if __name__ == '__main__':
     # Create admin

@@ -11,13 +11,12 @@ settings.configure(
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase',
+            'NAME': 'mydatabase.sqlite',
         }
     }
 )
 
 from django.db import models
-
 
 # Create application
 
@@ -40,23 +39,19 @@ class Post(models.Model):
     class Meta:
         app_label = 'posts'
     title = models.CharField(max_length=255)
-    # tags = db.ListField(db.StringField())
     text = models.TextField()
     date = models.DateField()
     user = models.ForeignKey(User)
-    # complex = db.ListField(db.EmbeddedDocumentField(ComplexEmbedded))
     def __unicode__(self):
         return self.title
+
+
 # Flask views
 @app.route('/')
 def index():
     return '<a href="/admin/">Click me to get to Admin!</a>'
 
     # Build the manifest of apps and models that are to be synchronized
-try:
-    install_models(User,Post)
-except:
-    pass
 
 if __name__ == '__main__':
     # Create admin
@@ -66,6 +61,11 @@ if __name__ == '__main__':
     admin.register(User)
     admin.register(Post)
 
+    # Create tables in database if not exists
+    try:
+        install_models(User,Post)
+    except:
+        pass
 
     # Start app
     app.debug = True
