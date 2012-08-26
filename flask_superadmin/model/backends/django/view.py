@@ -56,17 +56,17 @@ class ModelAdmin(BaseModelAdmin):
 
         #Calculate number of rows
         count = query.count()
-        
+
         #Order query
         if sort:
             query = query.order_by('%s%s'% ('-' if sort_desc else'', sort))
         
         # Pagination
         if page is not None:
-            query = query[page * self.list_per_page:]
+            query = query.all()[page * self.list_per_page:]
         query = query[:self.list_per_page]
 
         if execute:
-            query = query.all()
+            query = list(query)
 
         return count,query
