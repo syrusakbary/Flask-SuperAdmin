@@ -1,9 +1,9 @@
-from flask_superadmin.model.backends.sqlalchemy import ModelAdmin
+from flask_superadmin.model import ModelAdmin
 
 def print_kwargs(d):
 	return ', '.join(['%s=...'%k for k in d.keys()])
 
-class DeprecatedModelView(ModelAdmin):
+class DeprecatedModelView(object):
     def __init__(self,model,*args,**kwargs):
         import warnings
         msg = "The %s class is deprecated, use superadmin.model.ModelAdmin instead.\nOr just do admin.register(%s%s) for register your models."% (
