@@ -23,11 +23,11 @@ project's models (MongoEngine, Django or SQLAlchemy).
 
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
-    :width: 640px
+    :width: 480px
     :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
-    :width: 640px
+    :width: 480px
     :target: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-edit.png
 
 
