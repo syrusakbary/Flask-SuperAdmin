@@ -81,9 +81,9 @@ Examples
 
 Library comes with a lot of examples, you can find them in `examples <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/>`_ directory.
 
-- `MongoEngine documents <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/mongoengine>`_
-- `SQLAlchemy tables <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/sqlalchemy>`_
-- `Django models <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/django>`_
+- `MongoEngine <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/mongoengine>`_
+- `SQLAlchemy <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/sqlalchemy>`_
+- `Django <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/django>`_
 - `Flask-Login integration <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/auth>`_
 
 
