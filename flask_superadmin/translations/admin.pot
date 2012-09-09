@@ -1,0 +1,154 @@
+# Translations template for Flask-SuperAdmin.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the Flask-SuperAdmin
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Flask-SuperAdmin 1.5.1\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-08-27 03:49+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: flask_superadmin/form.py:81
+msgid "Invalid time format"
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:32
+msgid "Invalid directory name"
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:49
+msgid "File required."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:54
+msgid "Invalid file type."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:338
+msgid "File uploading is disabled."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:347
+#, python-format
+msgid "File \"%(name)s\" already exists."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:354
+#, python-format
+msgid "Failed to save file: %(error)s"
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:373
+msgid "Directory creation is disabled."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:383
+#, python-format
+msgid "Failed to create directory: %(error)s"
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:405
+msgid "Deletion is disabled."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:410
+msgid "Directory deletion is disabled."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:415
+#, python-format
+msgid "Directory \"%s\" was successfully deleted."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:417
+#, python-format
+msgid "Failed to delete directory: %(error)s"
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:421
+#, python-format
+msgid "File \"%(name)s\" was successfully deleted."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:423
+#, python-format
+msgid "Failed to delete file: %(name)s"
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:442
+msgid "Renaming is disabled."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:446
+msgid "Path does not exist."
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:457
+#, python-format
+msgid "Successfully renamed \"%(src)s\" to \"%(dst)s\""
+msgstr ""
+
+#: flask_superadmin/contrib/fileadmin.py:460
+#, python-format
+msgid "Failed to rename: %(error)s"
+msgstr ""
+
+#: flask_superadmin/model/base.py:145
+#, python-format
+msgid "New %(model)s saved successfully"
+msgstr ""
+
+#: flask_superadmin/model/base.py:149
+#, python-format
+msgid "Failed to add model. %(error)s"
+msgstr ""
+
+#: flask_superadmin/model/base.py:197
+#, python-format
+msgid "Failed to edit model. %(error)s"
+msgstr ""
+
+#: flask_superadmin/model/backends/mongoengine/fields.py:115
+#: flask_superadmin/model/backends/mongoengine/fields.py:165
+#: flask_superadmin/model/backends/mongoengine/fields.py:170
+msgid "Not a valid choice"
+msgstr ""
+
+#: flask_superadmin/model/backends/sqlalchemy/filters.py:35
+msgid "equals"
+msgstr ""
+
+#: flask_superadmin/model/backends/sqlalchemy/filters.py:43
+msgid "not equal"
+msgstr ""
+
+#: flask_superadmin/model/backends/sqlalchemy/filters.py:52
+msgid "contains"
+msgstr ""
+
+#: flask_superadmin/model/backends/sqlalchemy/filters.py:61
+msgid "not contains"
+msgstr ""
+
+#: flask_superadmin/model/backends/sqlalchemy/filters.py:69
+msgid "greater than"
+msgstr ""
+
+#: flask_superadmin/model/backends/sqlalchemy/filters.py:77
+msgid "smaller than"
+msgstr ""
+
+#: flask_superadmin/model/backends/sqlalchemy/orm.py:38
+msgid "Already exists."
+msgstr ""
+
