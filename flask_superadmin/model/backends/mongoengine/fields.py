@@ -208,33 +208,3 @@ class AutocompleteInput(TextInput):
         kwargs['value'] = ''
         kwargs['data-autocomplete'] = autocomplete_value
         return super(AutocompleteInput,self).__call__(field,**kwargs)
-
-try:
-    import simplejson
-except:
-    print "You must have simplejson package installed"
-
-# from bson.objectid import ObjectId
-# class TagListField(Field):
-#     widget = AutocompleteInput()
-#     def __init__(self, model=None, **kwargs):
-#         self.queryset = model.objects
-#         super(TagListField, self).__init__(**kwargs)
-
-#     def _value(self):
-#         if self.data:
-#             dic = [{'id':str(d.id),'name':str(d)} for d in self.data]
-#             # dic = dict([(str(d.id),str(d)) for d in self.data])
-#             return simplejson.dumps(dic).replace('"',"'")
-#         else:
-#             return u''
-
-#     def process_formdata(self, valuelist):
-#         print valuelist
-
-#         if valuelist and valuelist[0]:
-#             # print 'a'
-#             self.data = self.queryset.in_bulk([ObjectId(x.strip()) for x in valuelist[0].split(',')]).values()
-#             #self.data = [] 
-#         else:
-#             self.data = []
