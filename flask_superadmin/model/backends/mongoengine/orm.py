@@ -136,7 +136,7 @@ class ModelConverter(object):
 
     @converts('ListField')
     def conv_List(self, model, field, kwargs):
-        kwargs = {
+        kwargs = kwargs or {
             'validators': [],
             'filters': [],
             'label': unicode(field.verbose_name or field.name or ''),
