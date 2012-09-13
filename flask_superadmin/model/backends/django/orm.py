@@ -6,7 +6,7 @@ from wtforms.ext.django.fields import ModelSelectField
 from flask_superadmin import form
 
 __all__ = (
-    'AdminModelConverter','model_fields', 'model_form',
+    'AdminModelConverter', 'model_fields', 'model_form'
 )
 
 
@@ -33,7 +33,7 @@ class ModelConverterBase(object):
         ftype = type(field).__name__
         if field.choices:
             kwargs['choices'] = field.choices
-            return f.SelectField(widget=form.ChosenSelectWidget(),**kwargs)
+            return f.SelectField(widget=form.ChosenSelectWidget(), **kwargs)
         elif ftype in self.converters:
             return self.converters[ftype](model, field, kwargs)
         else:
@@ -44,7 +44,8 @@ class ModelConverterBase(object):
 
 class AdminModelConverter(ModelConverterBase):
     DEFAULT_SIMPLE_CONVERSIONS = {
-        f.IntegerField: ['AutoField', 'IntegerField', 'SmallIntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField'],
+        f.IntegerField: ['AutoField', 'IntegerField', 'SmallIntegerField',
+                         'PositiveIntegerField', 'PositiveSmallIntegerField'],
         f.DecimalField: ['DecimalField', 'FloatField'],
         f.FileField: ['FileField', 'FilePathField', 'ImageField'],
         f.BooleanField: ['BooleanField'],
@@ -71,7 +72,8 @@ class AdminModelConverter(ModelConverterBase):
         return _converter
 
     def conv_ForeignKey(self, model, field, kwargs):
-        return ModelSelectField(widget=form.ChosenSelectWidget(),model=field.rel.to, **kwargs)
+        return ModelSelectField(widget=form.ChosenSelectWidget(),
+                                model=field.rel.to, **kwargs)
 
     def conv_TimeField(self, model, field, kwargs):
         def time_only(obj):
@@ -80,7 +82,8 @@ class AdminModelConverter(ModelConverterBase):
             except AttributeError:
                 return obj
         kwargs['filters'].append(time_only)
-        return f.DateTimeField(widget=form.DateTimePickerWidget(),format='%H:%M:%S', **kwargs)
+        return f.DateTimeField(widget=form.DateTimePickerWidget(),
+                               format='%H:%M:%S', **kwargs)
 
     def conv_DateTimeField(self, model, field, kwargs):
         def time_only(obj):
@@ -89,7 +92,8 @@ class AdminModelConverter(ModelConverterBase):
             except AttributeError:
                 return obj
         kwargs['filters'].append(time_only)
-        return f.DateTimeField(widget=form.DateTimePickerWidget(),format='%H:%M:%S', **kwargs)
+        return f.DateTimeField(widget=form.DateTimePickerWidget(),
+                               format='%H:%M:%S', **kwargs)
 
     def conv_DateField(self, model, field, kwargs):
         def time_only(obj):
@@ -156,7 +160,8 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
     return field_dict
 
 
-def model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None):
+def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
+               converter=None):
     """
     Create a wtforms Form for a given Django model class::
 
@@ -181,6 +186,6 @@ def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
         A converter to generate the fields based on the model properties. If
         not set, ``ModelConverter`` is used.
     """
-    exclude = ([f for f in exclude] if exclude else [])+['id']
+    exclude = ([f for f in exclude] if exclude else []) + ['id']
     field_dict = model_fields(model, only, exclude, field_args, converter)
     return type(model._meta.object_name + 'Form', (base_class, ), field_dict)

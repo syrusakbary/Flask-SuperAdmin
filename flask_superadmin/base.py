@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, url_for, abort
 
 from flask_superadmin import babel
 
+
 def expose(url='/', methods=('GET',)):
     """
         Use this decorator to expose views in your view classes.
@@ -312,7 +313,7 @@ class Admin(object):
             self.add_model_backend(sqlalchemy.ModelAdmin)
         except:
             pass
-        
+
         try:
             from flask_superadmin.model.backends import django
             self.add_model_backend(django.ModelAdmin)
@@ -342,15 +343,16 @@ class Admin(object):
         if app:
             self._init_extension()
 
-    def model_backend(self,model):
+    def model_backend(self, model):
         for backend in self._model_backends:
-            if backend.model_detect(model): return backend
+            if backend.model_detect(model):
+                return backend
         raise Exception('There is no backend for this model')
 
-    def add_model_backend(self,backend):
+    def add_model_backend(self, backend):
         self._model_backends.append(backend)
 
-    def register (self,model, admin_class = None,*args,**kwargs):
+    def register(self, model, admin_class=None, *args, **kwargs):
         """
             Register model to the collection.
 
@@ -362,10 +364,9 @@ class Admin(object):
         from flask_superadmin.model import ModelAdmin
 
         admin_class = admin_class or ModelAdmin
-        model_view = admin_class(self, model,*args,**kwargs)
+        model_view = admin_class(self, model, *args, **kwargs)
         self._models.append((model, model_view))
         self.add_view(model_view)
-
 
     def add_view(self, view):
         """

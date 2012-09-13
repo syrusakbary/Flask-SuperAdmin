@@ -1,11 +1,8 @@
-from flask_superadmin.babel import gettext
 from flask_superadmin.form import BaseForm
 from flask_superadmin.model.base import BaseModelAdmin
 
 from orm import model_form, AdminModelConverter
 
-
-from bson.objectid import ObjectId
 
 class ModelAdmin(BaseModelAdmin):
     @staticmethod
@@ -15,12 +12,11 @@ class ModelAdmin(BaseModelAdmin):
 
     def allow_pk(self):
         return False
-    
+
     def get_column(self, instance, name):
-    	return getattr(instance,name,None)
+        return getattr(instance, name, None)
 
     def get_form(self, adding=False):
-        allow_pk = adding and self.allow_pk()
         return model_form(self.model,
                           BaseForm,
                           only=self.only,
@@ -28,13 +24,13 @@ class ModelAdmin(BaseModelAdmin):
                           field_args=self.field_args,
                           converter=AdminModelConverter())
 
-    def get_objects(self,*pks):
+    def get_objects(self, *pks):
         return self.model.objects.filter(pk__in=pks)
 
-    def get_object(self,pk):
+    def get_object(self, pk):
         return self.model.objects.get(pk=pk)
 
-    def get_pk (self,instance):
+    def get_pk(self, instance):
         return str(instance.id)
 
     def save_model(self, instance, form, adding=False):
@@ -50,7 +46,7 @@ class ModelAdmin(BaseModelAdmin):
         query = self.model.objects
 
         #Select only the columns listed
-        cols = self.list_display
+        # cols = self.list_display
         # if cols:
         #     query = query.only(*cols)
 
@@ -59,8 +55,8 @@ class ModelAdmin(BaseModelAdmin):
 
         #Order query
         if sort:
-            query = query.order_by('%s%s'% ('-' if sort_desc else'', sort))
-        
+            query = query.order_by('%s%s' % ('-' if sort_desc else '', sort))
+
         # Pagination
         if page is not None:
             query = query.all()[page * self.list_per_page:]
@@ -69,4 +65,4 @@ class ModelAdmin(BaseModelAdmin):
         if execute:
             query = list(query)
 
-        return count,query
+        return count, query
