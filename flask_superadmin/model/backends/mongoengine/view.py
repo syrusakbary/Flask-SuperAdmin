@@ -33,7 +33,6 @@ class ModelAdmin(BaseModelAdmin):
         return getattr(instance, name, None)
 
     def get_form(self, adding=False):
-        allow_pk = adding and self.allow_pk()
         return model_form(self.model,
                           BaseForm,
                           only=self.only,
