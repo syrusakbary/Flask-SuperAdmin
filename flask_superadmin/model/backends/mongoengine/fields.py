@@ -1,15 +1,16 @@
 """
 Useful form fields for use with the mongoengine.
 """
-from gettext import gettext as _
+import operator
 
 from wtforms import widgets
-from wtforms.fields import SelectFieldBase, FieldList, Field
+from wtforms.fields import SelectFieldBase, FieldList
 from wtforms.validators import ValidationError
 from wtforms.widgets import TextInput
 
 __all__ = (
-    'ModelSelectField','ModelSelectMultipleField', 'QuerySetSelectField','ListField',
+    'ModelSelectField', 'ModelSelectMultipleField', 'QuerySetSelectField',
+    'ListField',
 )
 
 
@@ -46,7 +47,7 @@ class QuerySelectField(SelectFieldBase):
     widget = widgets.Select()
 
     def __init__(self, label=None, validators=None, query_factory=None,
-                get_label=None, allow_blank=False,
+                 get_label=None, allow_blank=False,
                  blank_text='', **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
@@ -55,7 +56,7 @@ class QuerySelectField(SelectFieldBase):
 
         if get_label is None:
             self.get_label = lambda x: x
-        elif isinstance(get_label, (string,basestring)):
+        elif isinstance(get_label, (str, basestring)):
             self.get_label = operator.attrgetter(get_label)
         else:
             self.get_label = get_label
@@ -129,7 +130,8 @@ class QuerySelectMultipleField(QuerySelectField):
     def __init__(self, label=None, validators=None, default=None, **kwargs):
         if default is None:
             default = []
-        super(QuerySelectMultipleField, self).__init__(label, validators, default=default, **kwargs)
+        super(QuerySelectMultipleField, self).__init__(label, validators,
+              default=default, **kwargs)
         self._invalid_formdata = False
 
     def _get_data(self):
@@ -171,6 +173,7 @@ class QuerySelectMultipleField(QuerySelectField):
 
 
 def get_pk_from_identity(obj):
+    # TODO: WTF
     cls, key = identity_key(instance=obj)
     return ':'.join(str(x) for x in key)
 
@@ -181,7 +184,9 @@ class ModelSelectField(QuerySelectField):
     queryset and lists everything in it.
     """
     def __init__(self, label=u'', validators=None, model=None, **kwargs):
-        super(ModelSelectField, self).__init__(label, validators, query_factory=model.objects, **kwargs)
+        super(ModelSelectField, self).__init__(label, validators,
+              query_factory=model.objects, **kwargs)
+
 
 class ModelSelectMultipleField(QuerySelectMultipleField):
     """
@@ -189,7 +194,9 @@ class ModelSelectMultipleField(QuerySelectMultipleField):
     queryset and lists everything in it.
     """
     def __init__(self, label=u'', validators=None, model=None, **kwargs):
-        super(ModelSelectMultipleField, self).__init__(label, validators, query_factory=model.objects, **kwargs)
+        super(ModelSelectMultipleField, self).__init__(label, validators,
+              query_factory=model.objects, **kwargs)
+
 
 class ListField(FieldList):
     def new_generic(self):
@@ -197,14 +204,16 @@ class ListField(FieldList):
             'You cannot have more than max_entries entries in this FieldList'
         new_index = '__new__'
         name = '%s-%s' % (self.short_name, new_index)
-        id   = '%s-%s' % (self.id, new_index)
-        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id)
+        id = '%s-%s' % (self.id, new_index)
+        field = self.unbound_field.bind(form=None, name=name,
+                                        prefix=self._prefix, id=id)
         field.process(None, None)
         return field
 
+
 class AutocompleteInput(TextInput):
     def __call__(self, field, **kwargs):
-        autocomplete_value = kwargs.get('value',field._value())
+        autocomplete_value = kwargs.get('value', field._value())
         kwargs['value'] = ''
         kwargs['data-autocomplete'] = autocomplete_value
-        return super(AutocompleteInput,self).__call__(field,**kwargs)
+        return super(AutocompleteInput, self).__call__(field, **kwargs)

@@ -1,26 +1,25 @@
-from flask_superadmin.babel import gettext
+from sqlalchemy.sql.expression import desc
+from sqlalchemy import schema
+
 from flask_superadmin.form import BaseForm
 from flask_superadmin.model.base import BaseModelAdmin
-
-from sqlalchemy.orm.attributes import InstrumentedAttribute
-from sqlalchemy.orm import subqueryload
-from sqlalchemy.sql.expression import desc
-from sqlalchemy import or_, Column, schema
 
 from orm import model_form, AdminModelConverter
 
 
 class ModelAdmin(BaseModelAdmin):
     hide_backrefs = False
+
     def __init__(self, model, session=None,
-                 *args,**kwargs):
-        super(ModelAdmin,self).__init__(model,*args,**kwargs)
-        if session: self.session = session
+                 *args, **kwargs):
+        super(ModelAdmin, self).__init__(model, *args, **kwargs)
+        if session:
+            self.session = session
         self._primary_key = self.pk_key
 
     @staticmethod
     def model_detect(model):
-        return isinstance(getattr(model,'metadata',None),schema.MetaData)
+        return isinstance(getattr(model, 'metadata', None), schema.MetaData)
 
     def _get_model_iterator(self, model=None):
         """
@@ -41,12 +40,11 @@ class ModelAdmin(BaseModelAdmin):
 
     def allow_pk(self):
         return False
-    
+
     def get_column(self, instance, name):
-    	return getattr(instance,name,None)
+        return getattr(instance, name, None)
 
     def get_form(self, adding=False):
-        allow_pk = adding and self.allow_pk()
         return model_form(self.model,
                           BaseForm,
                           only=self.only,
@@ -58,19 +56,20 @@ class ModelAdmin(BaseModelAdmin):
     def query(self):
         return self.session.query(self.model)
 
-    def get_objects(self,*pks):
+    def get_objects(self, *pks):
         id = self.get_pk(self.model)
         return self.query.filter(id.in_(pks))
 
-    def get_object(self,pk):
+    def get_object(self, pk):
         return self.query.get(pk)
 
-    def get_pk (self,instance):
+    def get_pk(self, instance):
         return getattr(instance, self._primary_key)
 
     def save_model(self, instance, form, adding=False):
         form.populate_obj(instance)
-        if adding: self.session.add(instance)
+        if adding:
+            self.session.add(instance)
         self.session.commit()
         return instance
 
@@ -81,8 +80,6 @@ class ModelAdmin(BaseModelAdmin):
         return True
 
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
-        joins = set()
-
         query = self.session.query(self.model)
         count = query.count()
         #Order query
@@ -90,7 +87,7 @@ class ModelAdmin(BaseModelAdmin):
             if sort_desc:
                 sort = desc(sort)
             query = query.order_by(sort)
-        
+
         # Pagination
         if page is not None:
             query = query.offset(page * self.list_per_page)
@@ -100,4 +97,4 @@ class ModelAdmin(BaseModelAdmin):
         if execute:
             query = query.all()
 
-        return count,query
+        return count, query

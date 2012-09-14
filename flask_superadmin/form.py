@@ -88,7 +88,7 @@ class ChosenSelectWidget(widgets.Select):
         You must include chosen.js and form.js for styling to work.
     """
     def __call__(self, field, **kwargs):
-        if getattr(field,'allow_blank',False) and not self.multiple:
+        if getattr(field, 'allow_blank', False) and not self.multiple:
             kwargs['data-role'] = u'chosenblank'
         else:
             kwargs['data-role'] = u'chosen'

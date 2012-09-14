@@ -9,7 +9,7 @@ from fields import ModelSelectField, ModelSelectMultipleField, ListField
 # from models import ModelForm
 from mongoengine.fields import ReferenceField
 
-from flask_superadmin import form
+# from flask_superadmin import form
 from flask_superadmin.model import AdminModelConverter as AdminModelConverter_
 
 __all__ = (
@@ -38,7 +38,7 @@ class ModelConverter(object):
 
         self.converters = converters
 
-    def convert(self, model, field, field_args,multiple=False):
+    def convert(self, model, field, field_args, multiple=False):
         kwargs = {
             'label': unicode(field.verbose_name or field.name or ''),
             'description': field.help_text or '',
@@ -136,13 +136,15 @@ class ModelConverter(object):
 
     @converts('ListField')
     def conv_List(self, model, field, kwargs):
-        kwargs = {
+        kwargs = kwargs or {
             'validators': [],
             'filters': [],
             'label': unicode(field.verbose_name or field.name or ''),
         }
-        if field.field.choices: return self.convert(model,field.field,None,multiple=True)
-        if isinstance(field.field,ReferenceField): return ModelSelectMultipleField(model=field.field.document_type,**kwargs)
+        if field.field.choices:
+            return self.convert(model, field.field, None, multiple=True)
+        if isinstance(field.field, ReferenceField):
+            return ModelSelectMultipleField(model=field.field.document_type, **kwargs)
         unbound_field = self.convert(model, field.field, {})
         return ListField(unbound_field, min_entries=0, **kwargs)
 
@@ -166,7 +168,8 @@ class ModelConverter(object):
             'validators': [],
             'filters': [],
         }
-        form_class = model_form(field.document_type_obj, field_args={},converter=self)
+        form_class = model_form(field.document_type_obj, field_args={},
+                                converter=self)
         return f.FormField(form_class, **kwargs)
 
     @converts('ReferenceField')
@@ -178,7 +181,8 @@ class ModelConverter(object):
         return
 
 
-def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
+def model_fields(model, only=None, exclude=None, field_args=None,
+                 converter=None):
     """
     Generate a dictionary of fields for a given Django model.
 
@@ -212,29 +216,34 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
 
 import mongoengine.fields as fields
 
-def data_to_field (field,data):
-    if isinstance(field,fields.EmbeddedDocumentField):
-        return data_to_document(field.document_type_obj,data)
-    elif isinstance(field,(fields.ListField, fields.SequenceField, fields.SortedListField)):
+
+def data_to_field(field, data):
+    if isinstance(field, fields.EmbeddedDocumentField):
+        return data_to_document(field.document_type_obj, data)
+    elif isinstance(field, (fields.ListField, fields.SequenceField,
+                    fields.SortedListField)):
         l = []
         for d in data:
-            l.append(data_to_field(field.field,d))
+            l.append(data_to_field(field.field, d))
         return l
-    elif isinstance(field,(fields.ReferenceField, fields.ObjectIdField)) and isinstance(data,basestring):
+    elif isinstance(field, (fields.ReferenceField, fields.ObjectIdField)) and \
+                    isinstance(data, basestring):
         from bson.objectid import ObjectId
         return ObjectId(data)
     else:
         return data
 
-def data_to_document(document,data):
+
+def data_to_document(document, data):
     from inspect import isclass
     new = document() if isclass(document) else document
     for name, value in data.iteritems():
-        setattr(new,name,data_to_field(getattr(new.__class__,name),value))
+        setattr(new, name, data_to_field(getattr(new.__class__, name), value))
     return new
 
 
-def model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None):
+def model_form(model, base_class=Form, only=None, exclude=None,
+               field_args=None, converter=None):
     """
     Create a wtforms Form for a given mongoengine Document schema::
 
@@ -262,8 +271,9 @@ def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
     field_dict = model_fields(model, only, exclude, field_args, converter)
     field_dict['model_class'] = model
     # if base_class == ModelForm: base_class = object
+
     def populate_obj(self, obj):
-        return data_to_document(obj,self.data)
+        return data_to_document(obj, self.data)
 
     field_dict['populate_obj'] = populate_obj
 
@@ -271,4 +281,6 @@ def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
 
     # return type(model.__name__ + 'Form', (ModelForm, base_class,), field_dict)
 
-class AdminModelConverter(AdminModelConverter_,ModelConverter): pass
+
+class AdminModelConverter(AdminModelConverter_, ModelConverter):
+    pass
