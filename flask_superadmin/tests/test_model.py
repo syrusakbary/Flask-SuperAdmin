@@ -1,7 +1,6 @@
-from nose.tools import eq_, ok_, raises
+from nose.tools import eq_, ok_
 
 from flask import Flask
-from flask.helpers import get_flashed_messages
 
 from flask_superadmin import Admin
 from flask_superadmin.model import base, filters

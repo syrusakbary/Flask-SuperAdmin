@@ -3,7 +3,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from wtforms import ValidationError, fields, validators
 from wtforms.ext.sqlalchemy.orm import converts, ModelConverter
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
-from wtforms.ext.sqlalchemy.orm import model_form
 
 from flask.ext.superadmin import form
 
@@ -85,7 +84,7 @@ class AdminModelConverter(ModelConverter):
             })
             if local_column.nullable:
                 kwargs['validators'].append(validators.Optional())
-            elif prop.direction.name not in ('MANYTOMANY','ONETOMANY'):
+            elif prop.direction.name not in ('MANYTOMANY', 'ONETOMANY'):
                 kwargs['validators'].append(validators.Required())
 
             # Override field type if necessary
