@@ -143,7 +143,7 @@ class BaseModelAdmin(BaseView):
             if form.validate():
                 try:
                     instance = self.save_model(self.model(), form, True)
-                    flash(gettext('New % (model)s saved successfully',
+                    flash(gettext('New %(model)s saved successfully',
                           model=self.get_display_name()), 'success')
                     return self.dispatch_save_redirect(instance)
                 except Exception, ex:
