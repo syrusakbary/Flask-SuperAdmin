@@ -1,10 +1,11 @@
 from sqlalchemy.sql.expression import desc
 from sqlalchemy import schema
+from wtforms.ext.sqlalchemy.orm import model_form
 
 from flask_superadmin.form import BaseForm
 from flask_superadmin.model.base import BaseModelAdmin
 
-from orm import model_form, AdminModelConverter
+from .orm import AdminModelConverter
 
 
 class ModelAdmin(BaseModelAdmin):
