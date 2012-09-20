@@ -59,10 +59,8 @@ class AdminModelConverter(ModelConverter):
         return None
 
     def _get_field_override(self, name):
-        # if self.view.form_overrides:
-        #     return self.view.form_overrides.get(name)
-
-        return None
+        if self.view.field_overrides:
+            return self.view.field_overrides.get(name)
 
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {

@@ -57,6 +57,7 @@ class BaseModelAdmin(BaseView):
     search_fields = None
     actions = None
 
+    field_overrides = {}
     field_args = None
 
     @staticmethod
