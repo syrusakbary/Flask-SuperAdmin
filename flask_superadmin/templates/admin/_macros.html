@@ -115,13 +115,19 @@
         {% else %}
           {% set class='' %}
         {% endif %}
+
         {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
 
         {{ ff(class=class)}}
         
         {% for error in ff.errors %}
-          {{error}}
+          &nbsp;<span class="label label-important">{{ error }}</span>
         {% endfor %}
+
+        {% if ff.description %}
+          <p class="help-block">{{ ff.description }}</p>
+        {% endif %}
+
         {#{ ff.name }#}
         </div>
     {% endif %}
