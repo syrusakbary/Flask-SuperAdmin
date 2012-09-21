@@ -337,7 +337,8 @@ def test_form():
     pass
 
 
-def test_form_override():
+def test_field_override():
+    
     app, db, admin = setup()
 
     class Model(db.Model):
@@ -347,12 +348,13 @@ def test_form_override():
     db.create_all()
 
     view1 = CustomModelView(Model, db.session, endpoint='view1')
-    view2 = CustomModelView(Model, db.session, endpoint='view2', form_overrides=dict(test=wtf.FileField))
+    view2 = CustomModelView(Model, db.session, endpoint='view2', field_overrides=dict(test=wtf.FileField))
+
     admin.add_view(view1)
     admin.add_view(view2)
 
-    eq_(view1._create_form_class.test.field_class, wtf.TextField)
-    eq_(view2._create_form_class.test.field_class, wtf.FileField)
+    eq_(view1.get_add_form().test.field_class, wtf.TextField)
+    eq_(view2.get_add_form().test.field_class, wtf.FileField)
 
 
 def test_relations():
