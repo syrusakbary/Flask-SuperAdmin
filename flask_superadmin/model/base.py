@@ -1,4 +1,5 @@
 import math
+import re
 
 from wtforms import fields, widgets
 from flask import request, url_for, redirect, flash, abort
@@ -23,6 +24,11 @@ class AdminModelConverter(object):
             elif issubclass(field.field_class, fields.DateField):
                 field.kwargs['widget'] = DatePickerWidget()
         return field
+
+
+first_cap_re = re.compile('(.)([A-Z][a-z]+)')
+def camelcase_to_space(name):
+    return first_cap_re.sub(r'\1 \2', name)
 
 
 def prettify(str):
@@ -67,7 +73,7 @@ class BaseModelAdmin(BaseView):
     def __init__(self, model=None, name=None, category=None, endpoint=None,
                  url=None):
         if name is None:
-            name = '%s' % prettify(model.__name__)
+            name = '%s' % camelcase_to_space(model.__name__)
 
         if endpoint is None:
             endpoint = ('%s' % model.__name__).lower()
