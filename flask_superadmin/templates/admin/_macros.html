@@ -110,10 +110,9 @@
         {% if not delete %}<label for="{{ff.label.field_id}}">{{ff.label.text|capitalize}}</label>{% endif %}
         {% if delete %}<span class="delete">Delete</span>{% endif %}
         <div>
+        {% set class='' %}
         {% if ff.type == "DateTimeField" %}
           {% set data_type="datetimepicker" %}
-        {% else %}
-          {% set class='' %}
         {% endif %}
 
         {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}

@@ -7,7 +7,7 @@ from wtforms import Form
 
 from fields import ModelSelectField, ModelSelectMultipleField, ListField
 # from models import ModelForm
-from mongoengine.fields import ReferenceField
+from mongoengine.fields import ReferenceField, IntField
 
 # from flask_superadmin import form
 from flask_superadmin.model import AdminModelConverter as AdminModelConverter_
@@ -54,6 +54,8 @@ class ModelConverter(object):
 
         if field.choices:
             kwargs['choices'] = field.choices
+            if isinstance(field, IntField):
+                kwargs['coerce'] = int
             if not multiple:
                 return f.SelectField(**kwargs)
             else:
@@ -174,6 +176,7 @@ class ModelConverter(object):
 
     @converts('ReferenceField')
     def conv_Reference(self, model, field, kwargs):
+        kwargs['allow_blank'] = not field.required
         return ModelSelectField(model=field.document_type, **kwargs)
 
     @converts('GenericReferenceField')
