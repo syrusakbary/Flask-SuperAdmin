@@ -10,6 +10,7 @@ from flask_superadmin.base import BaseView, expose
 from flask_superadmin.form import ChosenSelectWidget, DatePickerWidget, \
     DateTimePickerWidget
 
+import traceback
 
 class AdminModelConverter(object):
     def convert(self, *args, **kwargs):
@@ -154,9 +155,11 @@ class BaseModelAdmin(BaseView):
                           model=self.get_display_name()), 'success')
                     return self.dispatch_save_redirect(instance)
                 except Exception, ex:
+                    print traceback.format_exc()
                     self.session.rollback()
                     flash(gettext('Failed to add model. %(error)s',
                           error=str(ex)), 'error')
+
         else:
             form = Form(obj=self.model())
 
@@ -234,6 +237,7 @@ class BaseModelAdmin(BaseView):
                           'success')
                     return self.dispatch_save_redirect(instance)
                 except Exception, ex:
+                    print traceback.format_exc()
                     flash(gettext('Failed to edit model. %(error)s', error=str(ex)),
                           'error')
         else:
