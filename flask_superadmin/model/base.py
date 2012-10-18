@@ -268,16 +268,4 @@ class BaseModelAdmin(BaseView):
         )
 
 
-class ModelAdmin(object):
-    def __new__(cls, admin, model, *args, **kwargs):
-        backend_model_class = admin.model_backend(model)
-        d = dict(cls.__dict__)
-        if cls != ModelAdmin:
-            bases = tuple(map(lambda x: x if x != ModelAdmin else \
-                backend_model_class, cls.__bases__))
-            new_class = type(cls.__name__, bases, d)
-            # print d,bases
-        else:
-            new_class = backend_model_class
-        # print new_class,new_class.__class__,backend_model_class
-        return new_class(model, *args, **kwargs)
+class ModelAdmin(object): pass

@@ -364,7 +364,11 @@ class Admin(object):
         from flask_superadmin.model import ModelAdmin
 
         admin_class = admin_class or ModelAdmin
-        model_view = admin_class(self, model, *args, **kwargs)
+
+        backend = self.model_backend(model)
+        new_class = type(admin_class.__name__,(admin_class,backend),{})
+        model_view = new_class(model, *args, **kwargs)
+        
         self._models.append((model, model_view))
         self.add_view(model_view)
 
