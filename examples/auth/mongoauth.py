@@ -37,7 +37,7 @@ class User(Document):
 
     # Required for administrative interface
     def __unicode__(self):
-        return self.username
+        return self.login
 
 
 # Define login and registration forms (for flask-login)
@@ -55,7 +55,7 @@ class LoginForm(wtf.Form):
             raise wtf.ValidationError('Invalid password')
 
     def get_user(self):
-        return User.objects.get(self.login.data)
+        return User.objects.get(self.login)
 
 
 class RegistrationForm(wtf.Form):
@@ -115,7 +115,8 @@ def register_view():
         user = User()
 
         form.populate_obj(user)
-
+        user.id = user.login
+        user.save()
         login.login_user(user)
 
         return redirect(url_for('index'))
