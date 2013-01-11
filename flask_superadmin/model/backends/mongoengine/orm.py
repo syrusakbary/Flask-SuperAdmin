@@ -2,6 +2,7 @@
 Tools for generating forms based on mongoengine Document schemas.
 """
 import inspect
+from werkzeug import secure_filename
 from wtforms import fields as f, validators
 from wtforms import Form
 
@@ -111,6 +112,10 @@ class ModelConverter(object):
         self._number_common(model, field, kwargs)
         return f.FloatField(**kwargs)
 
+    @converts('FileField')
+    def conv_File(self, model, field, kwargs):
+        return f.FileField(**kwargs)
+
     @converts('DecimalField')
     def conv_Decimal(self, model, field, kwargs):
         self._number_common(model, field, kwargs)
@@ -219,6 +224,7 @@ def model_fields(model, only=None, exclude=None, field_args=None,
 
 import mongoengine.fields as fields
 
+class NoneType: pass
 
 def data_to_field(field, data):
     if isinstance(field, fields.EmbeddedDocumentField):
@@ -229,6 +235,14 @@ def data_to_field(field, data):
         for d in data:
             l.append(data_to_field(field.field, d))
         return l
+    elif isinstance(field, (fields.FileField)):
+        if data.filename:
+            print data.filename
+        return NoneType
+            # gfs = field.proxy_class()
+            # gfs.put(data.stream, filename=secure_filename(data.filename), content_type=data.mimetype)
+            # return gfs
+        # print '**********',field, data, type(data)
     elif isinstance(field, (fields.ReferenceField, fields.ObjectIdField)) and \
                     isinstance(data, basestring):
         from bson.objectid import ObjectId
@@ -241,7 +255,10 @@ def data_to_document(document, data):
     from inspect import isclass
     new = document() if isclass(document) else document
     for name, value in data.iteritems():
-        setattr(new, name, data_to_field(getattr(new.__class__, name), value))
+        field = getattr(new.__class__, name)
+        field_value = data_to_field(field, value)
+        if field_value != NoneType:
+            setattr(new, name, field_value)
     return new
 
 
@@ -276,6 +293,7 @@ def model_form(model, base_class=Form, only=None, exclude=None,
     # if base_class == ModelForm: base_class = object
 
     def populate_obj(self, obj):
+        # print '_______', self.data, type(self.file_image), '*', self.file_image.file, type(self) #,request, request.files['file_image']
         return data_to_document(obj, self.data)
 
     field_dict['populate_obj'] = populate_obj

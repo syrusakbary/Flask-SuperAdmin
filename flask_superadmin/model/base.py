@@ -8,7 +8,7 @@ from flask_superadmin.babel import gettext
 from flask_superadmin.base import BaseView, expose
 # from flask_superadmin.form import format_form
 from flask_superadmin.form import ChosenSelectWidget, DatePickerWidget, \
-    DateTimePickerWidget
+    DateTimePickerWidget, FileField
 
 import traceback
 
@@ -24,6 +24,8 @@ class AdminModelConverter(object):
                 field.kwargs['widget'] = DateTimePickerWidget()
             elif issubclass(field.field_class, fields.DateField):
                 field.kwargs['widget'] = DatePickerWidget()
+            elif issubclass(field.field_class, fields.FileField):
+                field.field_class = FileField
         return field
 
 
@@ -147,7 +149,7 @@ class BaseModelAdmin(BaseView):
     def add(self):
         Form = self.get_add_form()
         if request.method == 'POST':
-            form = Form(request.form)
+            form = Form()
             if form.validate():
                 try:
                     instance = self.save_model(self.model(), form, True)
@@ -229,7 +231,7 @@ class BaseModelAdmin(BaseView):
         Form = self.get_edit_form()
 
         if request.method == 'POST':
-            form = Form(request.form, obj=instance)
+            form = Form(obj=instance)
             if form.validate():
                 try:
                     self.save_model(instance, form, False)

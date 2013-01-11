@@ -5,7 +5,7 @@ from flask.ext import wtf
 from wtforms import fields, widgets
 
 from flask_superadmin.babel import gettext
-
+from flask import request
 
 class BaseForm(wtf.Form):
     """
@@ -103,6 +103,17 @@ class ChosenSelectField(fields.SelectField):
         You must include chosen.js and form.js for styling to work.
     """
     widget = ChosenSelectWidget
+
+class FileField(wtf.FileField):
+    """
+        `Chosen <http://harvesthq.github.com/chosen/>`_ styled select field.
+
+        You must include chosen.js and form.js for styling to work.
+    """
+    pass
+    # @property
+    # def data(self):
+    #     return request.files[self.name]
 
 
 class DatePickerWidget(widgets.TextInput):

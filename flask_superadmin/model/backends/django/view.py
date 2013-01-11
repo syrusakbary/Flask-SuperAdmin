@@ -2,12 +2,11 @@ from flask_superadmin.form import BaseForm
 from flask_superadmin.model.base import BaseModelAdmin
 
 from orm import model_form, AdminModelConverter
-
+from django.db import models
 
 class ModelAdmin(BaseModelAdmin):
     @staticmethod
     def model_detect(model):
-        from django.db import models
         return issubclass(model, models.Model)
 
     def allow_pk(self):
