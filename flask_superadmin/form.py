@@ -104,16 +104,46 @@ class ChosenSelectField(fields.SelectField):
     """
     widget = ChosenSelectWidget
 
-class FileField(wtf.FileField):
-    """
-        `Chosen <http://harvesthq.github.com/chosen/>`_ styled select field.
+class FileFieldWidget(object):
+    # widget_file = widgets.FileInput()
+    widget_checkbox = widgets.CheckboxInput()
+    def __call__(self, field, **kwargs):
+        from cgi import escape
+        input_file = '<input %s>' % widgets.html_params(name=field.name, type='file')
+        return widgets.HTMLString('%s<br />Current: %s<br />%s <label for="%s">Clear file</label>'%(input_file, escape(field._value()), self.widget_checkbox(field._clear), field._clear.id))
 
-        You must include chosen.js and form.js for styling to work.
-    """
-    pass
-    # @property
-    # def data(self):
-    #     return request.files[self.name]
+class FileField(wtf.FileField):
+    widget = FileFieldWidget()
+    def __init__(self,*args,**kwargs):
+        self.clearable = kwargs.pop('clearable', True)
+        super(FileField, self).__init__(*args, **kwargs)
+        self._prefix = kwargs.get('_prefix', '')
+        self.clear_field = fields.BooleanField(default=False)
+        if self.clearable:
+            self._clear_name = '%s-clear'%self.short_name
+            self._clear_id = '%s-clear'%self.id
+            self._clear = self.clear_field.bind(form=None, name=self._clear_name, prefix=self._prefix, id=self._clear_id)
+
+    def process(self, formdata, data=fields._unset_value):
+        super(FileField, self).process(formdata, data)
+        if self.clearable:
+            self._clear.process(formdata, data)
+            self._clear.checked = False
+
+    @property
+    def clear(self):
+        return (not self.clearable) or self._clear.data
+
+    @property
+    def data(self):
+        data = self._data
+        if data is not None:
+            data.clear = self.clear
+        return data
+
+    @data.setter
+    def data(self, data):
+        self._data = data
 
 
 class DatePickerWidget(widgets.TextInput):

@@ -224,7 +224,8 @@ def model_fields(model, only=None, exclude=None, field_args=None,
 
 import mongoengine.fields as fields
 
-class NoneType: pass
+_unset_value = object()
+_remove_file_value = object()
 
 def data_to_field(field, data):
     if isinstance(field, fields.EmbeddedDocumentField):
@@ -237,11 +238,12 @@ def data_to_field(field, data):
         return l
     elif isinstance(field, (fields.FileField)):
         if data.filename:
-            print data.filename
-        return NoneType
-            # gfs = field.proxy_class()
-            # gfs.put(data.stream, filename=secure_filename(data.filename), content_type=data.mimetype)
-            # return gfs
+            gfs = field.proxy_class()
+            gfs.put(data.stream, filename=secure_filename(data.filename), content_type=data.mimetype)
+            return gfs
+        elif data.clear:
+            return _remove_file_value
+        return _unset_value
         # print '**********',field, data, type(data)
     elif isinstance(field, (fields.ReferenceField, fields.ObjectIdField)) and \
                     isinstance(data, basestring):
@@ -257,8 +259,11 @@ def data_to_document(document, data):
     for name, value in data.iteritems():
         field = getattr(new.__class__, name)
         field_value = data_to_field(field, value)
-        if field_value != NoneType:
-            setattr(new, name, field_value)
+        if field_value != _unset_value:
+            if field_value == _remove_file_value:
+                getattr(new,name).delete()
+            else:
+                setattr(new, name, field_value)
     return new
 
 

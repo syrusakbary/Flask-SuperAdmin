@@ -317,7 +317,6 @@ class Admin(object):
         try:
             from flask_superadmin.model.backends import django
             self.add_model_backend(django.ModelAdmin)
-            print 'DJANGO'
         except:
             pass
 
