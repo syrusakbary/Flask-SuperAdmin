@@ -158,7 +158,8 @@ class BaseModelAdmin(BaseView):
                     return self.dispatch_save_redirect(instance)
                 except Exception, ex:
                     print traceback.format_exc()
-                    self.session.rollback()
+                    if self.session:
+                        self.session.rollback()
                     flash(gettext('Failed to add model. %(error)s',
                           error=str(ex)), 'error')
 
