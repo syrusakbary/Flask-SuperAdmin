@@ -13,7 +13,8 @@
     <div class="clearfix"></div>
     <hr />
   {% macro extra() %}
-    <a href="{{ url_for('.delete', pk=pk, next=return_url) }}" class="btn">{{ _gettext('Delete') }}</a>
+    <a href="{{ url_for('.delete', pk=pk, next=return_url) }}" class="btn btn-danger">{{ _gettext('Delete') }}</a>
+    <input name="_edit" type="submit" class="btn" value="{{ _gettext('Save and stay on page') }}" />
   {% endmacro %}
   	{{ lib.render_form(form, return_url,extra()) }}
 {% endblock %}
