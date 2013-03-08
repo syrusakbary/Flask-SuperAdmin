@@ -136,21 +136,21 @@ class BaseModelAdmin(BaseView):
         return URLS[name]
 
     def dispatch_save_redirect(self, instance):
-        if 'save' in request.form:
-            return redirect(url_for(self.get_url_name('index')))
-        elif 'save_add' in request.form:
-            return redirect(url_for(self.get_url_name('add')))
-        else:
+        if '_edit' in request.form:
             return redirect(
                 url_for(self.get_url_name('edit'), pk=self.get_pk(instance))
             )
+        elif '_add_another' in request.form:
+            return redirect(url_for(self.get_url_name('add')))
+        else:
+            return redirect(url_for(self.get_url_name('index')))
 
     @expose('/add/', methods=('GET', 'POST'))
     def add(self):
         Form = self.get_add_form()
         if request.method == 'POST':
             form = Form()
-            if form.validate():
+            if form.validate_on_submit():
                 try:
                     instance = self.save_model(self.model(), form, True)
                     flash(gettext('New %(model)s saved successfully',
@@ -233,7 +233,7 @@ class BaseModelAdmin(BaseView):
 
         if request.method == 'POST':
             form = Form(obj=instance)
-            if form.validate():
+            if form.validate_on_submit():
                 try:
                     self.save_model(instance, form, False)
                     flash('Changes to %s saved successfully' % self.get_display_name(),

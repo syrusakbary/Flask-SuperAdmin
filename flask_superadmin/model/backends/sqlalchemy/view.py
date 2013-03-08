@@ -47,7 +47,7 @@ class ModelAdmin(BaseModelAdmin):
 
     def get_form(self, adding=False):
         return model_form(self.model,
-                          BaseForm,
+                          base_class=BaseForm,
                           only=self.only,
                           exclude=self.exclude,
                           field_args=self.field_args,
