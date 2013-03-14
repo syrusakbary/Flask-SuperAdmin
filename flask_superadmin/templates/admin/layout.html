@@ -16,6 +16,24 @@
         <link rel="icon" href="{{ url_for('admin.static', filename='img/favicon.png') }}" type="image/png">
         <link rel="shortcut icon" href="{{ url_for('admin.static', filename='img/favicon.png') }}" type="image/png">
     {% endblock %}
+
+    {% if csrf_token is defined %}
+        <script type="text/javascript" src="/static/js/vendor/jquery-1.9.0.js"></script>
+        <script>
+            $(function() {
+                // Add csrf token to any form with POST method
+                $('form[method="POST"]').each(function() {
+                    var csrfInput = $('<input>', {
+                        type: 'hidden',
+                        name: '_csrf_token',
+                        value: '{{ csrf_token() }}'
+                    });
+                    $(this).append(csrfInput);
+                });
+            });
+        </script>
+    {% endif %}
+
   {% endblock %}</head>
   <body>
     {% block page_body %}
