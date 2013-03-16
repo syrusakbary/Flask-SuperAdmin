@@ -1,24 +1,26 @@
 {% extends 'admin/layout.html' %}
 {% set name = admin_view.get_display_name() %}
 
-
 {% block body %}
-  <h1 id="main-title">{{ _gettext('Delete') }}</h1>
-  <div class="clearfix"></div>
-  <hr />
-  <form action="" method="POST" class="form-horizontal">
-    <input type="hidden" name="action" value="delete">
-    <p>Do you really want to delete all this models?</p>
-    <ul>{% for instance in instances %}
-      {% set pk = admin_view.get_pk(instance) %}
-      <li>
-        <input type="hidden" name="_selected_action" value="{{pk}}">
-        <a href="{{ url_for('.edit', pk=pk, next=cancel_url) }}">{{instance|string or 'None'}}</a>
-      </li>
-    {% endfor %}</ul>
-    <div class="form-buttons">
-      <input name="confirm_delete" type="submit" class="btn btn-danger btn-large" value="{{ _gettext('Confirm') }}" />
-      <a href="{{ cancel_url }}" class="btn">{{ _gettext('Cancel') }}</a>
-    </div>
-  </form>
+    <h1 id="main-title">{{ _gettext('Delete') }}</h1>
+    <div class="clearfix"></div>
+    <hr />
+
+    <form action="" method="POST" class="form-horizontal">
+        <input type="hidden" name="action" value="delete" />
+        <p>Do you really want to delete all this models?</p>
+        <ul>
+            {% for instance in instances %}
+                {% set pk = admin_view.get_pk(instance) %}
+                <li>
+                    <input type="hidden" name="_selected_action" value="{{pk}}">
+                    <a href="{{ url_for('.edit', pk=pk, next=cancel_url) }}">{{instance|string or 'None'}}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="form-buttons">
+            <input name="confirm_delete" type="submit" class="btn btn-danger btn-large" value="{{ _gettext('Confirm') }}" />
+            <a href="{{ cancel_url }}" class="btn">{{ _gettext('Cancel') }}</a>
+        </div>
+    </form>
 {% endblock %}
