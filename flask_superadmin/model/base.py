@@ -247,7 +247,7 @@ class BaseModelAdmin(BaseView):
             form = Form(obj=instance)
 
         return self.render(self.edit_template, model=self.model, form=form,
-                           pk=self.get_pk(instance))
+                           pk=self.get_pk(instance), instance=instance)
 
     @expose('/<pk>/delete', methods=('GET', 'POST'))
     def delete(self, pk=None, *pks):
