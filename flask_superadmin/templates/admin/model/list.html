@@ -12,7 +12,7 @@
     <form method="POST" action="{{ return_url }}">
         <h1 id="main-title">{{ _gettext('%(model)s model',model=name|capitalize) }}</h1>
 
-        {% if admin_view.can_add %}
+        {% if admin_view.can_create %}
             <a class="btn btn-primary btn-title" href="{{ url_for('.add', next=return_url) }}">{{ _gettext('Add %(model)s',model=name) }}</a>
         {% endif %}
 
