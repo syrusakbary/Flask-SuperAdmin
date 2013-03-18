@@ -17,7 +17,7 @@
         <input name="_edit" type="submit" class="btn" value="{{ _gettext('Save and stay on page') }}" />
     {% endmacro %}
 
-    {{ lib.render_form(form, return_url, extra()) }}
+    {{ lib.render_form(form, return_url, admin_view, extra()) }}
 {% endblock %}
 
 {% block tail %}

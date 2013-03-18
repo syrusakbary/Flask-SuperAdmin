@@ -134,57 +134,30 @@
 {% endmacro %}
 
 {% macro render_formfield(form) %}
-  <fieldset>
-    {% for f in form  if f.name != 'csrf_token' and f.name != 'csrf' %}
-        {{ render_ff(f) }}
-    {% endfor %}
-  </fieldset>
+    <fieldset>
+        {% for f in form  if f.name != 'csrf_token' and f.name != 'csrf' %}
+            {{ render_ff(f) }}
+        {% endfor %}
+    </fieldset>
 {% endmacro %}
 
-{% macro render_form(form, cancel_url, extra=None) -%}
+{% macro render_form(form, cancel_url, admin_view, extra=None) -%}
     <form action="" method="POST"{% if form.has_file_field %} enctype="multipart/form-data"{% endif %}>
-    {{ form.hidden_tag() if form.hidden_tag is defined }}
-    {{render_formfield(form)}}
+        {{ form.hidden_tag() if form.hidden_tag is defined }}
+        {{ render_formfield(form) }}
 
-        {#% for f in form if f.name != 'csrf_token' and f.name != 'csrf' %}
-        <div class="control-group{% if f.errors %} error{% endif %}">
-          {{ f.label(class='control-label') }}
-          <div class="controls">
-            <div>
-              {% if not focus_set %}
-              {{ f(autofocus='autofocus') }}
-              {% set focus_set = True %}
-              {% else %}
-              {{ f() }}
-              {% endif %}
+        {# if the view is not editable nor deletable, there's no point to show any buttons #}
+        {% if admin_view.can_delete or admin_view.can_edit %}
+            <div class="form-buttons">
+                <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
+                {% if extra %}
+                    {{ extra }}
+                {% endif %}
+                {% if cancel_url %}
+                    <a href="{{ cancel_url }}" class="btn">{{ _gettext('Cancel') }}</a>
+                {% endif %}
             </div>
-            {% if f.description %}
-            <p class="help-block">{{ f.description }}</p>
-            {% endif %}
-            {% if f.errors %}
-              <ul>
-              {% for e in f.errors %}
-                <li>{{ e }}</li>
-              {% endfor %}
-              </ul>
-            {% endif %}
-          </div>
-        </div>
-        {% endfor %#}
-<!--         <div class="control-group">
-          <div class="controls">
- -->           <div class="form-buttons">
-     <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
-            {% if extra %}
-            {{ extra }}
-            {% endif %}
-            {% if cancel_url %}
-            <a href="{{ cancel_url }}" class="btn">{{ _gettext('Cancel') }}</a>
-            {% endif %}
-        </div>
-<!--           </div>
-        </div>
- -->      
+        {% endif %}
     </form>
 {% endmacro %}
 
