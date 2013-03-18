@@ -92,6 +92,11 @@ class BaseModelAdmin(BaseView):
     def allow_pk(self):
         return not self.model._meta.auto_increment
 
+    def get_column_value(self, value):
+        if callable(value):
+            return value()
+        return value
+
     def get_form(self, adding=False):
         return model_form(self.model, only=self.fields, exclude=self.exclude,
                           converter=CustomModelConverter(self))

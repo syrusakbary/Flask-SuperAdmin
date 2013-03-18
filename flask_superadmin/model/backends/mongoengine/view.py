@@ -27,7 +27,8 @@ class ModelAdmin(BaseModelAdmin):
         return False
 
     def is_sortable(self, column):
-        return isinstance(self.get_column(self.model, column), SORTABLE_FIELDS)
+        field = getattr(self.model, column, None)
+        return isinstance(field, SORTABLE_FIELDS)
 
     def get_column(self, instance, name):
         value = getattr(instance, name, None)
@@ -35,7 +36,7 @@ class ModelAdmin(BaseModelAdmin):
         if field and field.choices:
             choices = dict(field.choices)
             if value in choices: return choices[value]
-        return value
+        return self.get_column_value(value)
 
     def get_form(self, adding=False):
         return model_form(self.model,
