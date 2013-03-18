@@ -1,135 +1,141 @@
 {% macro pager(page, pages, generator) -%}
-{% if pages > 1 %}
-<div class="pagination">
-    <ul>
-    {% set min = page - 3 %}
-    {% set max = page + 3 + 1 %}
+    {% if pages > 1 %}
+        <div class="pagination">
+            <ul>
+                {% set min = page - 3 %}
+                {% set max = page + 3 + 1 %}
 
-    {% if min < 0 %}
-        {% set max = max - min %}
-    {% endif %}
-    {% if max >= pages %}
-        {% set min = min - max + pages %}
-    {% endif %}
+                {% if min < 0 %}
+                    {% set max = max - min %}
+                {% endif %}
+                {% if max >= pages %}
+                    {% set min = min - max + pages %}
+                {% endif %}
 
-    {% if min < 0 %}
-        {% set min = 0 %}
-    {% endif %}
-    {% if max >= pages %}
-        {% set max = pages %}
-    {% endif %}
+                {% if min < 0 %}
+                    {% set min = 0 %}
+                {% endif %}
+                {% if max >= pages %}
+                    {% set max = pages %}
+                {% endif %}
 
-    {% if min > 0 %}
-    <li>
-        <a href="{{ generator(0) }}">&laquo;</a>
-    </li>
-    {% else %}
-    <li class="disabled">
-        <a href="#">&laquo;</a>
-    </li>
-    {% endif %}
-    {% if page > 0 %}
-    <li>
-        <a href="{{ generator(page-1) }}">&lt;</a>
-    </li>
-    {% else %}
-    <li class="disabled">
-        <a href="#">&lt;</a>
-    </li>
-    {% endif %}
+                {% if min > 0 %}
+                    <li>
+                        <a href="{{ generator(0) }}">&laquo;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="#">&laquo;</a>
+                    </li>
+                {% endif %}
+                {% if page > 0 %}
+                    <li>
+                        <a href="{{ generator(page-1) }}">&lt;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="#">&lt;</a>
+                    </li>
+                {% endif %}
 
-    {% for p in range(min, max) %}
-    {% if page == p %}
-    <li class="active">
-        <a href="#">{{ p + 1 }}</a>
-    </li>
-    {% else %}
-    <li>
-        <a href="{{ generator(p) }}">{{ p + 1 }}</a>
-    </li>
-    {% endif %}
-    {% endfor %}
+                {% for p in range(min, max) %}
+                    {% if page == p %}
+                        <li class="active">
+                            <a href="#">{{ p + 1 }}</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{{ generator(p) }}">{{ p + 1 }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
 
-    {% if page + 1 < pages %}
-    <li>
-        <a href="{{ generator(page + 1) }}">&gt;</a>
-    </li>
-    {% else %}
-    <li class="disabled">
-        <a href="#">&gt;</a>
-    </li>
+                {% if page + 1 < pages %}
+                    <li>
+                        <a href="{{ generator(page + 1) }}">&gt;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="#">&gt;</a>
+                    </li>
+                {% endif %}
+                {% if max < pages %}
+                    <li>
+                        <a href="{{ generator(pages - 1) }}">&raquo;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="#">&raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     {% endif %}
-    {% if max < pages %}
-    <li>
-        <a href="{{ generator(pages - 1) }}">&raquo;</a>
-    </li>
-    {% else %}
-    <li class="disabled">
-        <a href="#">&raquo;</a>
-    </li>
-    {% endif %}
-    </ul>
-</div>
-{% endif %}
 {%- endmacro %}
 
 {% macro render_field(field, show_error_list=True) %}
-  <div {% if show_error_list and field.errors %}class="error"{% endif %}>
-    {{ field.label }}
-    {{ field(**kwargs)|safe }}
-    {% if show_error_list and field.errors %}
-      <ul class="errors_list">
-        {% for error in field.errors %}<li>{{ error }}{% endfor %}
-      </ul>
-    {% endif %}
-  </div>
+    <div {% if show_error_list and field.errors %}class="error"{% endif %}>
+        {{ field.label }}
+        {{ field(**kwargs)|safe }}
+        {% if show_error_list and field.errors %}
+            <ul class="errors_list">
+                {% for error in field.errors %}<li>{{ error }}{% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro render_ff (ff,delete) %}
-  <section class="field">
-    {% if ff.type == "FormField" %}
+    <section class="field">
+        {% if ff.type == "FormField" %}
       
-      {% if delete %}<span class="delete">Delete</span>
-      {% else %} <h3>{{ff.short_name|capitalize}}</h3>
-      {% endif %}
+            {% if delete %}
+                <span class="delete">Delete</span>
+            {% else %}
+                <h3>{{ff.short_name|capitalize}}</h3>
+            {% endif %}
 
-      <div>{{render_formfield(ff.form)}}</div>
-    {% elif ff.type == "ListField" %}
-      <h3>{{ff.short_name|capitalize}}</h3>
-        {% if delete %}<span class="delete">Delete</span>{% endif %}
-        {% set a = ff.new_generic() %}
-        <div class="list_par">
-        <div class="append-list" style="display:none;">{{ render_ff(a,True) }}</div>
-        {% for field in ff %}
-                {{ render_ff(field,True) }}
-        {% endfor %}
-        <button class="append btn">+</button>
-        <div class="clear"></div>
-        </div>
-    {% else %}
-        {% if not delete %}<label for="{{ff.label.field_id}}">{{ff.label.text|capitalize}}</label>{% endif %}
-        {% if delete %}<span class="delete">Delete</span>{% endif %}
-        <div>
-        {% set class='' %}
-        {% if ff.type == "DateTimeField" %}
-          {% set data_type="datetimepicker" %}
-        {% endif %}
+            <div>{{render_formfield(ff.form)}}</div>
+        {% elif ff.type == "ListField" %}
+            <h3>{{ff.short_name|capitalize}}</h3>
+            {% if delete %}
+                <span class="delete">Delete</span>
+            {% endif %}
+            {% set a = ff.new_generic() %}
+            <div class="list_par">
+                <div class="append-list" style="display:none;">{{ render_ff(a,True) }}</div>
+                {% for field in ff %}
+                    {{ render_ff(field,True) }}
+                {% endfor %}
+                <button class="append btn">+</button>
+                <div class="clear"></div>
+            </div>
+        {% else %}
+            {% if delete %}
+                <span class="delete">Delete</span>
+            {% else %}
+                <label for="{{ff.label.field_id}}">{{ff.label.text|capitalize}}</label>
+            {% endif %}
 
-        {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
+            <div>
+                {% set class='' %}
+                {% if ff.type == "DateTimeField" %}
+                    {% set data_type="datetimepicker" %}
+                {% endif %}
 
-        {{ ff(class=class)}}
+                {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
+
+                {{ ff(class=class)}}
         
-        {% for error in ff.errors %}
-          &nbsp;<span class="label label-important">{{ error }}</span>
-        {% endfor %}
+                {% for error in ff.errors %}
+                    &nbsp;<span class="label label-important">{{ error }}</span>
+                {% endfor %}
 
-        {% if ff.description %}
-          <p class="help-block">{{ ff.description }}</p>
+                {% if ff.description %}
+                    <p class="help-block">{{ ff.description }}</p>
+                {% endif %}
+            </div>
         {% endif %}
-
-        {#{ ff.name }#}
-        </div>
-    {% endif %}
    </section>
 {% endmacro %}
 
@@ -141,13 +147,13 @@
     </fieldset>
 {% endmacro %}
 
-{% macro render_form(form, cancel_url, admin_view, extra=None) -%}
+{% macro render_form(form, cancel_url, extra=None, can_edit=True, can_delete=True) -%}
     <form action="" method="POST"{% if form.has_file_field %} enctype="multipart/form-data"{% endif %}>
         {{ form.hidden_tag() if form.hidden_tag is defined }}
         {{ render_formfield(form) }}
 
         {# if the view is not editable nor deletable, there's no point to show any buttons #}
-        {% if admin_view.can_delete or admin_view.can_edit %}
+        {% if can_edit or can_delete %}
             <div class="form-buttons">
                 <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
                 {% if extra %}
