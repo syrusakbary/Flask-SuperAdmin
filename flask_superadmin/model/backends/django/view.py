@@ -13,7 +13,7 @@ class ModelAdmin(BaseModelAdmin):
         return False
 
     def get_column(self, instance, name):
-        return getattr(instance, name, None)
+        return self.get_column_value(getattr(instance, name, None))
 
     def get_form(self, adding=False):
         return model_form(self.model,

@@ -32,13 +32,11 @@ class ModelAdmin(BaseModelAdmin):
 
     def get_column(self, instance, name):
         value = getattr(instance, name, None)
-        if callable(value):
-            value = value()
         field = instance._fields.get(name, None)
         if field and field.choices:
             choices = dict(field.choices)
             if value in choices: return choices[value]
-        return value
+        return self.get_column_value(value)
 
     def get_form(self, adding=False):
         return model_form(self.model,
