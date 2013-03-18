@@ -27,10 +27,13 @@ class ModelAdmin(BaseModelAdmin):
         return False
 
     def is_sortable(self, column):
-        return isinstance(self.get_column(self.model, column), SORTABLE_FIELDS)
+        field = getattr(self.model, column, None)
+        return isinstance(field, SORTABLE_FIELDS)
 
     def get_column(self, instance, name):
         value = getattr(instance, name, None)
+        if callable(value):
+            value = value()
         field = instance._fields.get(name, None)
         if field and field.choices:
             choices = dict(field.choices)
