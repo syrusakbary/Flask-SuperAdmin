@@ -12,11 +12,15 @@
     <h1 id="main-title">{{ _gettext('Edit %(model)s',model=name|capitalize) }}</h1>
     <div class="clearfix"></div>
     <hr />
-  {% macro extra() %}
-    <a href="{{ url_for('.delete', pk=pk, next=return_url) }}" class="btn btn-danger">{{ _gettext('Delete') }}</a>
-    <input name="_edit" type="submit" class="btn" value="{{ _gettext('Save and stay on page') }}" />
-  {% endmacro %}
-  	{{ lib.render_form(form, return_url,extra()) }}
+
+    {% macro extra() %}
+        {% if admin_view.can_delete %}
+            <a href="{{ url_for('.delete', pk=pk, next=return_url) }}" class="btn btn-danger">{{ _gettext('Delete') }}</a>
+        {% endif %}
+        <input name="_edit" type="submit" class="btn" value="{{ _gettext('Save and stay on page') }}" />
+    {% endmacro %}
+
+    {{ lib.render_form(form, return_url, extra(), admin_view.can_edit, admin_view.can_delete) }}
 {% endblock %}
 
 {% block tail %}

@@ -10,178 +10,77 @@
 
 {% block body %}
     <form method="POST" action="{{ return_url }}">
-    <h1 id="main-title">{{ _gettext('%(model)s model',model=name|capitalize) }}</h1>
-    {% if admin_view.can_create %}
-        <a class="btn btn-primary btn-title" href="{{ url_for('.add', next=return_url) }}">{{ _gettext('Add %(model)s',model=name) }}</a>
-    {% endif %}
-<!--     <div class="btn-group actions btn-title hidden">
-       
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">{{ _gettext('Actions') }}<span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li> <input type="submit" name="action-delete" value="{{ _gettext('Delete') }}" /></li>
-          </ul>
-    </div>
- -->   
- <select class="actions btn-title hidden" name="action" data-placeholder="{{ _gettext('Choose action') }}">
-    <option value=""></option>
-    <option value="delete">{{ _gettext('Delete selected') }}</option>
-</select>
- <div class="clearfix"></div>
-    <hr />
-<!--     <ul class="nav nav-pills">
-        <li class="active">
-            <a href="#">{{ _gettext('List') }} ({{ count }})</a>
-        </li>
+        <h1 id="main-title">{{ _gettext('%(model)s model',model=name|capitalize) }}</h1>
+
         {% if admin_view.can_create %}
-        <li>
-            <a href="{{ url_for('.add', next=return_url) }}"></a>
-        </li>
+            <a class="btn btn-primary btn-title" href="{{ url_for('.add', next=return_url) }}">{{ _gettext('Add %(model)s',model=name) }}</a>
         {% endif %}
 
-        {% if filter_groups %}
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                {{ _gettext('Add Filter') }}<b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu field-filters">
-                {% for k in filter_groups %}
-                <li>
-                    <a href="#" class="filter">{{ k[0] }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-        </li>
-        {% endif %}
+        <select class="actions btn-title hidden" name="action" data-placeholder="{{ _gettext('Choose action') }}">
+            <option value=""></option>
+            {% if admin_view.can_delete %}
+                <option value="delete">{{ _gettext('Delete selected') }}</option>
+            {% endif %}
+        </select>
 
-        {% if search_supported %}
-        <li>
-            <form method="GET" action="{{ return_url }}" class="search-form">
-                {% if sort_column is not none %}
-                <input type="hidden" name="sort" value="{{ sort_column }}"></input>
-                {% endif %}
-                {% if sort_desc %}
-                <input type="hidden" name="desc" value="{{ sort_desc }}"></input>
-                {% endif %}
-                <input type="text" name="search" value="{{ search or '' }}" class="search-query span2" placeholder="{{ _gettext('Search') }}"></input>
-                {% if search %}
-                    <a href="{{ clear_search_url }}" class="clear">
-                        <i class="icon-remove"></i>
-                    </a>
-                {% endif %}
-            </form>
-        </li>
-        {% endif %}
-    </ul>
-    {% if filter_groups %}
-        <form id="filter_form" method="GET" action="{{ return_url }}">
-            <div class="pull-right">
-                <button type="submit" class="btn btn-primary" style="display: none">{{ _gettext('Apply') }}</button>
-                {% if active_filters %}
-                <a href="{{ clear_search_url }}" class="btn">{{ _gettext('Reset Filters') }}</a>
-                {% endif %}
-            </div>
+        <div class="clearfix"></div>
+        <hr />
 
-            <div class="filters">
-                {%- for i, flt in enumerate(active_filters) -%}
-                <div class="filter-row">
-                    {% set filter = admin_view._filters[flt[0]] %}
-                    <a href="#" class="btn remove-filter" title="{{ _gettext('Remove Filter') }}">
-                        <span class="close-icon">&times;</span>&nbsp;{{ filters[flt[0]] }}
-                    </a><select class="filter-op" data-role="chosen">
-                        {% for op in admin_view._filter_dict[filter.name] %}
-                        <option value="{{ op[0] }}"{% if flt[0] == op[0] %} selected="selected"{% endif %}>{{ op[1] }}</option>
-                        {% endfor %}
-                    </select>
-                    {%- set data = filter_data.get(flt[0]) -%}
-                    {%- if data -%}
-                    <select name="flt{{ i }}_{{ flt[0] }}" class="filter-val" data-role="chosen">
-                        {%- for d in data %}
-                        <option value="{{ d[0] }}"{% if flt[1] == d[0] %} selected{% endif %}>{{ d[1] }}</option>
-                        {%- endfor %}
-                    </select>
-                    {%- else -%}
-                        <input name="flt{{ i }}_{{ flt[0] }}" type="text" value="{{ flt[1] or '' }}" class="filter-val"{% if flt[0] in filter_types %} data-role="{{ filter_types[flt[0]] }}"{% endif %}></input>
-                    {%- endif -%}
-                </div>
-                {% endfor %}
-            </div>
-        </form>
-    {% endif %}
- -->
-    <table class="table model-list">
-        <thead>
-            <tr>
-                <th class="model-check"><input type="checkbox" name="selected_all_instances" value="all"></th>
-                {% for c in admin_view.list_display %}
-                <th>
-                    {% set name = admin_view.field_name(c) %}
-                    {% if admin_view.is_sortable(c)%}
-                    {% if sort == c %}
-                    <a href="{{ admin_view.sort_url(c if not sort_desc else None, True) }}">
-                        {{ name }}
-                        {% if sort_desc %}
-                        <i class="icon-chevron-up"></i>
+        <table class="table model-list">
+            <thead>
+                <tr>
+                    <th class="model-check"><input type="checkbox" name="selected_all_instances" value="all"></th>
+                    {% for c in admin_view.list_display %}
+                        <th>
+                            {% set name = admin_view.field_name(c) %}
+                            {% if admin_view.is_sortable(c)%}
+                                {% if sort == c %}
+                                    <a href="{{ admin_view.sort_url(c if not sort_desc else None, True) }}">
+                                        {{ name }}
+                                        {% if sort_desc %}
+                                            <i class="icon-chevron-up"></i>
+                                        {% else %}
+                                            <i class="icon-chevron-down"></i>
+                                        {% endif %}
+                                    </a>
+                                {% else %}
+                                    <a href="{{ admin_view.sort_url(c) }}">{{ name }}</a>
+                                {% endif %}
+                            {% else %}
+                                {{ name }}
+                            {% endif %}
+                        </th>
+                    {% else %}
+                        <th>
+                            {{ name|capitalize }}
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            {% for instance in data %}
+                <tr>
+                    <td>
+                        {% set pk = admin_view.get_pk(instance) %}
+                        <input type="checkbox" name="_selected_action" value="{{ pk }}">
+                    </td>
+                    {% for c in admin_view.list_display %}
+                        {% if loop.first %}
+                            <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{ admin_view.get_column(instance, c) }}</a></td>
                         {% else %}
-                        <i class="icon-chevron-down"></i>
+                            <td>{{ admin_view.get_column(instance, c) }}</td>
                         {% endif %}
-                    </a>
                     {% else %}
-                    <a href="{{ admin_view.sort_url(c) }}">{{ name }}</a>
-                    {% endif %}
-                    {% else %}
-                    {{ name }}
-                    {% endif %}
-                </th>
-                {% else %}
-                <th>
-                    {{name|capitalize}}
-                </th>
-                {% endfor %}
-            </tr>
-        </thead>
-        {% for instance in data %}
-        <tr>
-            <td>
-                {% set pk = admin_view.get_pk(instance) %}
-                <input type="checkbox" name="_selected_action" value="{{pk}}">
-                {#%- if admin_view.can_edit -%}
-                <a class="icon" href="{{ url_for('.edit', pk=pk, next=return_url) }}">
-                    <i class="icon-pencil"></i>
-                </a>
-                {%- endif -%}
-                {%- if admin_view.can_delete -%}
-                <a class="icon" href="{{ url_for('.delete', pk=pk, next=return_url) }}">
-                    <i class="icon-remove"></i>
-                </a>
-                {%- endif -%#}
-            </td>
-            {% for c in admin_view.list_display %}
-                {% if loop.first %}
-                <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{ admin_view.get_column(instance, c) }}</a></td>
-                {% else %}
-                <td>{{ admin_view.get_column(instance, c) }}</td>
-                {% endif %}
-            {% else %}
-                <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{instance|string or 'None'}}</a></td>
+                        <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{ instance|string or 'None' }}</a></td>
+                    {% endfor %}
+                </tr>
             {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-    {{ lib.pager(page, total_pages, admin_view.page_url) }}
-</form>
+        </table>
+        {{ lib.pager(page, total_pages, admin_view.page_url) }}
+    </form>
 {% endblock %}
 
 {% block tail %}
     <script src="{{ url_for('admin.static', filename='js/bootstrap-datepicker.js') }}"></script>
     <script src="{{ url_for('admin.static', filename='js/form.js') }}"></script>
     <script src="{{ url_for('admin.static', filename='js/filters.js') }}"></script>
-    {#% if filter_groups is not none and filter_data is not none %}
-    <script language="javascript">
-        var form = new AdminForm();
-        var filter = new AdminFilters('#filter_form', '.field-filters', form,
-                                {{ admin_view._filter_dict|tojson|safe }},
-                                {{ filter_data|tojson|safe }},
-                                {{ filter_types|tojson|safe }});
-    </script>
-    {% endif %#}
 {% endblock %}
