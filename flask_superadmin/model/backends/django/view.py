@@ -23,8 +23,11 @@ class ModelAdmin(BaseModelAdmin):
                           field_args=self.field_args,
                           converter=AdminModelConverter())
 
+    def get_queryset(self):
+        return self.model.objects
+
     def get_objects(self, *pks):
-        return self.model.objects.filter(pk__in=pks)
+        return self.get_queryset().filter(pk__in=pks)
 
     def get_object(self, pk):
         return self.model.objects.get(pk=pk)
@@ -42,26 +45,21 @@ class ModelAdmin(BaseModelAdmin):
         return True
 
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
-        query = self.model.objects
-
-        #Select only the columns listed
-        # cols = self.list_display
-        # if cols:
-        #     query = query.only(*cols)
+        qs = self.get_queryset()
 
         #Calculate number of rows
-        count = query.count()
+        count = qs.count()
 
-        #Order query
+        #Order queryset
         if sort:
-            query = query.order_by('%s%s' % ('-' if sort_desc else '', sort))
+            qs = qs.order_by('%s%s' % ('-' if sort_desc else '', sort))
 
         # Pagination
         if page is not None:
-            query = query.all()[page * self.list_per_page:]
-        query = query[:self.list_per_page]
+            qs = qs.all()[page * self.list_per_page:]
+        qs = qs[:self.list_per_page]
 
         if execute:
-            query = list(query)
+            qs = list(qs)
 
-        return count, query
+        return count, qs
