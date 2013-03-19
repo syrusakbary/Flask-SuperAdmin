@@ -123,7 +123,10 @@ class BaseModelAdmin(BaseView):
     def field_name(self, field):
         return prettify(field)
 
-    def get_list(sel):
+    def get_queryset(self):
+        raise NotImplemented()
+
+    def get_list(self):
         raise NotImplemented()
 
     def get_url_name(self, name):

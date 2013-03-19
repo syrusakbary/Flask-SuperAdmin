@@ -45,12 +45,15 @@ class ModelAdmin(BaseModelAdmin):
                           field_args=self.field_args,
                           converter=AdminModelConverter())
 
+    def get_queryset(self):
+        return self.model.objects
+
     def get_objects(self, *pks):
-        return self.model.objects.in_bulk(list((ObjectId(pk) for pk in pks))) \
+        return self.get_queryset().in_bulk(list((ObjectId(pk) for pk in pks))) \
                                           .values()
 
     def get_object(self, pk):
-        return self.model.objects.with_id(pk)
+        return self.get_queryset().with_id(pk)
 
     def get_pk(self, instance):
         return str(instance.id)
@@ -66,26 +69,21 @@ class ModelAdmin(BaseModelAdmin):
         return True
 
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
-        query = self.model.objects
-
-        #Select only the columns listed
-        # cols = self.list_display
-        # if cols:
-        #     query = query.only(*cols)
+        qs = self.get_queryset()
 
         #Calculate number of rows
-        count = query.count()
+        count = qs.count()
 
-        #Order query
+        #Order queryset
         if sort:
-            query = query.order_by('%s%s' % ('-' if sort_desc else '', sort))
+            qs = qs.order_by('%s%s' % ('-' if sort_desc else '', sort))
 
         # Pagination
         if page is not None:
-            query = query.skip(page * self.list_per_page)
-        query = query.limit(self.list_per_page)
+            qs = qs.skip(page * self.list_per_page)
+        qs = qs.limit(self.list_per_page)
 
         if execute:
-            query = query.all()
+            qs = qs.all()
 
-        return count, query
+        return count, qs
