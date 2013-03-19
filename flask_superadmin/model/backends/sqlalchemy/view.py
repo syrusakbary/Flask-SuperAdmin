@@ -55,14 +55,17 @@ class ModelAdmin(BaseModelAdmin):
 
     @property
     def query(self):
+        return self.get_queryset()  # TODO remove eventually (kept for backwards compatibility)
+
+    def get_queryset():
         return self.session.query(self.model)
 
     def get_objects(self, *pks):
         id = self.get_pk(self.model)
-        return self.query.filter(id.in_(pks))
+        return self.get_queryset().filter(id.in_(pks))
 
     def get_object(self, pk):
-        return self.query.get(pk)
+        return self.get_queryset().get(pk)
 
     def get_pk(self, instance):
         return getattr(instance, self._primary_key)
@@ -81,21 +84,22 @@ class ModelAdmin(BaseModelAdmin):
         return True
 
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
-        query = self.session.query(self.model)
-        count = query.count()
-        #Order query
+        qs = self.get_queryset()
+        count = qs.count()
+        #Order queryset
         if sort:
             if sort_desc:
                 sort = desc(sort)
-            query = query.order_by(sort)
+            qs = qs.order_by(sort)
 
         # Pagination
         if page is not None:
-            query = query.offset(page * self.list_per_page)
+            qs = qs.offset(page * self.list_per_page)
 
-        query = query.limit(self.list_per_page)
+        qs = qs.limit(self.list_per_page)
 
         if execute:
-            query = query.all()
+            qs = qs.all()
 
-        return count, query
+        return count, qs
+
