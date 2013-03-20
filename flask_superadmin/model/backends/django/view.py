@@ -1,4 +1,3 @@
-from flask_superadmin.form import BaseForm
 from flask_superadmin.model.base import BaseModelAdmin
 
 from orm import model_form, AdminModelConverter
@@ -15,12 +14,11 @@ class ModelAdmin(BaseModelAdmin):
     def get_column(self, instance, name):
         return self.get_column_value(getattr(instance, name, None))
 
-    def get_form(self, adding=False):
-        form = model_form(self.model, base_class=BaseForm, only=self.only,
-                         exclude=self.exclude, field_args=self.field_args,
-                         converter=AdminModelConverter())
-        form.readonly_fields = self.readonly_fields
-        return form
+    def get_model_form(self):
+        return model_form
+
+    def get_converter(self):
+        return AdminModelConverter
 
     def get_queryset(self):
         return self.model.objects
