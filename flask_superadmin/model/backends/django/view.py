@@ -44,8 +44,27 @@ class ModelAdmin(BaseModelAdmin):
         self.get_objects(*pks).delete()
         return True
 
-    def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
+    def construct_search(self, field_name):
+        if field_name.startswith('^'):
+            return "%s__istartswith" % field_name[1:]
+        elif field_name.startswith('='):
+            return "%s__iexact" % field_name[1:]
+        elif field_name.startswith('@'):
+            return "%s__search" % field_name[1:]
+        else:
+            return "%s__icontains" % field_name
+
+    def get_list(self, page=0, sort=None, sort_desc=None, execute=False, search_query=None):
         qs = self.get_queryset()
+
+        # Filter by search query
+        if search_query:
+            orm_lookups = [self.construct_search(str(search_field))
+                           for search_field in self.search_fields]
+            for bit in search_query.split():
+                or_queries = [mongoengine.queryset.Q(**{orm_lookup: bit})
+                              for orm_lookup in orm_lookups]
+                qs = qs.filter(reduce(operator.or_, or_queries))
 
         #Calculate number of rows
         count = qs.count()

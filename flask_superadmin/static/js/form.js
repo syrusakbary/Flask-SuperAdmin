@@ -53,11 +53,32 @@ $('legend>.delete').live('click',function() {
   $(this).parent().parent().remove();  
 })
 
+$('.search-input').keydown(function(ev) {
+    if (ev.keyCode === 13) {
+        var parser = document.createElement('a');
+        parser.href = window.location.href;
+        window.location.href = parser.pathname + '?q=' + encodeURIComponent($(this).val());
+    }
+});
+
+$('.search-input').on('input', function() {
+    if ($(this).val().length) {
+        $('.search .clear-btn').show();
+    } else {
+        $('.search .clear-btn').hide();
+    }
+});
+
+$('.search .clear-btn').click(function() {
+    $('.search .search-input').val('').focus();
+    $(this).hide();
+});
+
 // Apply automatic styles
 function auto_apply(el) {
-el.find('[data-role=chosen]:visible').chosen();
-el.find('[data-role=chosenblank]:visible').chosen({allow_single_deselect: true});
-el.find('[data-role=datepicker]:visible').datepicker();
-el.find('[data-role=datetimepicker]:visible').datepicker({displayTime: true});
+    el.find('[data-role=chosen]:visible').chosen();
+    el.find('[data-role=chosenblank]:visible').chosen({allow_single_deselect: true});
+    el.find('[data-role=datepicker]:visible').datepicker();
+    el.find('[data-role=datetimepicker]:visible').datepicker({displayTime: true});
 }
 auto_apply($(document));
