@@ -50,8 +50,11 @@ class ModelAdmin(BaseModelAdmin):
     def query(self):
         return self.get_queryset()  # TODO remove eventually (kept for backwards compatibility)
 
-    def get_queryset(self):
-        return self.session.query(self.model)
+    def get_queryset(self, filters=None):
+        qs = self.session.query(self.model)
+        if filters:
+            pass  # TODO
+        return qs
 
     def get_objects(self, *pks):
         id = self.get_pk(self.model)
@@ -98,8 +101,9 @@ class ModelAdmin(BaseModelAdmin):
             qs = qs.filter(or_(*or_queries))
         return qs
 
-    def get_list(self, page=0, sort=None, sort_desc=None, execute=False, search_query=None):
-        qs = self.get_queryset()
+    def get_list(self, page=0, sort=None, sort_desc=None, execute=False,
+                 search_query=None, filters=None):
+        qs = self.get_queryset(filters=filters)
 
         # Filter by search query
         if search_query and self.search_fields:

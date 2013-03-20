@@ -19,8 +19,11 @@ class ModelAdmin(BaseModelAdmin):
     def get_converter(self):
         return AdminModelConverter
 
-    def get_queryset(self):
-        return self.model.objects
+    def get_queryset(self, filters=None):
+        qs = self.model.objects
+        if filters:
+            return qs.filter(**filters)
+        return qs
 
     def get_objects(self, *pks):
         return self.get_queryset().filter(pk__in=pks)
@@ -48,8 +51,10 @@ class ModelAdmin(BaseModelAdmin):
         else:
             return "%s__icontains" % field_name
 
-    def get_list(self, page=0, sort=None, sort_desc=None, execute=False, search_query=None):
-        qs = self.get_queryset()
+    def get_list(self, page=0, sort=None, sort_desc=None, execute=False,
+                 search_query=None, filters=None):
+
+        qs = self.get_queryset(filters=filters)
 
         # Filter by search query
         if search_query and self.search_fields:
@@ -76,3 +81,4 @@ class ModelAdmin(BaseModelAdmin):
             qs = list(qs)
 
         return count, qs
+
