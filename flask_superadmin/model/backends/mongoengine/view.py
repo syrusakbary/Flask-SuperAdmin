@@ -1,4 +1,3 @@
-from flask_superadmin.form import BaseForm
 from flask_superadmin.model.base import BaseModelAdmin
 
 from orm import model_form, AdminModelConverter
@@ -39,13 +38,11 @@ class ModelAdmin(BaseModelAdmin):
             if value in choices: return choices[value]
         return self.get_column_value(value)
 
-    def get_form(self, adding=False):
-        return model_form(self.model,
-                          base_class=BaseForm,
-                          only=self.only,
-                          exclude=self.exclude,
-                          field_args=self.field_args,
-                          converter=AdminModelConverter())
+    def get_model_form(self):
+        return model_form
+
+    def get_converter(self):
+        return AdminModelConverter
 
     def get_queryset(self):
         return self.model.objects

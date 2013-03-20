@@ -85,17 +85,17 @@
     </div>
 {% endmacro %}
 
-{% macro render_ff (ff,delete) %}
+{% macro render_ff (ff, delete, readonly=False) %}
     <section class="field">
         {% if ff.type == "FormField" %}
       
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
-                <h3>{{ff.short_name|capitalize}}</h3>
+                <h3>{{ ff.short_name|capitalize }}</h3>
             {% endif %}
 
-            <div>{{render_formfield(ff.form)}}</div>
+            <div>{{ render_formfield(ff.form) }}</div>
         {% elif ff.type == "ListField" %}
             <h3>{{ff.short_name|capitalize}}</h3>
             {% if delete %}
@@ -103,18 +103,19 @@
             {% endif %}
             {% set a = ff.new_generic() %}
             <div class="list_par">
-                <div class="append-list" style="display:none;">{{ render_ff(a,True) }}</div>
+                <div class="append-list" style="display:none;">{{ render_ff(a, True) }}</div>
                 {% for field in ff %}
-                    {{ render_ff(field,True) }}
+                    {{ render_ff(field, True) }}
                 {% endfor %}
                 <button class="append btn">+</button>
                 <div class="clear"></div>
             </div>
         {% else %}
+            
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
-                <label for="{{ff.label.field_id}}">{{ff.label.text|capitalize}}</label>
+                <label for="{{ ff.label.field_id }}">{{ ff.label.text|capitalize }}</label>
             {% endif %}
 
             <div>
@@ -125,7 +126,11 @@
 
                 {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
 
-                {{ ff(class=class)}}
+                {% if readonly %}
+                    <div class="readonly-value">{{ ff.data }}</div>
+                {% else %}
+                    {{ ff(class=class) }}
+                {% endif %}
         
                 {% for error in ff.errors %}
                     &nbsp;<span class="label label-important">{{ error }}</span>
@@ -142,7 +147,7 @@
 {% macro render_formfield(form) %}
     <fieldset>
         {% for f in form  if f.name != 'csrf_token' and f.name != 'csrf' %}
-            {{ render_ff(f) }}
+            {{ render_ff(f, readonly=f.name in form.readonly_fields) }}
         {% endfor %}
     </fieldset>
 {% endmacro %}

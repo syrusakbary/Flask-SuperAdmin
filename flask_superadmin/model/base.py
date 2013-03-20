@@ -7,7 +7,7 @@ from flask import request, url_for, redirect, flash, abort
 from flask_superadmin.babel import gettext
 from flask_superadmin.base import BaseView, expose
 # from flask_superadmin.form import format_form
-from flask_superadmin.form import ChosenSelectWidget, DatePickerWidget, \
+from flask_superadmin.form import BaseForm, ChosenSelectWidget, DatePickerWidget, \
     DateTimePickerWidget, FileField
 
 import traceback
@@ -51,6 +51,7 @@ class BaseModelAdmin(BaseView):
     exclude = None
     only = None
     fields = None
+    readonly_fields = []
 
     form = None
 
@@ -97,15 +98,26 @@ class BaseModelAdmin(BaseView):
             return value()
         return value
 
-    def get_form(self, adding=False):
-        return model_form(self.model, only=self.fields, exclude=self.exclude,
-                          converter=CustomModelConverter(self))
+    def get_converter(self):
+        raise NotImplemented()
+
+    def get_form(self, include_readonly=False):
+        if include_readonly:
+            exclude = self.exclude
+        else:
+            exclude = list(set(self.exclude) | set(self.readonly_fields))
+
+        model_form = self.get_model_form()
+        converter = self.get_converter()
+        form = model_form(self.model, base_class=BaseForm, only=self.only,
+                          exclude=exclude, field_args=self.field_args,
+                          converter=converter())
+
+        form.readonly_fields = self.readonly_fields
+        return form
 
     def get_add_form(self):
         return self.get_form(adding=True)
-
-    def get_edit_form(self):
-        return self.get_form()
 
     def get_objects(self, *pks):
         raise NotImplemented()
@@ -242,7 +254,7 @@ class BaseModelAdmin(BaseView):
         except self.DoesNotExist:
             abort(404)
 
-        Form = self.get_edit_form()
+        Form = self.get_form(include_readonly=request.method == 'GET')
 
         if request.method == 'POST':
             form = Form(obj=instance)
