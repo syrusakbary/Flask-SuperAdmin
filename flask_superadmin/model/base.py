@@ -128,6 +128,9 @@ class BaseModelAdmin(BaseView):
     def field_name(self, field):
         return prettify(field)
 
+    def construct_search(self, field_name):
+        raise NotImplemented()
+
     def get_queryset(self):
         raise NotImplemented()
 
@@ -195,7 +198,7 @@ class BaseModelAdmin(BaseView):
 
     @property
     def search(self):
-        return request.args.get('search', None)
+        return request.args.get('q', None)
 
     def page_url(self, page):
         sort, desc = self.sort
@@ -224,11 +227,13 @@ class BaseModelAdmin(BaseView):
 
         sort, sort_desc = self.sort
         page = self.page
-        count, data = self.get_list(page=page, sort=sort, sort_desc=sort_desc)
+        search_query = self.search
+        count, data = self.get_list(page=page, sort=sort, sort_desc=sort_desc, search_query=search_query)
         sort, sort_desc = self.sort
         return self.render(self.list_template, data=data, page=page,
                            total_pages=self.total_pages(count), sort=sort,
-                           sort_desc=sort_desc, count=count, modeladmin=self)
+                           sort_desc=sort_desc, count=count, modeladmin=self,
+                           search_query=search_query)
 
     @expose('/<pk>/', methods=('GET', 'POST'))
     def edit(self, pk):

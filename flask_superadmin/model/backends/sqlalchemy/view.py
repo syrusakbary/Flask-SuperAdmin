@@ -1,4 +1,4 @@
-from sqlalchemy.sql.expression import desc
+from sqlalchemy.sql.expression import desc, literal
 from sqlalchemy import schema
 from wtforms.ext.sqlalchemy.orm import model_form
 
@@ -83,9 +83,27 @@ class ModelAdmin(BaseModelAdmin):
         #for obj in self.get_objects(*pks): obj.delete()
         return True
 
-    def get_list(self, page=0, sort=None, sort_desc=None, execute=False):
+    def construct_search(self, field_name):
+        if field_name.startswith('^'):
+            return literal(field_name[1:]).startswith
+        elif field_name.startswith('='):
+            return literal(field_name[1:]).op('=')
+        else:
+            return literal(field_name).contains
+
+    def get_list(self, page=0, sort=None, sort_desc=None, execute=False, search_query=None):
         qs = self.get_queryset()
+
+        # Filter by search query
+        if search_query:
+            orm_lookups = [self.construct_search(str(search_field))
+                           for search_field in self.search_fields]
+            for bit in search_query.split():
+                or_queries = [orn_lookup(bit) for orm_lookup in orm_lookups]
+                qs = qs.filter(sum(or_queries))
+
         count = qs.count()
+
         #Order queryset
         if sort:
             if sort_desc:

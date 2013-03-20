@@ -295,14 +295,67 @@ form.search-form a.clear i {
 .dropdown-menu li > input:hover,
 .dropdown-menu .active > input,
 .dropdown-menu .active > input:hover {
-  color: #ffffff;
-  text-decoration: none;
-background-color: #3875D7;
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3875d7', endColorstr='#2a62bc', GradientType=0 );
-background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(20%, #3875D7), color-stop(90%, #2A62BC));
-background-image: -webkit-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
-background-image: -moz-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
-background-image: -o-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
-background-image: linear-gradient(#3875D7 20%, #2A62BC 90%);
-color: white;
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #3875D7;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3875d7', endColorstr='#2a62bc', GradientType=0 );
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(20%, #3875D7), color-stop(90%, #2A62BC));
+    background-image: -webkit-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
+    background-image: -moz-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
+    background-image: -o-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
+    background-image: linear-gradient(#3875D7 20%, #2A62BC 90%);
+    color: white;
 }
+
+.search {
+    position: relative;
+}
+
+.search .search-input {
+    width: 250px;
+    margin-bottom: 10px;
+    padding: 4px 12px 4px 25px;
+    border: solid 1px #999;
+    background: #fff url("../img/search-input-icon.png") 10px 10px no-repeat;
+    resize: none;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    border-radius: 16px;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 30px;
+}
+
+.search .clear-btn {
+    position: absolute;
+    right: auto;
+    left: 225px;
+    top: 7px;
+    background: #ddd;
+    border-radius: 16px;
+    width: 16px;
+    height: 16px;
+    color: white;
+    line-height: 0;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.search .clear-btn:before {
+    content: '×';
+    padding: 9px 0 0 3px;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 17px;
+    font-family: arial;
+}
+
