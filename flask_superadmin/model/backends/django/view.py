@@ -4,6 +4,8 @@ from flask_superadmin.model.base import BaseModelAdmin
 from orm import model_form, AdminModelConverter
 from django.db import models
 
+import operator
+
 class ModelAdmin(BaseModelAdmin):
     @staticmethod
     def model_detect(model):
@@ -62,7 +64,7 @@ class ModelAdmin(BaseModelAdmin):
             orm_lookups = [self.construct_search(str(search_field))
                            for search_field in self.search_fields]
             for bit in search_query.split():
-                or_queries = [mongoengine.queryset.Q(**{orm_lookup: bit})
+                or_queries = [models.Q(**{orm_lookup: bit})
                               for orm_lookup in orm_lookups]
                 qs = qs.filter(reduce(operator.or_, or_queries))
 
