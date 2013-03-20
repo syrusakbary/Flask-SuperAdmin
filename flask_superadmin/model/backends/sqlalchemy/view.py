@@ -46,12 +46,11 @@ class ModelAdmin(BaseModelAdmin):
         return self.get_column_value(getattr(instance, name, None))
 
     def get_form(self, adding=False):
-        return model_form(self.model,
-                          base_class=BaseForm,
-                          only=self.only,
-                          exclude=self.exclude,
-                          field_args=self.field_args,
+        form = model_form(self.model, base_class=BaseForm, only=self.only,
+                          exclude=self.exclude, field_args=self.field_args,
                           converter=AdminModelConverter(self))
+        form.readonly_fields = self.readonly_fields
+        return form
 
     @property
     def query(self):

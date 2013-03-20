@@ -51,6 +51,7 @@ class BaseModelAdmin(BaseView):
     exclude = None
     only = None
     fields = None
+    readonly_fields = []
 
     form = None
 
@@ -98,8 +99,10 @@ class BaseModelAdmin(BaseView):
         return value
 
     def get_form(self, adding=False):
-        return model_form(self.model, only=self.fields, exclude=self.exclude,
+        form = model_form(self.model, only=self.fields, exclude=self.exclude,
                           converter=CustomModelConverter(self))
+        form.readonly_fields = self.readonly_fields
+        return form
 
     def get_add_form(self):
         return self.get_form(adding=True)
