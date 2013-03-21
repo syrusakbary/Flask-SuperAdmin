@@ -105,11 +105,13 @@ class BaseModelAdmin(BaseView):
         if include_readonly:
             exclude = self.exclude
         else:
-            exclude = list(set(self.exclude) | set(self.readonly_fields))
+            exclude = list(set(self.exclude or []) | set(self.readonly_fields or []))
+
+        only = list(set(self.only or []) - set(exclude or []))
 
         model_form = self.get_model_form()
         converter = self.get_converter()
-        form = model_form(self.model, base_class=BaseForm, only=self.only,
+        form = model_form(self.model, base_class=BaseForm, only=only,
                           exclude=exclude, field_args=self.field_args,
                           converter=converter())
 
