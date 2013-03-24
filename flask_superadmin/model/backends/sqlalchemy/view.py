@@ -54,7 +54,7 @@ class ModelAdmin(BaseModelAdmin):
     def query(self):
         return self.get_queryset()  # TODO remove eventually (kept for backwards compatibility)
 
-    def get_queryset():
+    def get_queryset(self):
         return self.session.query(self.model)
 
     def get_objects(self, *pks):
