@@ -48,7 +48,7 @@ class ModelAdmin(BaseModelAdmin):
         return model_form
 
     def get_converter(self):
-        return AdminModelConverter
+        return AdminModelConverter(self)
 
     @property
     def query(self):
