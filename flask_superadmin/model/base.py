@@ -119,7 +119,7 @@ class BaseModelAdmin(BaseView):
         return form
 
     def get_add_form(self):
-        return self.get_form(adding=True)
+        return self.get_form()
 
     def get_objects(self, *pks):
         raise NotImplemented()
