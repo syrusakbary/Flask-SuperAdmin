@@ -111,9 +111,11 @@ class BaseModelAdmin(BaseView):
 
         model_form = self.get_model_form()
         converter = self.get_converter()
+        if isinstance(converter, type):
+            converter = converter()
         form = model_form(self.model, base_class=BaseForm, only=only,
                           exclude=exclude, field_args=self.field_args,
-                          converter=converter())
+                          converter=converter)
 
         form.readonly_fields = self.readonly_fields
         return form
