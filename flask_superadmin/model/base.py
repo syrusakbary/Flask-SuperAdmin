@@ -93,6 +93,15 @@ class BaseModelAdmin(BaseView):
     def allow_pk(self):
         return not self.model._meta.auto_increment
 
+    def get_column(self, instance, name):
+        parts = name.split('.')
+        obj = instance
+        for p in parts:
+            obj = getattr(obj, p, None)
+            if not obj:
+                break
+        return self.get_column_value(obj)
+
     def get_column_value(self, value):
         if callable(value):
             return value()

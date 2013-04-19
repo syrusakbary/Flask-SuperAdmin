@@ -13,9 +13,6 @@ class ModelAdmin(BaseModelAdmin):
     def allow_pk(self):
         return False
 
-    def get_column(self, instance, name):
-        return self.get_column_value(getattr(instance, name, None))
-
     def get_model_form(self):
         return model_form
 
