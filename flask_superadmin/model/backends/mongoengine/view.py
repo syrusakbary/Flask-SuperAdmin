@@ -69,6 +69,16 @@ class ModelAdmin(BaseModelAdmin):
         else:
             return "%s__icontains" % field_name
 
+    def apply_search(self, qs, search_query):
+        if search_query:
+            orm_lookups = [self.construct_search(str(search_field))
+                           for search_field in self.search_fields]
+            for bit in search_query.split():
+                or_queries = [mongoengine.queryset.Q(**{orm_lookup: bit})
+                              for orm_lookup in orm_lookups]
+                qs = qs.filter(reduce(operator.or_, or_queries))
+        return qs
+
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False,
                  search_query=None, filters=None):
 
@@ -76,12 +86,7 @@ class ModelAdmin(BaseModelAdmin):
 
         # Filter by search query
         if search_query and self.search_fields:
-            orm_lookups = [self.construct_search(str(search_field))
-                           for search_field in self.search_fields]
-            for bit in search_query.split():
-                or_queries = [mongoengine.queryset.Q(**{orm_lookup: bit})
-                              for orm_lookup in orm_lookups]
-                qs = qs.filter(reduce(operator.or_, or_queries))
+            qs = self.apply_search(qs, search_query)
 
         #Calculate number of documents
         count = qs.count()
