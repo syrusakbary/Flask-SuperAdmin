@@ -74,7 +74,15 @@
                         {% if loop.first %}
                             <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{ admin_view.get_column(instance, c) }}</a></td>
                         {% else %}
-                            <td>{{ admin_view.get_column(instance, c) }}</td>
+
+                            {% with reference = admin_view.get_reference(admin_view.get_column(instance, c)) %}
+                                {% if reference %}
+                                    <td><a href="{{ reference }}">{{ admin_view.get_column(instance, c) }}</a></td>
+                                {% else %}
+                                    <td>{{ admin_view.get_column(instance, c) }}</td>
+                                {% endif %}
+                            {% endwith %}
+
                         {% endif %}
                     {% else %}
                         <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{ instance|string or 'None' }}</a></td>

@@ -107,6 +107,11 @@ class BaseModelAdmin(BaseView):
             return value()
         return value
 
+    def get_reference(self, column_value):
+        for model, model_view in self.admin._models:
+            if type(column_value) == model:
+                return '/admin/%s/%s/' % (model_view.endpoint, column_value.pk)
+
     def get_converter(self):
         raise NotImplemented()
 
