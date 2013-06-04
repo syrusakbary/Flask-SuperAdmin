@@ -127,7 +127,15 @@
                 {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
 
                 {% if readonly %}
-                    <div class="readonly-value">{{ ff.data }}</div>
+
+                    {% with reference = admin_view.get_reference(ff.data) %}
+                        {% if reference %}
+                            <div class="readonly-value"><a href="{{ reference }}">{{ ff.data }}</a></div>
+                        {% else %}
+                            <div class="readonly-value">{{ ff.data }}</div>
+                        {% endif %}
+                    {% endwith %}
+
                 {% else %}
                     {{ ff(class=class) }}
                 {% endif %}
