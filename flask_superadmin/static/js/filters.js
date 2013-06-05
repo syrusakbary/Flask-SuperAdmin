@@ -1,11 +1,11 @@
 var AdminFilters = function(element, filters_element, adminForm, operations, options, types) {
-    var $root = $(element)
+    var $root = $(element);
     var $container = $('.filters', $root);
     var lastCount = 0;
 
     function getCount(name) {
         var idx = name.indexOf('_');
-        return parseInt(name.substr(3, idx - 3));
+        return parseInt(name.substr(3, idx - 3), 10);
     }
 
     function changeOperation() {
@@ -101,14 +101,14 @@ var AdminFilters = function(element, filters_element, adminForm, operations, opt
     });
     all_checkboxes = $( ':checkbox[name="_selected_action"]' ).not(checker);
     actions = $('.actions').change(function() {this.form.submit();});
-    actions = actions.chosen().data('chosen').container.addClass(actions.attr('class'))
+    actions = actions.chosen().data('chosen').container.addClass(actions.attr('class'));
     all_checkboxes.change(function(e) {
         _this = $(this);
         checked = $.grep(all_checkboxes, function (a) { return $(a).is( ':checked' ); });
-        all_selected = checked.length==all_checkboxes.length;
-        opacity = (all_selected || checked.length==0)?1:0.5;
-        checker.attr( 'checked',checked.length>0).css('opacity',opacity);
-        actions.toggleClass('hidden',checked.length==0)
+        all_selected = checked.length === all_checkboxes.length;
+        opacity = (all_selected || checked.length === 0) ? 1 : 0.5;
+        checker.attr('checked',checked.length > 0).css('opacity', opacity);
+        actions.toggleClass('hidden', checked.length === 0);
         // $('.action_delete').stop().animate({'opacity':checked.length>0?1:0},200)
         if (_this.is(':checked')) _this.parent().parent().addClass('checked');
         else _this.parent().parent().removeClass('checked');
