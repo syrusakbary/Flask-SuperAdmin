@@ -1,33 +1,33 @@
 var AdminForm = function() {
-  this.applyStyle = function(el, name) {
-    switch (name) {
-        case 'chosen':
-            $(el).chosen();
-            break;
-        case 'chosenblank':
-            $(el).chosen({allow_single_deselect: true});
-            break;
-        case 'datepicker':
-            $(el).datepicker();
-            break;
-        case 'datetimepicker':
-            $(el).datepicker({displayTime: true});
-            break;
+    this.applyStyle = function(el, name) {
+        switch (name) {
+            case 'chosen':
+                $(el).chosen();
+                break;
+            case 'chosenblank':
+                $(el).chosen({allow_single_deselect: true});
+                break;
+            case 'datepicker':
+                $(el).datepicker();
+                break;
+            case 'datetimepicker':
+                $(el).datepicker({displayTime: true});
+                break;
+        }
     };
-  }
 };
 
 $('.append').live('click',function(e) {
     e.preventDefault();
-    _this = $(this)
-    parent = _this.parent()
+    _this = $(this);
+    parent = _this.parent();
     len = parent.find('>.field').length;
     html = parent.find('>.append-list').html();
     _new = $(html);
     _new.find('label,input,textarea,select').each(function(index) {
         __this = $(this);
         $.each(['id', 'name','for'], function(index, value) { 
-            v = __this.attr(value)
+            v = __this.attr(value);
             if (v) {
                 new_v = v.replace("__new__", len);
                 __this.attr(value,new_v);
@@ -43,21 +43,21 @@ $('.append').live('click',function(e) {
     _new.fadeIn(200);
     return false;
 });
-$('.field>.delete').live('click',function() {
-  var p = $(this).parent();
-  p.slideUp(200);
-  p.dequeue();
-  p.fadeOut(200,function(){p.remove();});  
-})
-$('legend>.delete').live('click',function() {
-  $(this).parent().parent().remove();  
-})
+
+$(document).on('click', '.field>.delete',function() {
+    var p = $(this).parent();
+    p.slideUp(200);
+    p.dequeue();
+    p.fadeOut(200,function(){ p.remove(); });  
+});
+
+$(document).on('click', 'legend > .delete',function() {
+    $(this).parent().parent().remove();  
+});
 
 $('.search-input').keydown(function(ev) {
     if (ev.keyCode === 13) {
-        var parser = document.createElement('a');
-        parser.href = window.location.href;
-        window.location.href = parser.pathname + '?q=' + encodeURIComponent($(this).val());
+        window.location.href = window.location.pathname + '?q=' + encodeURIComponent($(this).val());
     }
 });
 
@@ -81,4 +81,6 @@ function auto_apply(el) {
     el.find('[data-role=datepicker]:visible').datepicker();
     el.find('[data-role=datetimepicker]:visible').datepicker({displayTime: true});
 }
+
 auto_apply($(document));
+
