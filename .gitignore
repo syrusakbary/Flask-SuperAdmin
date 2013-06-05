@@ -5,6 +5,7 @@
 *.*~
 *.egg-info
 pyenv
+node_modules
 #*#
 build
 source/_static*
