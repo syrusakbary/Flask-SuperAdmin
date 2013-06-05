@@ -93,6 +93,15 @@ class BaseModelAdmin(BaseView):
     def allow_pk(self):
         return not self.model._meta.auto_increment
 
+    def get_column(self, instance, name):
+        parts = name.split('.')
+        obj = instance
+        for p in parts:
+            obj = getattr(obj, p, None)
+            if not obj:
+                break
+        return self.get_column_value(obj)
+
     def get_column_value(self, value):
         if callable(value):
             return value()
@@ -105,19 +114,23 @@ class BaseModelAdmin(BaseView):
         if include_readonly:
             exclude = self.exclude
         else:
-            exclude = list(set(self.exclude) | set(self.readonly_fields))
+            exclude = list(set(self.exclude or []) | set(self.readonly_fields or []))
+
+        only = list(set(self.only or []) - set(exclude or []))
 
         model_form = self.get_model_form()
         converter = self.get_converter()
-        form = model_form(self.model, base_class=BaseForm, only=self.only,
+        if isinstance(converter, type):
+            converter = converter()
+        form = model_form(self.model, base_class=BaseForm, only=only,
                           exclude=exclude, field_args=self.field_args,
-                          converter=converter())
+                          converter=converter)
 
         form.readonly_fields = self.readonly_fields
         return form
 
     def get_add_form(self):
-        return self.get_form(adding=True)
+        return self.get_form()
 
     def get_objects(self, *pks):
         raise NotImplemented()
@@ -213,17 +226,19 @@ class BaseModelAdmin(BaseView):
         return request.args.get('q', None)
 
     def page_url(self, page):
+        search_query = self.search
         sort, desc = self.sort
         if sort and desc:
             sort = '-' + sort
         if page == 0:
             page = None
-        return url_for(self.get_url_name('index'), page=page, sort=sort)
+        return url_for(self.get_url_name('index'), page=page, sort=sort, q=search_query)
 
     def sort_url(self, sort, desc=None):
         if sort and desc:
             sort = '-' + sort
-        return url_for(self.get_url_name('index'), sort=sort)
+        search_query = self.search
+        return url_for(self.get_url_name('index'), sort=sort, q=search_query)
 
     @expose('/', methods=('GET', 'POST',))
     def list(self):

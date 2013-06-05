@@ -79,7 +79,7 @@ class ModelAdmin(BaseModelAdmin):
         qs = self.get_queryset()
 
         # Filter by search query
-        if search_query:
+        if search_query and self.search_fields:
             orm_lookups = [self.construct_search(str(search_field))
                            for search_field in self.search_fields]
             for bit in search_query.split():

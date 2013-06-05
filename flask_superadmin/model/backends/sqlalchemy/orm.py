@@ -136,7 +136,9 @@ class AdminModelConverter(ModelConverter):
                                                        model,
                                                        column))
 
-                if not column.nullable:
+                if column.nullable:
+                    kwargs['validators'].append(validators.Optional())
+                else:
                     kwargs['validators'].append(validators.Required())
 
             # Apply label

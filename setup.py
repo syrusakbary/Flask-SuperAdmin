@@ -17,12 +17,12 @@ def desc():
 
 setup(
     name='Flask-SuperAdmin',
-    version='1.5.2',
+    version='1.6',
     url='https://github.com/syrusakbary/flask-superadmin/',
     license='BSD',
     author='Syrus Akbary',
     author_email='me@syrusakbary.com',
-    description='The best admin interface framework for Flask. With scaffolding for MongoEngine, Django and SQLAlchemy.',
+    description='The best admin interface framework for Python. With scaffolding for MongoEngine, Django and SQLAlchemy.',
     long_description=desc(),
     packages=find_packages(),
     include_package_data=True,

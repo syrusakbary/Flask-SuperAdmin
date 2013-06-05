@@ -13,9 +13,6 @@ class ModelAdmin(BaseModelAdmin):
     def allow_pk(self):
         return False
 
-    def get_column(self, instance, name):
-        return self.get_column_value(getattr(instance, name, None))
-
     def get_model_form(self):
         return model_form
 
@@ -55,7 +52,7 @@ class ModelAdmin(BaseModelAdmin):
         qs = self.get_queryset()
 
         # Filter by search query
-        if search_query:
+        if search_query and self.search_fields:
             orm_lookups = [self.construct_search(str(search_field))
                            for search_field in self.search_fields]
             for bit in search_query.split():
