@@ -48,11 +48,10 @@ class ModelAdmin(BaseModelAdmin):
         return self.model.objects
 
     def get_objects(self, *pks):
-        return self.get_queryset().in_bulk(list((ObjectId(pk) for pk in pks))) \
-                                          .values()
+        return self.get_queryset().filter(pk__in=pks)
 
     def get_object(self, pk):
-        return self.get_queryset().with_id(pk)
+        return self.get_queryset().get(pk=pk)
 
     def get_pk(self, instance):
         return str(instance.id)
