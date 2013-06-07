@@ -17,7 +17,7 @@ var AdminForm = function() {
     };
 };
 
-$('.append').live('click',function(e) {
+$(document).on('click', '.append', function(e) {
     e.preventDefault();
     _this = $(this);
     parent = _this.parent();
@@ -57,6 +57,7 @@ $(document).on('click', 'legend > .delete',function() {
 
 $('.search-input').keydown(function(ev) {
     if (ev.keyCode === 13) {
+        ev.preventDefault();
         window.location.href = window.location.pathname + '?q=' + encodeURIComponent($(this).val());
     }
 });
