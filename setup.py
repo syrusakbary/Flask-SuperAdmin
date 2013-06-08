@@ -17,7 +17,7 @@ def desc():
 
 setup(
     name='Flask-SuperAdmin',
-    version='1.6',
+    version='1.7',
     url='https://github.com/syrusakbary/flask-superadmin/',
     license='BSD',
     author='Syrus Akbary',
