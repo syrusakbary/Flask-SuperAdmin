@@ -260,8 +260,9 @@ class BaseModelAdmin(BaseView):
         sort, sort_desc = self.sort
         page = self.page
         search_query = self.search
-        count, data = self.get_list(page=page, sort=sort, sort_desc=sort_desc, search_query=search_query)
-        sort, sort_desc = self.sort
+        count, data = self.get_list(page=page, sort=sort, sort_desc=sort_desc,
+                                    search_query=search_query)
+
         return self.render(self.list_template, data=data, page=page,
                            total_pages=self.total_pages(count), sort=sort,
                            sort_desc=sort_desc, count=count, modeladmin=self,
@@ -271,7 +272,7 @@ class BaseModelAdmin(BaseView):
     def edit(self, pk):
         try:
             instance = self.get_object(pk)
-        except self.DoesNotExist:
+        except self.model.DoesNotExist:
             abort(404)
 
         Form = self.get_form(include_readonly=request.method == 'GET')
