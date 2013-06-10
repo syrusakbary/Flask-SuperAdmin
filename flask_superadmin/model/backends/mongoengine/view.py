@@ -1,4 +1,4 @@
-from flask_superadmin.model.base import BaseModelAdmin
+from flask_superadmin.model.base import BaseModelAdmin, prettify
 
 from orm import model_form, AdminModelConverter
 
@@ -35,6 +35,31 @@ class ModelAdmin(BaseModelAdmin):
 
     def get_converter(self):
         return AdminModelConverter
+
+    def get_list_filters(self):
+        filter_choices = []
+        for list_filter in self.list_filters:
+            field = self.model._fields.get(list_filter)
+            if field:
+
+                # check the type of the field and if it has choices
+                if isinstance(field, mongoengine.fields.BooleanField):
+                    choices = (('', 'All'), ('True', 'Yes'), ('False', 'No'))
+                elif hasattr(field, 'choices'):
+                    choices = field.choices
+                    print type(choices)
+                    print choices
+                    print dir(choices)
+                else:
+                    pass  # TODO other field types and non-fields
+
+                filter_choices.append({
+                    'lookup': list_filter,
+                    'label': prettify(list_filter),
+                    'choices': choices
+                })
+
+        return filter_choices
 
     def get_queryset(self, filters=None):
         qs = self.model.objects

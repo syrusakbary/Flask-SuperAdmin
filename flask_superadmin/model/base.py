@@ -55,6 +55,9 @@ class BaseModelAdmin(BaseView):
     # the model or document.
     list_display = tuple()
 
+    # filters to display in the UI
+    list_filters = tuple()
+
     # Only fields with names specified in `fields` will be displayed in the
     # form (minus the ones mentioned in `exclude`). The order is preserved,
     # too. You can also include methods that are on the model admin, or on the
@@ -302,6 +305,12 @@ class BaseModelAdmin(BaseView):
         args = { k: args[k][0] for k in args if args[k] and args[k][0] }
         return args
 
+    def get_list_filters(self):
+        """ Checks the list_filters parameter and returns a title and choices
+        for each filter.
+        """
+        raise NotImplemented()
+
     def page_url(self, page):
         filters = self.filters
         search_query = self.search
@@ -318,7 +327,8 @@ class BaseModelAdmin(BaseView):
             sort = '-' + sort
         search_query = self.search
         filters = self.filters
-        return url_for(self.get_url_name('index'), sort=sort, q=search_query, **filters)
+        return url_for(self.get_url_name('index'), sort=sort, q=search_query,
+                       **filters)
 
     @expose('/', methods=('GET', 'POST',))
     def list(self):

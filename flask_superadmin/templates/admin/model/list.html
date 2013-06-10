@@ -31,6 +31,20 @@
 
         <div class="total-count">Total count: {{ count }}</div>
 
+        {% if admin_view.list_filters %}
+            <br />
+            <div class="filter-choices">
+                {% for list_filter in admin_view.get_list_filters() %}
+                    <div class="extra-actions filters">
+                        <label>{{ list_filter.label }}:</label>
+                        <a href="{{ url_for('.list') }}">All</a>
+                        {% for value, label in list_filter.choices %}
+                            <a href="{{ url_for('.list') }}?{{ list_filter.lookup }}={{ value }}">{{ label }}</a>
+                        {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="page-content">
             {% if admin_view.search_fields %}
                 <div class="search">
