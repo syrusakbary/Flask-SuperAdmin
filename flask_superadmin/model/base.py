@@ -90,6 +90,11 @@ class BaseModelAdmin(BaseView):
     # filters, default
     field_args = None
 
+    # list of extra readonly fields that should be included in the form
+    # the names should point to the methods in this class. Those methods will
+    # be passed an obj instance as a parameter
+    extra_readonly = None
+
     @staticmethod
     def model_detect(model):
         return False
@@ -162,6 +167,11 @@ class BaseModelAdmin(BaseView):
                 }
             ret_vals[field] = val
         return ret_vals
+
+    def get_extra_readonly(self, instance):
+        if self.extra_readonly:
+            return [getattr(self, method_name)(instance) for method_name in self.extra_readonly]
+        return []
 
     def get_converter(self):
         raise NotImplemented()

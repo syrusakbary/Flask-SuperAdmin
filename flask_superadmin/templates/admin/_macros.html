@@ -182,6 +182,22 @@
             {% endif %}
         {% endfor %}
 
+        {% if instance.id %}
+            {% for f in admin_view.get_extra_readonly(instance) %}
+                <section class="field">
+                    <label>{{ f.label }}</label>
+                    <div>
+                        <div class="readonly-value">
+                            {% if f.url %}
+                                <a href="{{ f.url }}">{{ f.value }}</a>
+                            {% else %}
+                                {{ f.value }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+            {% endfor %}
+        {% endif %}
     </fieldset>
 {% endmacro %}
 
