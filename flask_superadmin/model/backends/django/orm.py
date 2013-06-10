@@ -136,7 +136,8 @@ class AdminModelConverter(ModelConverterBase):
         return f.SelectField(choices=choices, coerce=coerce_nullbool, **kwargs)
 
 
-def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
+def model_fields(model, only=None, exclude=None, field_args=None,
+                 converter=None, fields_order=None):
     """
     Generate a dictionary of fields for a given Django model.
 
@@ -160,8 +161,8 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
     return field_dict
 
 
-def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
-               converter=None):
+def model_form(model, base_class=Form, only=None, exclude=None,
+               field_args=None, converter=None, fields_order=None):
     """
     Create a wtforms Form for a given Django model class::
 
@@ -187,5 +188,7 @@ def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
         not set, ``ModelConverter`` is used.
     """
     exclude = ([f for f in exclude] if exclude else []) + ['id']
-    field_dict = model_fields(model, only, exclude, field_args, converter)
+    field_dict = model_fields(model, only, exclude, field_args, converter,
+                              fields_order)
     return type(model._meta.object_name + 'Form', (base_class, ), field_dict)
+
