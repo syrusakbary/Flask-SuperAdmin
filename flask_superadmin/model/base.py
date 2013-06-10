@@ -42,9 +42,12 @@ class BaseModelAdmin(BaseView):
     """
     BaseModelView provides create/edit/delete functionality for a peewee Model.
     """
+
+    # number of objects to display per page in the list view
+    list_per_page = 20
+
     # columns to display in the list index - can be field names or callables on
     # a model instance, though in the latter case they will not be sortable
-    list_per_page = 20
     list_display = tuple()
 
     # form parameters, lists of fields
@@ -52,6 +55,7 @@ class BaseModelAdmin(BaseView):
     only = None
     fields = None
     readonly_fields = []
+    fields_order = None  # order of the fields in the form. Fields that aren't mentioned here are appended at the end
 
     form = None
 
@@ -68,6 +72,10 @@ class BaseModelAdmin(BaseView):
     actions = None
 
     field_overrides = {}
+
+    # a dictionary of field_name: overridden_params_dict, e.g.
+    # { 'first_name': { 'label': 'First', 'description': 'This is first name' } }
+    # parameters that can be overridden: label, description, validators, filters, default
     field_args = None
 
     @staticmethod
@@ -115,6 +123,12 @@ class BaseModelAdmin(BaseView):
     def get_converter(self):
         raise NotImplemented()
 
+    def get_model_form(self):
+        """ Returns the model form, should get overridden in backend-specific
+        view.
+        """
+        raise NotImplemented()
+
     def get_form(self, include_readonly=False):
         if include_readonly:
             exclude = self.exclude
@@ -129,7 +143,7 @@ class BaseModelAdmin(BaseView):
             converter = converter()
         form = model_form(self.model, base_class=BaseForm, only=only,
                           exclude=exclude, field_args=self.field_args,
-                          converter=converter)
+                          converter=converter, fields_order=self.fields_order)
 
         form.readonly_fields = self.readonly_fields
         return form

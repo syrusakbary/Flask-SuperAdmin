@@ -194,9 +194,9 @@ class ModelConverter(object):
 
 
 def model_fields(model, only=None, exclude=None, field_args=None,
-                 converter=None):
+                 converter=None, fields_order=None):
     """
-    Generate a dictionary of fields for a given Django model.
+    Generate a dictionary of fields for a given MongoEngine model.
 
     See `model_form` docstring for description of parameters.
     """
@@ -207,8 +207,14 @@ def model_fields(model, only=None, exclude=None, field_args=None,
     converter = converter or ModelConverter()
     field_args = field_args or {}
 
-    if hasattr(model, '_fields_order'):
-        field_names = model._fields_order
+    if fields_order:
+
+        # order fields according to fields_order
+        field_names = list(fields_order)
+
+        # append any fields that haven't been mentioned in the fields_order
+        field_names += [field_name for field_name in model._fields.keys() \
+                                            if field_name not in field_names]
     else:
         field_names = model._fields.keys()
 
@@ -248,7 +254,6 @@ def data_to_field(field, data):
         elif data.clear:
             return _remove_file_value
         return _unset_value
-        # print '**********',field, data, type(data)
     elif isinstance(field, (fields.ReferenceField, fields.ObjectIdField)) and \
                     isinstance(data, basestring):
         from bson.objectid import ObjectId
@@ -272,7 +277,7 @@ def data_to_document(document, data):
 
 
 def model_form(model, base_class=Form, only=None, exclude=None,
-               field_args=None, converter=None):
+               field_args=None, converter=None, fields_order=None):
     """
     Create a wtforms Form for a given mongoengine Document schema::
 
@@ -296,21 +301,23 @@ def model_form(model, base_class=Form, only=None, exclude=None,
     :param converter:
         A converter to generate the fields based on the model properties. If
         not set, ``ModelConverter`` is used.
+    :param fields_order:
+        An optional iterable of field names - the fields will appear in a form
+        in the order mentioned here. If there are any fields missing in this
+        list, they will be appended at the end.
     """
-    field_dict = model_fields(model, only, exclude, field_args, converter)
+    field_dict = model_fields(model, only, exclude, field_args, converter,
+                              fields_order)
     field_dict['model_class'] = model
-    # if base_class == ModelForm: base_class = object
 
     def populate_obj(self, obj):
-        # print '_______', self.data, type(self.file_image), '*', self.file_image.file, type(self) #,request, request.files['file_image']
         return data_to_document(obj, self.data)
 
     field_dict['populate_obj'] = populate_obj
 
     return type(model.__name__ + 'Form', (base_class,), field_dict)
 
-    # return type(model.__name__ + 'Form', (ModelForm, base_class,), field_dict)
-
 
 class AdminModelConverter(AdminModelConverter_, ModelConverter):
     pass
+
