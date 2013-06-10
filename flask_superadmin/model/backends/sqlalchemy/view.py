@@ -93,7 +93,7 @@ class ModelAdmin(BaseModelAdmin):
             orm_lookups = [self.construct_search(str(search_field))
                            for search_field in self.search_fields]
             for bit in search_query.split():
-                or_queries = [orn_lookup(bit) for orm_lookup in orm_lookups]
+                or_queries = [orm_lookup(bit) for orm_lookup in orm_lookups]
                 qs = qs.filter(sum(or_queries))
 
         count = qs.count()
