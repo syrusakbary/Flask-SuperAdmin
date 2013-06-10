@@ -6,6 +6,7 @@ import operator
 import mongoengine
 
 from bson.objectid import ObjectId
+from flask import request
 
 SORTABLE_FIELDS = (
     mongoengine.BooleanField,
@@ -41,22 +42,18 @@ class ModelAdmin(BaseModelAdmin):
         for list_filter in self.list_filters:
             field = self.model._fields.get(list_filter)
             if field:
-
-                # check the type of the field and if it has choices
                 if isinstance(field, mongoengine.fields.BooleanField):
-                    choices = (('', 'All'), ('True', 'Yes'), ('False', 'No'))
+                    choices = (('True', 'Yes'), ('False', 'No'))
                 elif hasattr(field, 'choices'):
                     choices = field.choices
-                    print type(choices)
-                    print choices
-                    print dir(choices)
                 else:
                     pass  # TODO other field types and non-fields
 
                 filter_choices.append({
                     'lookup': list_filter,
                     'label': prettify(list_filter),
-                    'choices': choices
+                    'choices': choices,
+                    'selected': request.args.get(list_filter)
                 })
 
         return filter_choices

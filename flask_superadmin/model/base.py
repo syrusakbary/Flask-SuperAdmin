@@ -322,6 +322,14 @@ class BaseModelAdmin(BaseView):
         return url_for(self.get_url_name('index'), page=page, sort=sort,
                        q=search_query, **filters)
 
+    def filter_url(self, filter, value):
+        sort, desc = self.sort
+        search_query = self.search
+        filters = self.filters
+        filters[filter] = value
+        return url_for(self.get_url_name('index'), sort=sort, q=search_query,
+                       **filters)
+
     def sort_url(self, sort, desc=None):
         if sort and desc:
             sort = '-' + sort

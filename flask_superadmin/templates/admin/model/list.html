@@ -37,9 +37,9 @@
                 {% for list_filter in admin_view.get_list_filters() %}
                     <div class="extra-actions filters">
                         <label>{{ list_filter.label }}:</label>
-                        <a href="{{ url_for('.list') }}">All</a>
+                        <a href="{{ admin_view.filter_url(list_filter.lookup, '') }}" {% if not list_filter.selected %}class="active"{% endif %}>All</a>
                         {% for value, label in list_filter.choices %}
-                            <a href="{{ url_for('.list') }}?{{ list_filter.lookup }}={{ value }}">{{ label }}</a>
+                            <a href="{{ admin_view.filter_url(list_filter.lookup, value) }}" {% if list_filter.selected == value %}class="active"{% endif %}>{{ label }}</a>
                         {% endfor %}
                 {% endfor %}
             </div>
