@@ -61,6 +61,19 @@ class ModelAdmin(BaseModelAdmin):
     def get_queryset(self, filters=None):
         qs = self.model.objects
         if filters:
+            for key in filters.keys():
+
+                # TODO eventually we wanna use class-based list filters and handle
+                # it more generically (like Django)
+
+                # fix boolean filters
+                if isinstance(self.model._fields.get(key), mongoengine.fields.BooleanField):
+                    val = filters[key]
+                    if val in ('True', 'False'):
+                        filters[key] = True if val == 'True' else False
+                    else:
+                        del filters[key]
+
             return qs.filter(**filters)
         return qs
 
