@@ -182,7 +182,7 @@
             {% endif %}
         {% endfor %}
 
-        {% if instance.id %}
+        {% if instance and instance.id %}
             {% for f in admin_view.get_extra_readonly(instance) %}
                 <section class="field">
                     <label>{{ f.label }}</label>
