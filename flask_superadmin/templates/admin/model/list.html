@@ -41,6 +41,7 @@
                         {% for value, label in list_filter.choices %}
                             <a href="{{ admin_view.filter_url(list_filter.lookup, value) }}" {% if list_filter.selected == value %}class="active"{% endif %}>{{ label }}</a>
                         {% endfor %}
+                    </div>
                 {% endfor %}
             </div>
         {% endif %}
