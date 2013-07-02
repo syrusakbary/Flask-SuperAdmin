@@ -43,11 +43,12 @@ class BaseModelAdmin(BaseView):
     BaseModelView provides create/edit/delete functionality for a peewee Model.
     """
 
-    # number of objects to display per page in the list view
+    # Number of objects to display per page in the list view
     list_per_page = 20
 
-    # columns to display in the list index - can be field names or callables on
-    # a model instance, though in the latter case they will not be sortable
+    # Columns to display in the list index - can be field names or callables.
+    # Admin's methods have higher priority than the fields/methods on
+    # the model or document.
     list_display = tuple()
 
     # form parameters, lists of fields
@@ -103,16 +104,22 @@ class BaseModelAdmin(BaseView):
 
     def get_column(self, instance, name):
         parts = name.split('.')
-        obj = instance
+        value = instance
         for p in parts:
-            obj = getattr(obj, p, None)
-            if not obj:
-                break
-        return self.get_column_value(obj)
 
-    def get_column_value(self, value):
-        if callable(value):
-            return value()
+            # admin's methods have higher priority than the fields/methods on
+            # the model or document. If a callable is found on the admin
+            # level, it's also passed an instance object
+            if hasattr(self, p) and callable(getattr(self, p)):
+                value = getattr(self, p)(instance)
+            else:
+                value = getattr(value, p, None)
+                if callable(value):
+                    value = value()
+
+            if not value:
+                break
+
         return value
 
     def get_reference(self, column_value):
