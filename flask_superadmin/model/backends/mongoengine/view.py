@@ -30,14 +30,6 @@ class ModelAdmin(BaseModelAdmin):
         field = getattr(self.model, column, None)
         return isinstance(field, SORTABLE_FIELDS)
 
-    def get_column(self, instance, name):
-        value = getattr(instance, name, None)
-        field = instance._fields.get(name, None)
-        if field and field.choices:
-            choices = dict(field.choices)
-            if value in choices: return choices[value]
-        return self.get_column_value(value)
-
     def get_model_form(self):
         return model_form
 
