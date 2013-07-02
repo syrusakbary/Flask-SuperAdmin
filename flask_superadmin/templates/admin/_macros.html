@@ -105,9 +105,11 @@
             <div class="list_par">
                 <div class="append-list" style="display:none;">{{ render_ff(a, True) }}</div>
                 {% for field in ff %}
-                    {{ render_ff(field, True) }}
+                    {{ render_ff(field, admin_view.can_edit or not instance) }}
                 {% endfor %}
-                <button class="append btn">+</button>
+                {% if admin_view.can_edit or not instance %}
+                    <button class="append btn">+</button>
+                {% endif %}
                 <div class="clear"></div>
             </div>
         {% else %}
@@ -126,7 +128,7 @@
 
                 {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
 
-                {% if readonly %}
+                {% if readonly or (not admin_view.can_edit and instance) %}
 
                     {% with reference = admin_view.get_reference(ff.data) %}
                         {% if reference %}
