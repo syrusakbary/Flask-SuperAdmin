@@ -50,6 +50,7 @@ section {
 section > h3, section > label, section > div, fieldset{
     display: table-cell;
     vertical-align: top;
+    padding-right: 10px;
 }
 
 fieldset {
