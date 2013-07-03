@@ -156,9 +156,30 @@
 
 {% macro render_formfield(form) %}
     <fieldset>
-        {% for f in form  if f.name != 'csrf_token' and f.name != 'csrf' %}
-            {{ render_ff(f, readonly=f.name in form.readonly_fields) }}
-        {% endfor %}
+        {% with readonly_fields = admin_view.get_readonly_fields(instance) %}
+        
+            {% for field_name in admin_view.fields %}
+                {% if field_name in readonly_fields %}
+                    {% with f = readonly_fields[field_name] %}
+                        <section class="field">
+                            <label>{{ f.label }}</label>
+                            <div>
+                                <div class="readonly-value">
+                                    {% if f.url %}
+                                        <a href="{{ f.url }}"{% if f.url.startswith('http') %}target="_blank"{% endif %}>{{ f.value }}</a>
+                                    {% else %}
+                                        {{ f.value }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </section>
+                    {% endwith %}
+                {% else %}
+                    {{ render_ff(form._fields[field_name], readonly=False) }}
+                {% endif %}
+            {% endfor %}
+
+        {% endwith %}
     </fieldset>
 {% endmacro %}
 

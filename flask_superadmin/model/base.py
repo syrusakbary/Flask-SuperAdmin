@@ -52,11 +52,10 @@ class BaseModelAdmin(BaseView):
     list_display = tuple()
 
     # form parameters, lists of fields
-    exclude = None
-    only = None
-    fields = None
-    readonly_fields = []
-    fields_order = None  # order of the fields in the form. Fields that aren't mentioned here are appended at the end
+    fields = tuple()
+    readonly_fields = tuple()
+    exclude = tuple()
+    #fields_order = None  # order of the fields in the form. Fields that aren't mentioned here are appended at the end
 
     form = None
 
@@ -69,8 +68,7 @@ class BaseModelAdmin(BaseView):
     add_template = 'admin/model/add.html'
     delete_template = 'admin/model/delete.html'
 
-    search_fields = None
-    actions = None
+    search_fields = tuple()
 
     field_overrides = {}
 
@@ -127,6 +125,23 @@ class BaseModelAdmin(BaseView):
             if type(column_value) == model:
                 return '/admin/%s/%s/' % (model_view.endpoint, column_value.pk)
 
+    def get_readonly_fields(self, instance):
+        ret_vals = {}
+        for field in self.readonly_fields:
+            if hasattr(self, field):
+                val = getattr(self, field)(instance)
+            else:
+                val = getattr(instance, field)
+                if callable(val):
+                    val = val()
+            if not isinstance(val, dict):
+                val = {
+                    'label': prettify(field),
+                    'value': val
+                }
+            ret_vals[field] = val
+        return ret_vals
+
     def get_converter(self):
         raise NotImplemented()
 
@@ -136,23 +151,15 @@ class BaseModelAdmin(BaseView):
         """
         raise NotImplemented()
 
-    def get_form(self, include_readonly=False):
-        if include_readonly:
-            exclude = self.exclude
-        else:
-            exclude = list(set(self.exclude or []) | set(self.readonly_fields or []))
-
-        only = list(set(self.only or []) - set(exclude or []))
-
+    def get_form(self):
         model_form = self.get_model_form()
         converter = self.get_converter()
         if isinstance(converter, type):
             converter = converter()
-        form = model_form(self.model, base_class=BaseForm, only=only,
-                          exclude=exclude, field_args=self.field_args,
-                          converter=converter, fields_order=self.fields_order)
-
-        form.readonly_fields = self.readonly_fields
+        form = model_form(self.model, base_class=BaseForm, fields=self.fields,
+                          readonly_fields=self.readonly_fields,
+                          exclude=self.exclude, field_args=self.field_args,
+                          converter=converter)
         return form
 
     def get_add_form(self):
@@ -296,7 +303,7 @@ class BaseModelAdmin(BaseView):
         except self.model.DoesNotExist:
             abort(404)
 
-        Form = self.get_form(include_readonly=request.method == 'GET')
+        Form = self.get_form()  # TODO remove include_readonly=request.method == 'GET')
 
         if request.method == 'POST':
             form = Form(obj=instance)
@@ -312,6 +319,10 @@ class BaseModelAdmin(BaseView):
                           'error')
         else:
             form = Form(obj=instance)
+
+        print form
+        print dir(form)
+        print form._fields
 
         return self.render(self.edit_template, model=self.model, form=form,
                            pk=self.get_pk(instance), instance=instance)

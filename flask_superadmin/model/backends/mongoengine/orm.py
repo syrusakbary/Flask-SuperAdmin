@@ -7,18 +7,17 @@ from wtforms import fields as f, validators
 from wtforms import Form
 
 from fields import ModelSelectField, ModelSelectMultipleField, ListField
-# from models import ModelForm
 from mongoengine.fields import ReferenceField, IntField
 
-# from flask_superadmin import form
 from flask_superadmin.model import AdminModelConverter as AdminModelConverter_
 
-__all__ = (
-    'model_fields', 'model_form',
-)
+__all__ = ('model_fields', 'model_form')
 
 
 def converts(*args):
+    """ A convenient decorator for the ModelConverter used to mark which
+    method should be used to convert which MongoEngine field.
+    """
     def _inner(func):
         func._converter_for = frozenset(args)
         return func
@@ -26,6 +25,8 @@ def converts(*args):
 
 
 class ModelConverter(object):
+    """ Manages the way MongoEngine fields are converted into WTForms fields
+    """
     def __init__(self, converters=None):
 
         if not converters:
@@ -193,10 +194,10 @@ class ModelConverter(object):
         return
 
 
-def model_fields(model, only=None, exclude=None, field_args=None,
-                 converter=None, fields_order=None):
+def model_fields(model, fields=None, readonly_fields=None, exclude=None,
+                 field_args=None, converter=None):
     """
-    Generate a dictionary of fields for a given MongoEngine model.
+    Generate a dictionary of WTForms fields for a given MongoEngine model.
 
     See `model_form` docstring for description of parameters.
     """
@@ -207,30 +208,24 @@ def model_fields(model, only=None, exclude=None, field_args=None,
     converter = converter or ModelConverter()
     field_args = field_args or {}
 
-    if fields_order:
-
-        # order fields according to fields_order
-        field_names = list(fields_order)
-
-        # append any fields that haven't been mentioned in the fields_order
-        field_names += [field_name for field_name in model._fields.keys() \
-                                            if field_name not in field_names]
-    else:
-        field_names = model._fields.keys()
-
-    if only:
-        field_names = (x for x in field_names if x in only)
-    elif exclude:
-        field_names = (x for x in field_names if x not in exclude)
+    field_names = fields if fields else model._fields.keys()
+    field_names = (x for x in field_names if x in fields and x not in exclude)
 
     field_dict = {}
     for name in field_names:
-        model_field = model._fields[name]
-        field = converter.convert(model, model_field, field_args.get(name))
-        if field is not None:
-            field_dict[name] = field
+        if name not in readonly_fields and name not in model._fields:
+            raise KeyError('"%s" is not read-only and does not appear to be a field on the document.' % name)
+
+        if name in model._fields and name not in readonly_fields:
+            model_field = model._fields[name]
+            field = converter.convert(model, model_field, field_args.get(name))
+            if field is not None:
+                field_dict[name] = field
+            else:
+                raise TypeError('Cannot convert %s - check the model converter' % name)
 
     return field_dict
+
 
 import mongoengine.fields as fields
 
@@ -270,14 +265,14 @@ def data_to_document(document, data):
         field_value = data_to_field(field, value)
         if field_value != _unset_value:
             if field_value == _remove_file_value:
-                getattr(new,name).delete()
+                getattr(new, name).delete()
             else:
                 setattr(new, name, field_value)
     return new
 
 
-def model_form(model, base_class=Form, only=None, exclude=None,
-               field_args=None, converter=None, fields_order=None):
+def model_form(model, base_class=Form, fields=None, readonly_fields=None,
+               exclude=None, field_args=None, converter=None):
     """
     Create a wtforms Form for a given mongoengine Document schema::
 
@@ -289,9 +284,10 @@ def model_form(model, base_class=Form, only=None, exclude=None,
         A mongoengine Document schema class
     :param base_class:
         Base form class to extend from. Must be a ``wtforms.Form`` subclass.
-    :param only:
-        An optional iterable with the property names that should be included in
-        the form. Only these properties will have fields.
+    :param fields:
+        An optional iterable with the property names that should be included
+        in the form. Only these properties will have fields. It also
+        determines the order of the fields.
     :param exclude:
         An optional iterable with the property names that should be excluded
         from the form. All other properties will have fields.
@@ -301,13 +297,9 @@ def model_form(model, base_class=Form, only=None, exclude=None,
     :param converter:
         A converter to generate the fields based on the model properties. If
         not set, ``ModelConverter`` is used.
-    :param fields_order:
-        An optional iterable of field names - the fields will appear in a form
-        in the order mentioned here. If there are any fields missing in this
-        list, they will be appended at the end.
     """
-    field_dict = model_fields(model, only, exclude, field_args, converter,
-                              fields_order)
+    field_dict = model_fields(model, fields, readonly_fields, exclude,
+                              field_args, converter)
     field_dict['model_class'] = model
 
     def populate_obj(self, obj):
