@@ -209,7 +209,7 @@ def model_fields(model, fields=None, readonly_fields=None, exclude=None,
     field_args = field_args or {}
 
     field_names = fields if fields else model._fields.keys()
-    field_names = (x for x in field_names if x in fields and x not in exclude)
+    field_names = (x for x in field_names if x not in exclude)
 
     field_dict = {}
     for name in field_names:
@@ -221,8 +221,6 @@ def model_fields(model, fields=None, readonly_fields=None, exclude=None,
             field = converter.convert(model, model_field, field_args.get(name))
             if field is not None:
                 field_dict[name] = field
-            else:
-                raise TypeError('Cannot convert %s - check the model converter' % name)
 
     return field_dict
 

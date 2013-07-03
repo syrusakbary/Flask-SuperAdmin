@@ -1,131 +1,85 @@
 from nose.tools import eq_, ok_, raises
 
 from flask import Flask
-
 from flask.ext import wtf
+from mongoengine import *
 
-from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import InvalidRequestError
 from flask_superadmin import Admin
-from flask_superadmin.model.backends.sqlalchemy.view import ModelAdmin
-
-
-class CustomModelView(ModelAdmin):
-    def __init__(self, model, session, name=None, category=None,
-                 endpoint=None, url=None, **kwargs):
-        for k, v in kwargs.iteritems():
-            setattr(self, k, v)
-
-        super(CustomModelView, self).__init__(model, session,
-                                              name, category,
-                                              endpoint, url)
-
-
-def create_models(db):
-    class Model1(db.Model):
-        def __init__(self, test1=None, test2=None, test3=None, test4=None):
-            self.test1 = test1
-            self.test2 = test2
-            self.test3 = test3
-            self.test4 = test4
-
-        id = db.Column(db.Integer, primary_key=True)
-        test1 = db.Column(db.String(20))
-        test2 = db.Column(db.Unicode(20))
-        test3 = db.Column(db.Text)
-        test4 = db.Column(db.UnicodeText)
-
-    class Model2(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        int_field = db.Column(db.Integer)
-        bool_field = db.Column(db.Boolean)
-
-    db.create_all()
-
-    return Model1, Model2
+from flask_superadmin.model.backends.mongoengine.view import ModelAdmin
 
 
 def setup():
+    connect('superadmin_test')
     app = Flask(__name__)
     app.config['SECRET_KEY'] = '1'
     app.config['CSRF_ENABLED'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'
 
-    db = SQLAlchemy(app)
     admin = Admin(app)
 
-    return app, db, admin
+    return app, admin
 
 
 def test_model():
-    app, db, admin = setup()
-    Model1, Model2 = create_models(db)
-    db.create_all()
+    app, admin = setup()
 
-    view = CustomModelView(Model1, db.session)
+    class Person(Document):
+        name = StringField()
+        age = IntField()
+
+    Person.drop_collection()
+
+    view = ModelAdmin(Person)
     admin.add_view(view)
 
-    eq_(view.model, Model1)
-    eq_(view.name, 'Model1')
-    eq_(view.endpoint, 'model1')
-
-    eq_(view._primary_key, 'id')
+    eq_(view.model, Person)
+    eq_(view.name, 'Person')
+    eq_(view.endpoint, 'person')
 
     # Verify form
-    eq_(view.get_form()._fields['test_1'], wtf.TextField)
-    eq_(view.get_form()._fields['test_2'], wtf.TextField)
-    eq_(view.get_form()._fields['test_3'], wtf.TextAreaField)
-    eq_(view.get_form()._fields['test_4'], wtf.TextAreaField)
+    with app.test_request_context():
+        Form = view.get_form()
+        print Form()._fields
+        ok_(isinstance(Form()._fields['name'], wtf.TextAreaField))
+        ok_(isinstance(Form()._fields['age'], wtf.IntegerField))
 
     # Make some test clients
     client = app.test_client()
 
-    rv = client.get('/admin/model1/')
+    rv = client.get('/admin/person/')
     eq_(rv.status_code, 200)
 
-    rv = client.get('/admin/model1/add/')
+    rv = client.get('/admin/person/add/')
     eq_(rv.status_code, 200)
 
-    rv = client.post('/admin/model1/add/',
-                     data=dict(test1='test1large', test2='test2'))
+    rv = client.post('/admin/person/add/',
+                     data=dict(name='name', age='18'))
     eq_(rv.status_code, 302)
 
-    model = db.session.query(Model1).first()
-    eq_(model.test1, 'test1large')
-    eq_(model.test2, 'test2')
-    eq_(model.test3, '')
-    eq_(model.test4, '')
+    person = Person.objects.first()
+    eq_(person.name, 'name')
+    eq_(person.age, 18)
 
-    rv = client.get('/admin/model1/')
+    rv = client.get('/admin/person/')
     eq_(rv.status_code, 200)
-    ok_('test1large' in rv.data)
+    ok_(str(person.pk) in rv.data)
 
-    rv = client.get('/admin/model1/edit/%s/' % model.id)
+    rv = client.get('/admin/person/%s/' % person.pk)
     eq_(rv.status_code, 200)
 
-    rv = client.post(url, data=dict(test1='test1small', test2='test2large'))
+    rv = client.post('/admin/person/%s/' % person.pk, data=dict(name='changed'))
     eq_(rv.status_code, 302)
 
-    model = db.session.query(Model1).first()
-    eq_(model.test1, 'test1small')
-    eq_(model.test2, 'test2large')
-    eq_(model.test3, '')
-    eq_(model.test4, '')
+    person = Person.objects.first()
+    eq_(person.name, 'changed')
+    eq_(person.age, 18)
 
-    rv = client.post('/admin/model1/%s/delete/' % model.id)
+    rv = client.post('/admin/person/%s/delete' % person.pk)
+    eq_(rv.status_code, 200)
+    eq_(Person.objects.count(), 1)
+
+    rv = client.post('/admin/person/%s/delete' % person.pk, data={'confirm_delete': True})
     eq_(rv.status_code, 302)
-    eq_(db.session.query(Model1).count(), 0)
-
-
-@raises(InvalidRequestError)
-def test_no_pk():
-    app, db, admin = setup()
-
-    class Model(db.Model):
-        test = db.Column(db.Integer)
-
-    view = CustomModelView(Model, db.session)
-    admin.add_view(view)
+    eq_(Person.objects.count(), 0)
 
 
 def test_list_display():
