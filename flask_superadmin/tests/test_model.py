@@ -203,7 +203,6 @@ def test_permissions():
 
 
 def test_templates():
-    return
     app, admin = setup()
 
     view = MockModelView(Model)
@@ -212,110 +211,43 @@ def test_templates():
     client = app.test_client()
 
     view.list_template = 'mock.html'
-    view.create_template = 'mock.html'
+    view.add_template = 'mock.html'
     view.edit_template = 'mock.html'
 
-    rv = client.get('/admin/modelview/')
+    rv = client.get('/admin/model/')
     eq_(rv.data, 'Success!')
 
-    rv = client.get('/admin/modelview/new/')
+    rv = client.get('/admin/model/add/')
     eq_(rv.data, 'Success!')
 
-    rv = client.get('/admin/modelview/edit/?id=1')
+    rv = client.get('/admin/model/1/')
     eq_(rv.data, 'Success!')
 
 
-def test_list_columns():
-    return
+def test_list_display_header():
     app, admin = setup()
 
-    view = MockModelView(Model,
-                         list_columns=['col1', 'col3'],
-                         rename_columns=dict(col1='Column1'))
+    view = MockModelView(Model, list_display=['test_header'])
     admin.add_view(view)
 
-    eq_(len(view._list_columns), 2)
-    eq_(view._list_columns, [('col1', 'Column1'), ('col3', 'Col3')])
+    eq_(len(view.list_display), 1)
 
     client = app.test_client()
 
-    rv = client.get('/admin/modelview/')
-    ok_('Column1' in rv.data)
-    ok_('Col2' not in rv.data)
+    rv = client.get('/admin/model/')
+    ok_('Test Header' in rv.data)
 
 
-def test_exclude_columns():
-    return
+def test_search_fields():
     app, admin = setup()
 
-    view = MockModelView(Model, excluded_list_columns=['col2'])
+    view = MockModelView(Model, search_fields=['col1', 'col2'])
     admin.add_view(view)
 
-    eq_(view._list_columns, [('col1', 'Col1'), ('col3', 'Col3')])
+    eq_(view.search_fields, ['col1', 'col2'])
 
     client = app.test_client()
 
-    rv = client.get('/admin/modelview/')
-    ok_('Col1' in rv.data)
-    ok_('Col2' not in rv.data)
+    rv = client.get('/admin/model/')
+    ok_('<div class="search">' in rv.data)
 
-
-def test_sortable_columns():
-    return
-    app, admin = setup()
-
-    view = MockModelView(Model, sortable_columns=['col1', ('col2', 'test1')])
-    admin.add_view(view)
-
-    eq_(view._sortable_columns, dict(col1='col1', col2='test1'))
-
-
-def test_searchable_columns():
-    return
-    app, admin = setup()
-
-    view = MockModelView(Model, searchable_columns=['col1', 'col2'])
-    admin.add_view(view)
-
-    eq_(view._search_supported, True)
-
-    # TODO: Make calls with search
-
-
-def test_column_filters():
-    return
-    app, admin = setup()
-
-    view = MockModelView(Model, column_filters=['col1', 'col2'])
-    admin.add_view(view)
-
-    eq_(len(view._filters), 2)
-    eq_(view._filters[0].name, 'col1')
-    eq_(view._filters[1].name, 'col2')
-
-    eq_(view._filter_dict, {'col1': [(0, 'test')],
-                            'col2': [(1, 'test')]})
-
-    # TODO: Make calls with filters
-
-
-def test_form():
-    return
-    # TODO: form_columns
-    # TODO: excluded_form_columns
-    # TODO: form_args
-    pass
-
-
-def test_custom_form():
-    return
-    app, admin = setup()
-
-    class TestForm(wtf.Form):
-        pass
-
-    view = MockModelView(Model, form=TestForm)
-    admin.add_view(view)
-
-    eq_(view._create_form_class, TestForm)
-    eq_(view._edit_form_class, TestForm)
