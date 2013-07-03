@@ -9,8 +9,8 @@ from flask_superadmin.model.backends.mongoengine.view import ModelAdmin
 
 
 class CustomModelView(ModelAdmin):
-    def __init__(self, model, name=None, category=None,
-                 endpoint=None, url=None, **kwargs):
+    def __init__(self, model, name=None, category=None, endpoint=None,
+                 url=None, **kwargs):
         for k, v in kwargs.iteritems():
             setattr(self, k, v)
 
@@ -48,7 +48,6 @@ def test_model():
     # Verify form
     with app.test_request_context():
         Form = view.get_form()
-        print Form()._fields
         ok_(isinstance(Form()._fields['name'], wtf.TextAreaField))
         ok_(isinstance(Form()._fields['age'], wtf.IntegerField))
 
@@ -122,103 +121,122 @@ def test_list_display():
 
 
 def test_exclude():
-    return
-    app, db, admin = setup()
+    app, admin = setup()
 
-    Model1, Model2 = create_models(db)
+    class Person(Document):
+        name = StringField()
+        age = IntField()
 
-    view = CustomModelView(Model1, db.session,
-                           excluded_list_columns=['test2', 'test4'])
+    Person.drop_collection()
+
+    view = CustomModelView(Person, exclude=['name'])
     admin.add_view(view)
 
-    eq_(view._list_columns, [('test1', 'Test1'), ('test3', 'Test3')])
+    # Verify form
+    with app.test_request_context():
+        Form = view.get_form()
+        eq_(Form()._fields.keys(), ['csrf_token', 'age'])
 
-    client = app.test_client()
+def test_fields():
+    app, admin = setup()
 
-    rv = client.get('/admin/model1view/')
-    ok_('Test1' in rv.data)
-    ok_('Test2' not in rv.data)
+    class Person(Document):
+        name = StringField()
+        age = IntField()
 
+    Person.drop_collection()
+
+    view = CustomModelView(Person, fields=['name'])
+    admin.add_view(view)
+
+    # Verify form
+    with app.test_request_context():
+        Form = view.get_form()
+        eq_(Form()._fields.keys(), ['csrf_token', 'name'])
+
+def test_fields_and_exclude():
+    app, admin = setup()
+
+    class Person(Document):
+        name = StringField()
+        age = IntField()
+
+    Person.drop_collection()
+
+    view = CustomModelView(Person, fields=['name', 'age'], exclude=['name'])
+    admin.add_view(view)
+
+    # Verify form
+    with app.test_request_context():
+        Form = view.get_form()
+        eq_(Form()._fields.keys(), ['csrf_token', 'age'])
 
 def test_search_fields():
-    return
-    app, db, admin = setup()
+    app, admin = setup()
 
-    Model1, Model2 = create_models(db)
+    class Person(Document):
+        name = StringField()
+        age = IntField()
 
-    view = CustomModelView(Model1, db.session,
-                           searchable_columns=['test1', 'test2'])
+    Person.drop_collection()
+    Person.objects.create(name='John', age=18)
+    Person.objects.create(name='Michael', age=21)
+
+    view = CustomModelView(Person, list_display=['name'],
+                           search_fields=['name'])
     admin.add_view(view)
 
-    eq_(view._search_supported, True)
-    eq_(len(view._search_fields), 2)
-    ok_(isinstance(view._search_fields[0], db.Column))
-    ok_(isinstance(view._search_fields[1], db.Column))
-    eq_(view._search_fields[0].name, 'test1')
-    eq_(view._search_fields[1].name, 'test2')
+    eq_(len(view.search_fields), 1)
+    client = app.test_client()
 
-    db.session.add(Model1('model1'))
-    db.session.add(Model1('model2'))
-    db.session.commit()
+    resp = client.get('/admin/person/')
+    ok_('name="q" class="search-input"' in resp.data)
+    ok_('John' in resp.data)
+    ok_('Michael' in resp.data)
+
+    resp = client.get('/admin/person/?q=john')
+    ok_('John' in resp.data)
+    ok_('Michael' not in resp.data)
+
+
+def test_pagination():
+    app, admin = setup()
+
+    class Person(Document):
+        name = StringField()
+        age = IntField()
+
+    Person.drop_collection()
+    Person.objects.create(name='John', age=18)
+    Person.objects.create(name='Michael', age=21)
+    Person.objects.create(name='Steve', age=15)
+    Person.objects.create(name='Ron', age=59)
+
+    view = CustomModelView(Person, list_per_page=2,
+                           list_display=['name', 'age'])
+    admin.add_view(view)
 
     client = app.test_client()
 
-    rv = client.get('/admin/model1view/?search=model1')
-    ok_('model1' in rv.data)
-    ok_('model2' not in rv.data)
+    resp = client.get('/admin/person/')
+    ok_('<div class="total-count">Total count: 4</div>' in resp.data)
+    ok_('<a href="#">1</a>' in resp.data)  # make sure the first page is active (i.e. has no url)
+    ok_('John' in resp.data)
+    ok_('Michael' in resp.data)
+    ok_('Steve' not in resp.data)
+    ok_('Ron' not in resp.data)
 
+    # default page == page 0
+    eq_(resp.data, client.get('/admin/person/?page=0').data)
 
-def test_url_args():
-    return
-    app, db, admin = setup()
+    resp = client.get('/admin/person/?page=1')
+    ok_('John' not in resp.data)
+    ok_('Michael' not in resp.data)
+    ok_('Steve' in resp.data)
+    ok_('Ron' in resp.data)
 
-    Model1, Model2 = create_models(db)
-
-    view = CustomModelView(Model1, db.session,
-                           page_size=2,
-                           searchable_columns=['test1'],
-                           column_filters=['test1'])
-    admin.add_view(view)
-
-    db.session.add(Model1('data1'))
-    db.session.add(Model1('data2'))
-    db.session.add(Model1('data3'))
-    db.session.add(Model1('data4'))
-    db.session.commit()
-
-    client = app.test_client()
-
-    rv = client.get('/admin/model1view/')
-    ok_('data1' in rv.data)
-    ok_('data3' not in rv.data)
-
-    # page
-    rv = client.get('/admin/model1view/?page=1')
-    ok_('data1' not in rv.data)
-    ok_('data3' in rv.data)
-
-    # sort
-    rv = client.get('/admin/model1view/?sort=0&desc=1')
-    ok_('data1' not in rv.data)
-    ok_('data3' in rv.data)
-    ok_('data4' in rv.data)
-
-    # search
-    rv = client.get('/admin/model1view/?search=data1')
-    ok_('data1' in rv.data)
-    ok_('data2' not in rv.data)
-
-    rv = client.get('/admin/model1view/?search=^data1')
-    ok_('data2' not in rv.data)
-
-    # like
-    rv = client.get('/admin/model1view/?flt0=0&flt0v=data1')
-    ok_('data1' in rv.data)
-
-    # not like
-    rv = client.get('/admin/model1view/?flt0=1&flt0v=data1')
-    ok_('data2' in rv.data)
-
+def test_sort():
+    pass # TODO
 
 def test_non_int_pk():
     return
@@ -249,13 +267,6 @@ def test_non_int_pk():
     rv = client.get('/admin/modelview/edit/?id=test1')
     eq_(rv.status_code, 200)
     ok_('test2' in rv.data)
-
-
-def test_form():
-    # TODO: form_columns
-    # TODO: excluded_form_columns
-    # TODO: form_args
-    pass
 
 
 def test_field_override():
