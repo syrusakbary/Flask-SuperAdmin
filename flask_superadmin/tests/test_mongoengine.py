@@ -236,61 +236,45 @@ def test_pagination():
     ok_('Ron' in resp.data)
 
 def test_sort():
-    pass # TODO
+    app, admin = setup()
 
-def test_non_int_pk():
-    return
-    app, db, admin = setup()
+    class Person(Document):
+        name = StringField()
+        age = IntField()
 
-    class Model(db.Model):
-        id = db.Column(db.String, primary_key=True)
-        test = db.Column(db.String)
+    Person.drop_collection()
+    Person.objects.create(name='John', age=18)
+    Person.objects.create(name='Michael', age=21)
+    Person.objects.create(name='Steve', age=15)
+    Person.objects.create(name='Ron', age=59)
 
-    db.create_all()
-
-    view = CustomModelView(Model, db.session, form_columns=['id', 'test'])
+    view = CustomModelView(Person, list_per_page=2,
+                           list_display=['name', 'age'])
     admin.add_view(view)
 
     client = app.test_client()
 
-    rv = client.get('/admin/modelview/')
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/person/?sort=name')
+    ok_('John' in resp.data)
+    ok_('Michael' in resp.data)
+    ok_('Ron' not in resp.data)
+    ok_('Steve' not in resp.data)
 
-    rv = client.post('/admin/modelview/new/',
-                     data=dict(id='test1', test='test2'))
-    eq_(rv.status_code, 302)
+    resp = client.get('/admin/person/?sort=-name')
+    ok_('John' not in resp.data)
+    ok_('Michael' not in resp.data)
+    ok_('Ron' in resp.data)
+    ok_('Steve' in resp.data)
 
-    rv = client.get('/admin/modelview/')
-    eq_(rv.status_code, 200)
-    ok_('test1' in rv.data)
+    resp = client.get('/admin/person/?sort=age')
+    ok_('John' in resp.data)
+    ok_('Michael' not in resp.data)
+    ok_('Ron' not in resp.data)
+    ok_('Steve' in resp.data)
 
-    rv = client.get('/admin/modelview/edit/?id=test1')
-    eq_(rv.status_code, 200)
-    ok_('test2' in rv.data)
-
-
-def test_field_override():
-    return
-
-    app, db, admin = setup()
-
-    class Model(db.Model):
-        id = db.Column(db.String, primary_key=True)
-        test = db.Column(db.String)
-
-    db.create_all()
-
-    view1 = CustomModelView(Model, db.session, endpoint='view1')
-    view2 = CustomModelView(Model, db.session, endpoint='view2', field_overrides=dict(test=wtf.FileField))
-
-    admin.add_view(view1)
-    admin.add_view(view2)
-
-    eq_(view1.get_add_form().test.field_class, wtf.TextField)
-    eq_(view2.get_add_form().test.field_class, wtf.FileField)
-
-
-def test_relations():
-    # TODO: test relations
-    pass
+    resp = client.get('/admin/person/?sort=-age')
+    ok_('John' not in resp.data)
+    ok_('Michael' in resp.data)
+    ok_('Ron' in resp.data)
+    ok_('Steve' not in resp.data)
 

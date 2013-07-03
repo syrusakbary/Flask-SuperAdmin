@@ -192,7 +192,9 @@
         {# if the view is not editable nor deletable, there's no point to show any buttons #}
         {% if can_edit or can_delete %}
             <div class="form-buttons">
-                <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
+                {% if can_edit or not instance %}
+                    <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
+                {% endif %}
                 {% if extra %}
                     {{ extra }}
                 {% endif %}

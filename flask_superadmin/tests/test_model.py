@@ -202,6 +202,48 @@ def test_permissions():
     eq_(rv.status_code, 403)
 
 
+def test_permissions_and_add_delete_buttons():
+    app, admin = setup()
+
+    view = MockModelView(Model)
+    admin.add_view(view)
+
+    client = app.test_client()
+
+    resp = client.get('/admin/model/')
+    eq_(resp.status_code, 200)
+    ok_('Add Model' in resp.data)
+
+    view.can_create = False
+    resp = client.get('/admin/model/')
+    eq_(resp.status_code, 200)
+    ok_('Add Model' not in resp.data)
+
+    view.can_edit = False
+    view.can_delete = False
+    resp = client.get('/admin/model/1/')
+    eq_(resp.status_code, 200)
+    ok_('Submit' not in resp.data)
+    ok_('Save and stay on page' not in resp.data)
+    ok_('Delete' not in resp.data)
+
+    view.can_edit = False
+    view.can_delete = True
+    resp = client.get('/admin/model/1/')
+    eq_(resp.status_code, 200)
+    ok_('Submit' not in resp.data)
+    ok_('Save and stay on page' not in resp.data)
+    ok_('Delete' in resp.data)
+
+    view.can_edit = True
+    view.can_delete = False
+    resp = client.get('/admin/model/1/')
+    eq_(resp.status_code, 200)
+    ok_('Submit' in resp.data)
+    ok_('Save and stay on page' in resp.data)
+    ok_('Delete' not in resp.data)
+
+
 def test_templates():
     app, admin = setup()
 
