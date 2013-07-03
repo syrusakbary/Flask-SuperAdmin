@@ -9,11 +9,11 @@
 {% endblock %}
 
 {% block body %}
-    <form method="POST" action="{{ return_url }}">
-        <h1 id="main-title">{{ _gettext('%(model)s model',model=name|capitalize) }}</h1>
+    <form method="POST" action="#">
+        <h1 id="main-title">{{ _gettext('%(model)s model', model=name|capitalize) }}</h1>
 
         {% if admin_view.can_create %}
-            <a class="btn btn-primary btn-title" href="{{ url_for('.add', next=return_url) }}">{{ _gettext('Add %(model)s',model=name) }}</a>
+            <a class="btn btn-primary btn-title" href="{{ url_for('.add') }}">{{ _gettext('Add %(model)s', model=name) }}</a>
         {% endif %}
 
         <select class="actions btn-title hidden" name="action" data-placeholder="{{ _gettext('Choose action') }}">
@@ -75,7 +75,7 @@
                         </td>
                         {% for c in admin_view.list_display %}
                             {% if loop.first %}
-                                <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{ admin_view.get_column(instance, c) }}</a></td>
+                                <td><a href="{{ url_for('.edit', pk=pk) }}">{{ admin_view.get_column(instance, c) }}</a></td>
                             {% else %}
 
                                 {% with reference = admin_view.get_reference(admin_view.get_column(instance, c)) %}
@@ -88,7 +88,7 @@
 
                             {% endif %}
                         {% else %}
-                            <td><a href="{{ url_for('.edit', pk=pk, next=return_url) }}">{{ instance|string or 'None' }}</a></td>
+                            <td><a href="{{ url_for('.edit', pk=pk) }}">{{ instance|string or 'None' }}</a></td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

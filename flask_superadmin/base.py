@@ -1,5 +1,6 @@
+import re
+
 from functools import wraps
-from re import sub
 
 from flask import Blueprint, render_template, url_for, abort
 
@@ -114,9 +115,8 @@ class BaseView(object):
             raise Exception('Attempted to instantiate admin view %s without defailt view' % self.__class__.__name__)
 
     def create_blueprint(self, admin):
-        """
-            Create Flask blueprint.
-        """
+        """ Create Flask blueprint. """
+
         # Store admin instance
         self.admin = admin
 
@@ -175,7 +175,7 @@ class BaseView(object):
             `name`
                 String to prettify
         """
-        return sub(r'(?<=.)([A-Z])', r' \1', name)
+        return re.sub(r'(?<=.)([A-Z])', r' \1', name)
 
     def is_accessible(self):
         """
@@ -226,9 +226,8 @@ class AdminIndexView(BaseView):
 
 
 class MenuItem(object):
-    """
-        Simple menu tree hierarchy.
-    """
+    """ Simple menu tree hierarchy. """
+
     def __init__(self, name, view=None):
         self.name = name
         self._view = view
@@ -274,9 +273,8 @@ class MenuItem(object):
 
 
 class Admin(object):
-    """
-        Collection of the views. Also manages menu structure.
-    """
+    """ Collection of the views. Also manages menu structure. """
+
     def __init__(self, app=None, name=None, url=None, index_view=None,
                  translations_path=None):
         """
@@ -368,7 +366,7 @@ class Admin(object):
         backend = self.model_backend(model)
         new_class = type(admin_class.__name__,(admin_class,backend),{})
         model_view = new_class(model, *args, **kwargs)
-        
+
         self._models.append((model, model_view))
         self.add_view(model_view)
 
@@ -460,12 +458,11 @@ class Admin(object):
             self.app.extensions = dict()
 
         if 'admin' in self.app.extensions:
-            raise Exception('Can not have more than one instance of the Admin class associated with Flask application')
+            raise Exception('Cannot have more than one instance of the Admin class associated with Flask application')
 
         self.app.extensions['admin'] = self
 
     def menu(self):
-        """
-            Return menu hierarchy.
-        """
+        """ Return menu hierarchy. """
         return self._menu
+

@@ -3,6 +3,7 @@
 *.swo
 *.pyc
 *.*~
+*.egg
 *.egg-info
 pyenv
 node_modules

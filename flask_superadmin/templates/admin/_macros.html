@@ -183,8 +183,8 @@
     </fieldset>
 {% endmacro %}
 
-{% macro render_form(form, cancel_url, extra=None, can_edit=True, can_delete=True) -%}
-    <form action="" method="POST"{% if form.has_file_field %} enctype="multipart/form-data"{% endif %}>
+{% macro render_form(form, extra=None, can_edit=True, can_delete=True) -%}
+    <form action="#" method="POST"{% if form.has_file_field %} enctype="multipart/form-data"{% endif %}>
         {{ form.hidden_tag() if form.hidden_tag is defined }}
 
         {{ render_formfield(form) }}
@@ -195,9 +195,6 @@
                 <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
                 {% if extra %}
                     {{ extra }}
-                {% endif %}
-                {% if cancel_url %}
-                    <a href="{{ cancel_url }}" class="btn">{{ _gettext('Cancel') }}</a>
                 {% endif %}
             </div>
         {% endif %}

@@ -33,7 +33,9 @@ setup(
         'Flask-WTF>=0.6'
     ],
     tests_require=[
-        'nose>=1.0'
+        'nose>=1.0',
+        'Flask==0.9',
+        'flask-sqlalchemy'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

@@ -6,7 +6,6 @@ from flask import request, url_for, redirect, flash, abort
 
 from flask_superadmin.babel import gettext
 from flask_superadmin.base import BaseView, expose
-# from flask_superadmin.form import format_form
 from flask_superadmin.form import BaseForm, ChosenSelectWidget, DatePickerWidget, \
     DateTimePickerWidget, FileField
 
@@ -17,7 +16,6 @@ class AdminModelConverter(object):
         field = super(AdminModelConverter, self).convert(*args, **kwargs)
         if field:
             widget = field.kwargs.get('widget', field.field_class.widget)
-            # print field, widget
             if isinstance(widget, widgets.Select):
                 field.kwargs['widget'] = ChosenSelectWidget(multiple=widget.multiple)
             elif issubclass(field.field_class, fields.DateTimeField):
@@ -39,8 +37,10 @@ def prettify(str):
 
 
 class BaseModelAdmin(BaseView):
-    """
-    BaseModelView provides create/edit/delete functionality for a peewee Model.
+    """ BaseModelAdmin provides create/edit/delete functionality for an
+    abstract Model. The abstraction is further customized by the
+    backend-specific model admin (see flask_superadmin/model/backends/) and
+    by the user-defined admin classes inheriting from ModelAdmin.
     """
 
     # Number of objects to display per page in the list view
@@ -51,11 +51,15 @@ class BaseModelAdmin(BaseView):
     # the model or document.
     list_display = tuple()
 
-    # form parameters, lists of fields
+    # Only fields with names specified in `fields` will be displayed in the
+    # form (minus the ones mentioned in `exclude`). The order is preserved,
+    # too. You can also include methods that are on the model admin, or on the
+    # model/document, as long as they are marked as read-only (i.e. included
+    # in `readonly_fields`). Priority of fields' lookup: methods on the model
+    # admin, methods/fields on the model/document.
     fields = tuple()
     readonly_fields = tuple()
     exclude = tuple()
-    #fields_order = None  # order of the fields in the form. Fields that aren't mentioned here are appended at the end
 
     form = None
 
@@ -72,9 +76,10 @@ class BaseModelAdmin(BaseView):
 
     field_overrides = {}
 
-    # a dictionary of field_name: overridden_params_dict, e.g.
-    # { 'first_name': { 'label': 'First', 'description': 'This is first name' } }
-    # parameters that can be overridden: label, description, validators, filters, default
+    # A dictionary of field_name: overridden_params_dict, e.g.
+    #   { 'name': { 'label': 'Name', 'description': 'This is a name' } }
+    # Parameters that can be overridden: label, description, validators,
+    # filters, default
     field_args = None
 
     @staticmethod
@@ -221,13 +226,13 @@ class BaseModelAdmin(BaseView):
             form = Form()
             if form.validate_on_submit():
                 try:
-                    instance = self.save_model(self.model(), form, True)
+                    instance = self.save_model(self.model(), form, adding=True)
                     flash(gettext('New %(model)s saved successfully',
                           model=self.get_display_name()), 'success')
                     return self.dispatch_save_redirect(instance)
                 except Exception, ex:
                     print traceback.format_exc()
-                    if self.session:
+                    if hasattr(self, 'session'):
                         self.session.rollback()
                     flash(gettext('Failed to add model. %(error)s',
                           error=str(ex)), 'error')
@@ -303,13 +308,13 @@ class BaseModelAdmin(BaseView):
         except self.model.DoesNotExist:
             abort(404)
 
-        Form = self.get_form()  # TODO remove include_readonly=request.method == 'GET')
+        Form = self.get_form()
 
         if request.method == 'POST':
             form = Form(obj=instance)
             if form.validate_on_submit():
                 try:
-                    self.save_model(instance, form, False)
+                    self.save_model(instance, form, adding=False)
                     flash('Changes to %s saved successfully' % self.get_display_name(),
                           'success')
                     return self.dispatch_save_redirect(instance)
@@ -320,10 +325,6 @@ class BaseModelAdmin(BaseView):
         else:
             form = Form(obj=instance)
 
-        print form
-        print dir(form)
-        print form._fields
-
         return self.render(self.edit_template, model=self.model, form=form,
                            pk=self.get_pk(instance), instance=instance)
 
@@ -331,10 +332,6 @@ class BaseModelAdmin(BaseView):
     def delete(self, pk=None, *pks):
         if pk:
             pks += pk,
-            # collected = {}
-            # if self.delete_collect_objects:
-            #     for obj in query:
-            #         collected[obj.get_pk()] = self.collect_objects(obj)
 
         if request.method == 'POST' and 'confirm_delete' in request.form:
             count = len(pks)
@@ -348,9 +345,8 @@ class BaseModelAdmin(BaseView):
 
         return self.render(self.delete_template,
             instances=instances
-            # query=query,
-            # collected=collected,
         )
 
 
 class ModelAdmin(object): pass
+
