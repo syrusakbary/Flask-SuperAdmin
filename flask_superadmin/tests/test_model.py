@@ -180,7 +180,6 @@ def test_mockview():
 
 
 def test_permissions():
-    return
     app, admin = setup()
 
     view = MockModelView(Model)
@@ -189,16 +188,18 @@ def test_permissions():
     client = app.test_client()
 
     view.can_create = False
-    rv = client.get('/admin/modelview/new/')
-    eq_(rv.status_code, 302)
+    rv = client.get('/admin/model/add/')
+    eq_(rv.status_code, 403)
 
     view.can_edit = False
-    rv = client.get('/admin/modelview/edit/?id=1')
-    eq_(rv.status_code, 302)
+    rv = client.get('/admin/model/1/')
+    # 200 resp, but readonly fields
+    eq_(rv.status_code, 200)
+    eq_(rv.data.count('<div class="readonly-value">'), 3)
 
     view.can_delete = False
-    rv = client.post('/admin/modelview/delete/?id=1')
-    eq_(rv.status_code, 302)
+    rv = client.post('/admin/model/1/delete')
+    eq_(rv.status_code, 403)
 
 
 def test_templates():

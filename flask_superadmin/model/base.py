@@ -221,6 +221,9 @@ class BaseModelAdmin(BaseView):
 
     @expose('/add/', methods=('GET', 'POST'))
     def add(self):
+        if not self.can_create:
+            abort(403)
+
         Form = self.get_add_form()
         if request.method == 'POST':
             form = Form()
@@ -330,6 +333,9 @@ class BaseModelAdmin(BaseView):
 
     @expose('/<pk>/delete', methods=('GET', 'POST'))
     def delete(self, pk=None, *pks):
+        if not self.can_delete:
+            abort(403)
+
         if pk:
             pks += pk,
 
