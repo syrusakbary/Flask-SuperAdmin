@@ -16,8 +16,7 @@ class CustomModelView(ModelAdmin):
         for k, v in kwargs.iteritems():
             setattr(self, k, v)
 
-        super(CustomModelView, self).__init__(model, session,
-                                              name, category,
+        super(CustomModelView, self).__init__(model, session, name, category,
                                               endpoint, url)
 
 

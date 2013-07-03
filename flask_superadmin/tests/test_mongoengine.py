@@ -8,6 +8,16 @@ from flask_superadmin import Admin
 from flask_superadmin.model.backends.mongoengine.view import ModelAdmin
 
 
+class CustomModelView(ModelAdmin):
+    def __init__(self, model, name=None, category=None,
+                 endpoint=None, url=None, **kwargs):
+        for k, v in kwargs.iteritems():
+            setattr(self, k, v)
+
+        super(CustomModelView, self).__init__(model, name, category, endpoint,
+                                              url)
+
+
 def setup():
     connect('superadmin_test')
     app = Flask(__name__)
@@ -28,7 +38,7 @@ def test_model():
 
     Person.drop_collection()
 
-    view = ModelAdmin(Person)
+    view = CustomModelView(Person)
     admin.add_view(view)
 
     eq_(view.model, Person)
@@ -83,24 +93,32 @@ def test_model():
 
 
 def test_list_display():
-    return
-    app, db, admin = setup()
+    app, admin = setup()
 
-    Model1, Model2 = create_models(db)
+    class Person(Document):
+        name = StringField()
+        age = IntField()
 
-    view = CustomModelView(Model1, db.session,
-                           list_columns=['test1', 'test3'],
-                           rename_columns=dict(test1='Column1'))
+    Person.drop_collection()
+
+    view = CustomModelView(Person, list_display=('name', 'age'))
     admin.add_view(view)
 
-    eq_(len(view._list_columns), 2)
-    eq_(view._list_columns, [('test1', 'Column1'), ('test3', 'Test3')])
+    eq_(len(view.list_display), 2)
 
     client = app.test_client()
 
-    rv = client.get('/admin/model1view/')
-    ok_('Column1' in rv.data)
-    ok_('Test2' not in rv.data)
+    rv = client.get('/admin/person/')
+    ok_('Name' in rv.data)
+    ok_('Age' in rv.data)
+
+    rv = client.post('/admin/person/add/',
+                     data=dict(name='Steve', age='18'))
+    eq_(rv.status_code, 302)
+
+    rv = client.get('/admin/person/')
+    ok_('Steve' in rv.data)
+    ok_('18' in rv.data)
 
 
 def test_exclude():
