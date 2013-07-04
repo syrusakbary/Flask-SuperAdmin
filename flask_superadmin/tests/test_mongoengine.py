@@ -54,40 +54,40 @@ def test_model():
     # Make some test clients
     client = app.test_client()
 
-    rv = client.get('/admin/person/')
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/person/')
+    eq_(resp.status_code, 200)
 
-    rv = client.get('/admin/person/add/')
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/person/add/')
+    eq_(resp.status_code, 200)
 
-    rv = client.post('/admin/person/add/',
+    resp = client.post('/admin/person/add/',
                      data=dict(name='name', age='18'))
-    eq_(rv.status_code, 302)
+    eq_(resp.status_code, 302)
 
     person = Person.objects.first()
     eq_(person.name, 'name')
     eq_(person.age, 18)
 
-    rv = client.get('/admin/person/')
-    eq_(rv.status_code, 200)
-    ok_(str(person.pk) in rv.data)
+    resp = client.get('/admin/person/')
+    eq_(resp.status_code, 200)
+    ok_(str(person.pk) in resp.data)
 
-    rv = client.get('/admin/person/%s/' % person.pk)
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/person/%s/' % person.pk)
+    eq_(resp.status_code, 200)
 
-    rv = client.post('/admin/person/%s/' % person.pk, data=dict(name='changed'))
-    eq_(rv.status_code, 302)
+    resp = client.post('/admin/person/%s/' % person.pk, data=dict(name='changed'))
+    eq_(resp.status_code, 302)
 
     person = Person.objects.first()
     eq_(person.name, 'changed')
     eq_(person.age, 18)
 
-    rv = client.post('/admin/person/%s/delete' % person.pk)
-    eq_(rv.status_code, 200)
+    resp = client.post('/admin/person/%s/delete/' % person.pk)
+    eq_(resp.status_code, 200)
     eq_(Person.objects.count(), 1)
 
-    rv = client.post('/admin/person/%s/delete' % person.pk, data={'confirm_delete': True})
-    eq_(rv.status_code, 302)
+    resp = client.post('/admin/person/%s/delete/' % person.pk, data={'confirm_delete': True})
+    eq_(resp.status_code, 302)
     eq_(Person.objects.count(), 0)
 
 
@@ -107,17 +107,17 @@ def test_list_display():
 
     client = app.test_client()
 
-    rv = client.get('/admin/person/')
-    ok_('Name' in rv.data)
-    ok_('Age' in rv.data)
+    resp = client.get('/admin/person/')
+    ok_('Name' in resp.data)
+    ok_('Age' in resp.data)
 
-    rv = client.post('/admin/person/add/',
+    resp = client.post('/admin/person/add/',
                      data=dict(name='Steve', age='18'))
-    eq_(rv.status_code, 302)
+    eq_(resp.status_code, 302)
 
-    rv = client.get('/admin/person/')
-    ok_('Steve' in rv.data)
-    ok_('18' in rv.data)
+    resp = client.get('/admin/person/')
+    ok_('Steve' in resp.data)
+    ok_('18' in resp.data)
 
 
 def test_exclude():

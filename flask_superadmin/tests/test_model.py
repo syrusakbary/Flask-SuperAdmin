@@ -174,7 +174,7 @@ def test_mockview():
     eq_(rv.status_code, 404)
 
     # Attempt to delete model
-    rv = client.post('/admin/model/3/delete', data=dict(confirm_delete=True))
+    rv = client.post('/admin/model/3/delete/', data=dict(confirm_delete=True))
     eq_(rv.status_code, 302)
     eq_(rv.headers['location'], 'http://localhost/admin/model/')
 
@@ -198,7 +198,7 @@ def test_permissions():
     eq_(rv.data.count('<div class="readonly-value">'), 3)
 
     view.can_delete = False
-    rv = client.post('/admin/model/1/delete')
+    rv = client.post('/admin/model/1/delete/')
     eq_(rv.status_code, 403)
 
 

@@ -22,17 +22,20 @@ class CustomModelView(ModelAdmin):
 
 def create_models(db):
     class Model1(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        test1 = db.Column(db.String(20))
+        test2 = db.Column(db.Unicode(20))
+        test3 = db.Column(db.Text)
+        test4 = db.Column(db.UnicodeText)
+
         def __init__(self, test1=None, test2=None, test3=None, test4=None):
             self.test1 = test1
             self.test2 = test2
             self.test3 = test3
             self.test4 = test4
 
-        id = db.Column(db.Integer, primary_key=True)
-        test1 = db.Column(db.String(20))
-        test2 = db.Column(db.Unicode(20))
-        test3 = db.Column(db.Text)
-        test4 = db.Column(db.UnicodeText)
+        def __unicode__(self):
+            return self.test1
 
     class Model2(db.Model):
         id = db.Column(db.Integer, primary_key=True)
@@ -71,23 +74,25 @@ def test_model():
     eq_(view._primary_key, 'id')
 
     # Verify form
-    eq_(view.get_form()._fields['test_1'], wtf.TextField)
-    eq_(view.get_form()._fields['test_2'], wtf.TextField)
-    eq_(view.get_form()._fields['test_3'], wtf.TextAreaField)
-    eq_(view.get_form()._fields['test_4'], wtf.TextAreaField)
+    with app.test_request_context():
+        Form = view.get_form()
+        ok_(isinstance(Form()._fields['test1'], wtf.TextField))
+        ok_(isinstance(Form()._fields['test2'], wtf.TextField))
+        ok_(isinstance(Form()._fields['test3'], wtf.TextAreaField))
+        ok_(isinstance(Form()._fields['test4'], wtf.TextAreaField))
 
     # Make some test clients
     client = app.test_client()
 
-    rv = client.get('/admin/model1/')
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/model1/')
+    eq_(resp.status_code, 200)
 
-    rv = client.get('/admin/model1/add/')
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/model1/add/')
+    eq_(resp.status_code, 200)
 
-    rv = client.post('/admin/model1/add/',
-                     data=dict(test1='test1large', test2='test2'))
-    eq_(rv.status_code, 302)
+    resp = client.post('/admin/model1/add/',
+                       data=dict(test1='test1large', test2='test2'))
+    eq_(resp.status_code, 302)
 
     model = db.session.query(Model1).first()
     eq_(model.test1, 'test1large')
@@ -95,15 +100,15 @@ def test_model():
     eq_(model.test3, '')
     eq_(model.test4, '')
 
-    rv = client.get('/admin/model1/')
-    eq_(rv.status_code, 200)
-    ok_('test1large' in rv.data)
+    resp = client.get('/admin/model1/')
+    eq_(resp.status_code, 200)
+    ok_('test1large' in resp.data)
 
-    rv = client.get('/admin/model1/edit/%s/' % model.id)
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/model1/%s/' % model.id)
+    eq_(resp.status_code, 200)
 
-    rv = client.post(url, data=dict(test1='test1small', test2='test2large'))
-    eq_(rv.status_code, 302)
+    resp = client.post('/admin/model1/%s/' % model.id, data=dict(test1='test1small', test2='test2large'))
+    eq_(resp.status_code, 302)
 
     model = db.session.query(Model1).first()
     eq_(model.test1, 'test1small')
@@ -111,8 +116,12 @@ def test_model():
     eq_(model.test3, '')
     eq_(model.test4, '')
 
-    rv = client.post('/admin/model1/%s/delete/' % model.id)
-    eq_(rv.status_code, 302)
+    resp = client.post('/admin/model1/%s/delete/' % model.id)
+    eq_(resp.status_code, 200)
+    eq_(db.session.query(Model1).count(), 1)
+
+    resp = client.post('/admin/model1/%s/delete/' % model.id, data={'confirm_delete': True})
+    eq_(resp.status_code, 302)
     eq_(db.session.query(Model1).count(), 0)
 
 
@@ -143,9 +152,9 @@ def test_list_display():
 
     client = app.test_client()
 
-    rv = client.get('/admin/model1view/')
-    ok_('Column1' in rv.data)
-    ok_('Test2' not in rv.data)
+    resp = client.get('/admin/model1view/')
+    ok_('Column1' in resp.data)
+    ok_('Test2' not in resp.data)
 
 
 def test_exclude():
@@ -162,9 +171,9 @@ def test_exclude():
 
     client = app.test_client()
 
-    rv = client.get('/admin/model1view/')
-    ok_('Test1' in rv.data)
-    ok_('Test2' not in rv.data)
+    resp = client.get('/admin/model1view/')
+    ok_('Test1' in resp.data)
+    ok_('Test2' not in resp.data)
 
 
 def test_search_fields():
@@ -190,9 +199,9 @@ def test_search_fields():
 
     client = app.test_client()
 
-    rv = client.get('/admin/model1view/?search=model1')
-    ok_('model1' in rv.data)
-    ok_('model2' not in rv.data)
+    resp = client.get('/admin/model1view/?search=model1')
+    ok_('model1' in resp.data)
+    ok_('model2' not in resp.data)
 
 
 def test_url_args():
@@ -215,36 +224,36 @@ def test_url_args():
 
     client = app.test_client()
 
-    rv = client.get('/admin/model1view/')
-    ok_('data1' in rv.data)
-    ok_('data3' not in rv.data)
+    resp = client.get('/admin/model1view/')
+    ok_('data1' in resp.data)
+    ok_('data3' not in resp.data)
 
     # page
-    rv = client.get('/admin/model1view/?page=1')
-    ok_('data1' not in rv.data)
-    ok_('data3' in rv.data)
+    resp = client.get('/admin/model1view/?page=1')
+    ok_('data1' not in resp.data)
+    ok_('data3' in resp.data)
 
     # sort
-    rv = client.get('/admin/model1view/?sort=0&desc=1')
-    ok_('data1' not in rv.data)
-    ok_('data3' in rv.data)
-    ok_('data4' in rv.data)
+    resp = client.get('/admin/model1view/?sort=0&desc=1')
+    ok_('data1' not in resp.data)
+    ok_('data3' in resp.data)
+    ok_('data4' in resp.data)
 
     # search
-    rv = client.get('/admin/model1view/?search=data1')
-    ok_('data1' in rv.data)
-    ok_('data2' not in rv.data)
+    resp = client.get('/admin/model1view/?search=data1')
+    ok_('data1' in resp.data)
+    ok_('data2' not in resp.data)
 
-    rv = client.get('/admin/model1view/?search=^data1')
-    ok_('data2' not in rv.data)
+    resp = client.get('/admin/model1view/?search=^data1')
+    ok_('data2' not in resp.data)
 
     # like
-    rv = client.get('/admin/model1view/?flt0=0&flt0v=data1')
-    ok_('data1' in rv.data)
+    resp = client.get('/admin/model1view/?flt0=0&flt0v=data1')
+    ok_('data1' in resp.data)
 
     # not like
-    rv = client.get('/admin/model1view/?flt0=1&flt0v=data1')
-    ok_('data2' in rv.data)
+    resp = client.get('/admin/model1view/?flt0=1&flt0v=data1')
+    ok_('data2' in resp.data)
 
 
 def test_non_int_pk():
@@ -262,20 +271,20 @@ def test_non_int_pk():
 
     client = app.test_client()
 
-    rv = client.get('/admin/modelview/')
-    eq_(rv.status_code, 200)
+    resp = client.get('/admin/modelview/')
+    eq_(resp.status_code, 200)
 
-    rv = client.post('/admin/modelview/new/',
+    resp = client.post('/admin/modelview/new/',
                      data=dict(id='test1', test='test2'))
-    eq_(rv.status_code, 302)
+    eq_(resp.status_code, 302)
 
-    rv = client.get('/admin/modelview/')
-    eq_(rv.status_code, 200)
-    ok_('test1' in rv.data)
+    resp = client.get('/admin/modelview/')
+    eq_(resp.status_code, 200)
+    ok_('test1' in resp.data)
 
-    rv = client.get('/admin/modelview/edit/?id=test1')
-    eq_(rv.status_code, 200)
-    ok_('test2' in rv.data)
+    resp = client.get('/admin/modelview/edit/?id=test1')
+    eq_(resp.status_code, 200)
+    ok_('test2' in resp.data)
 
 
 def test_form():

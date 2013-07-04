@@ -1,3 +1,7 @@
+"""
+Tools for generating forms based on Django Model schemas.
+"""
+
 from wtforms import fields as f
 from wtforms import Form
 from wtforms import validators

@@ -335,7 +335,7 @@ class BaseModelAdmin(BaseView):
         return self.render(self.edit_template, model=self.model, form=form,
                            pk=self.get_pk(instance), instance=instance)
 
-    @expose('/<pk>/delete', methods=('GET', 'POST'))
+    @expose('/<pk>/delete/', methods=('GET', 'POST'))
     def delete(self, pk=None, *pks):
         if not self.can_delete:
             abort(403)
