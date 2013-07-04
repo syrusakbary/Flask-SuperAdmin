@@ -203,7 +203,7 @@ def model_fields(model, fields=None, readonly_fields=None, exclude=None,
     """
     from mongoengine.base import BaseDocument
     if BaseDocument not in inspect.getmro(model):
-        raise TypeError('model must be a mongoengine Document schema')
+        raise TypeError('Model must be a MongoEngine Document schema')
 
     readonly_fields = readonly_fields or []
     exclude = exclude or []
@@ -275,14 +275,14 @@ def data_to_document(document, data):
 def model_form(model, base_class=Form, fields=None, readonly_fields=None,
                exclude=None, field_args=None, converter=None):
     """
-    Create a wtforms Form for a given mongoengine Document schema::
+    Create a wtforms Form for a given MongoEngine Document schema::
 
         from flaskext.mongoengine.wtf import model_form
         from myproject.myapp.schemas import Article
         ArticleForm = model_form(Article)
 
     :param model:
-        A mongoengine Document schema class
+        A MongoEngine Document schema class
     :param base_class:
         Base form class to extend from. Must be a ``wtforms.Form`` subclass.
     :param fields:

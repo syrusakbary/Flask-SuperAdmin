@@ -175,7 +175,7 @@ def model_form(model, base_class=Form, fields=None, readonly_fields=None,
         UserForm = model_form(User)
 
     :param model:
-        A mongoengine Document schema class
+        A Django ORM model class
     :param base_class:
         Base form class to extend from. Must be a ``wtforms.Form`` subclass.
     :param fields:
@@ -186,13 +186,14 @@ def model_form(model, base_class=Form, fields=None, readonly_fields=None,
         An optional iterable with the property names that should be excluded
         from the form. All other properties will have fields.
     :param field_args:
-        An optional dictionary of field names mapping to keyword arguments used
-        to construct each field object.
+        An optional dictionary of field names mapping to keyword arguments
+        used to construct each field object.
     :param converter:
         A converter to generate the fields based on the model properties. If
         not set, ``ModelConverter`` is used.
     """
     exclude = ([f for f in exclude] if exclude else []) + ['id']
-    field_dict = model_fields(model, fields, readonly_fields, exclude, field_args, converter)
+    field_dict = model_fields(model, fields, readonly_fields, exclude,
+                              field_args, converter)
     return type(model._meta.object_name + 'Form', (base_class, ), field_dict)
 
