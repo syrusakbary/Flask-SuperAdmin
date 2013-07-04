@@ -44,6 +44,7 @@ def test_model():
     eq_(view.model, Person)
     eq_(view.name, 'Person')
     eq_(view.endpoint, 'person')
+    eq_(view.url, '/admin/person')
 
     # Verify form
     with app.test_request_context():

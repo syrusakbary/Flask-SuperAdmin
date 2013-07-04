@@ -140,8 +140,8 @@ class AdminModelConverter(ModelConverterBase):
         return f.SelectField(choices=choices, coerce=coerce_nullbool, **kwargs)
 
 
-def model_fields(model, only=None, exclude=None, field_args=None,
-                 converter=None, fields_order=None):
+def model_fields(model, fields=None, readonly_fields=None, exclude=None,
+                 field_args=None, converter=None):
     """
     Generate a dictionary of fields for a given Django model.
 
@@ -151,8 +151,8 @@ def model_fields(model, only=None, exclude=None, field_args=None,
     field_args = field_args or {}
 
     model_fields = ((f.name, f) for f in model._meta.fields)
-    if only:
-        model_fields = (x for x in model_fields if x[0] in only)
+    if fields:
+        model_fields = (x for x in model_fields if x[0] in fields)
     elif exclude:
         model_fields = (x for x in model_fields if x[0] not in exclude)
 
@@ -165,8 +165,8 @@ def model_fields(model, only=None, exclude=None, field_args=None,
     return field_dict
 
 
-def model_form(model, base_class=Form, only=None, exclude=None,
-               field_args=None, converter=None, fields_order=None):
+def model_form(model, base_class=Form, fields=None, readonly_fields=None,
+               exclude=None, field_args=None, converter=None):
     """
     Create a wtforms Form for a given Django model class::
 
@@ -175,12 +175,13 @@ def model_form(model, base_class=Form, only=None, exclude=None,
         UserForm = model_form(User)
 
     :param model:
-        A Django ORM model class
+        A mongoengine Document schema class
     :param base_class:
         Base form class to extend from. Must be a ``wtforms.Form`` subclass.
-    :param only:
-        An optional iterable with the property names that should be included in
-        the form. Only these properties will have fields.
+    :param fields:
+        An optional iterable with the property names that should be included
+        in the form. Only these properties will have fields. It also
+        determines the order of the fields.
     :param exclude:
         An optional iterable with the property names that should be excluded
         from the form. All other properties will have fields.
@@ -192,7 +193,6 @@ def model_form(model, base_class=Form, only=None, exclude=None,
         not set, ``ModelConverter`` is used.
     """
     exclude = ([f for f in exclude] if exclude else []) + ['id']
-    field_dict = model_fields(model, only, exclude, field_args, converter,
-                              fields_order)
+    field_dict = model_fields(model, fields, readonly_fields, exclude, field_args, converter)
     return type(model._meta.object_name + 'Form', (base_class, ), field_dict)
 
