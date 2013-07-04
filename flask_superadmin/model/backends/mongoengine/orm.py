@@ -205,6 +205,9 @@ def model_fields(model, fields=None, readonly_fields=None, exclude=None,
     if BaseDocument not in inspect.getmro(model):
         raise TypeError('model must be a mongoengine Document schema')
 
+    readonly_fields = readonly_fields or []
+    exclude = exclude or []
+
     converter = converter or ModelConverter()
     field_args = field_args or {}
 

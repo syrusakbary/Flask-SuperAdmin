@@ -156,30 +156,30 @@
 
 {% macro render_formfield(form) %}
     <fieldset>
-        {% with readonly_fields = admin_view.get_readonly_fields(instance) %}
+        {% set readonly_fields = admin_view.get_readonly_fields(instance) %}
+        {% set field_names = admin_view.fields or form._fields.keys() %}
         
-            {% for field_name in admin_view.fields %}
-                {% if field_name in readonly_fields %}
-                    {% with f = readonly_fields[field_name] %}
-                        <section class="field">
-                            <label>{{ f.label }}</label>
-                            <div>
-                                <div class="readonly-value">
-                                    {% if f.url %}
-                                        <a href="{{ f.url }}"{% if f.url.startswith('http') %}target="_blank"{% endif %}>{{ f.value }}</a>
-                                    {% else %}
-                                        {{ f.value }}
-                                    {% endif %}
-                                </div>
+        {% for field_name in field_names %}
+            {% if field_name in readonly_fields %}
+                {% with f = readonly_fields[field_name] %}
+                    <section class="field">
+                        <label>{{ f.label }}</label>
+                        <div>
+                            <div class="readonly-value">
+                                {% if f.url %}
+                                    <a href="{{ f.url }}"{% if f.url.startswith('http') %}target="_blank"{% endif %}>{{ f.value }}</a>
+                                {% else %}
+                                    {{ f.value }}
+                                {% endif %}
                             </div>
-                        </section>
-                    {% endwith %}
-                {% else %}
-                    {{ render_ff(form._fields[field_name]) }}
-                {% endif %}
-            {% endfor %}
+                        </div>
+                    </section>
+                {% endwith %}
+            {% else %}
+                {{ render_ff(form._fields[field_name]) }}
+            {% endif %}
+        {% endfor %}
 
-        {% endwith %}
     </fieldset>
 {% endmacro %}
 
