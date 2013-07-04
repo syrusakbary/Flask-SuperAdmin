@@ -140,9 +140,13 @@ class BaseModelAdmin(BaseView):
                 if callable(val):
                     val = val()
             if not isinstance(val, dict):
+                # Check if the value is a reference field to a doc/model
+                # registered in the admin. If so, link to it.
+                reference = self.get_reference(val)
                 val = {
                     'label': prettify(field),
-                    'value': val
+                    'value': val,
+                    'url': reference if reference else None
                 }
             ret_vals[field] = val
         return ret_vals

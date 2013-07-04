@@ -85,7 +85,7 @@
     </div>
 {% endmacro %}
 
-{% macro render_ff (ff, delete, readonly=False) %}
+{% macro render_ff (ff, delete) %}
     <section class="field">
         {% if ff.type == "FormField" %}
       
@@ -128,7 +128,7 @@
 
                 {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
 
-                {% if readonly or (not admin_view.can_edit and instance) %}
+                {% if not admin_view.can_edit and instance %}
 
                     {% with reference = admin_view.get_reference(ff.data) %}
                         {% if reference %}
@@ -175,7 +175,7 @@
                         </section>
                     {% endwith %}
                 {% else %}
-                    {{ render_ff(form._fields[field_name], readonly=False) }}
+                    {{ render_ff(form._fields[field_name]) }}
                 {% endif %}
             {% endfor %}
 
