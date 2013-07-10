@@ -366,9 +366,9 @@ class Admin(object):
         admin_class = admin_class or ModelAdmin
 
         backend = self.model_backend(model)
-        new_class = type(admin_class.__name__,(admin_class,backend),{})
+        new_class = type(admin_class.__name__, (admin_class, backend), {})
         model_view = new_class(model, *args, **kwargs)
-        
+
         self._models.append((model, model_view))
         self.add_view(model_view)
 
