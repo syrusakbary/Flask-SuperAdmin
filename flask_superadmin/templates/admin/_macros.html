@@ -88,7 +88,7 @@
 {% macro render_ff (ff, delete, readonly=False) %}
     <section class="field">
         {% if ff.type == "FormField" %}
-      
+
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
@@ -113,7 +113,7 @@
                 <div class="clear"></div>
             </div>
         {% else %}
-            
+
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
@@ -141,7 +141,7 @@
                 {% else %}
                     {{ ff(class=class) }}
                 {% endif %}
-        
+
                 {% for error in ff.errors %}
                     &nbsp;<span class="label label-important">{{ error }}</span>
                 {% endfor %}

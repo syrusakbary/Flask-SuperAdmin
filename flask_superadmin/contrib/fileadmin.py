@@ -277,6 +277,9 @@ class FileAdmin(BaseView):
 
         return base_path, directory, path
 
+    def field_name(self, text):
+        return text.capitalize()
+
     @expose('/')
     @expose('/b/<path:path>')
     def index(self, path=None):
