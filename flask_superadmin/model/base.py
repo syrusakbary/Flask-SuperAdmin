@@ -342,4 +342,4 @@ class BaseModelAdmin(BaseView):
         )
 
 
-class ModelAdmin(object): pass
+class ModelAdmin(BaseModelAdmin): pass
