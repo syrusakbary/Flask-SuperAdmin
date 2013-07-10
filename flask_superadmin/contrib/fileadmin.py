@@ -323,7 +323,8 @@ class FileAdmin(BaseView):
                            breadcrumbs=breadcrumbs,
                            get_dir_url=self._get_dir_url,
                            get_file_url=self._get_file_url,
-                           items=items)
+                           items=items,
+                           base_path=base_path)
 
     @expose('/upload/', methods=('GET', 'POST'))
     @expose('/upload/<path:path>', methods=('GET', 'POST'))
