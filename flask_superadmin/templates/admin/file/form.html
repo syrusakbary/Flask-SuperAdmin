@@ -2,8 +2,9 @@
 {% import 'admin/_macros.html' as lib with context %}
 
 {% block body %}
-    <h1 id="main-title">{{_gettext('Files')}}</h1>
+    <h1 id="main-title">{{_gettext('Files')}}{%if msg %} - {{msg}} {% endif %}</h1>
     <div class="clearfix"></div>
+    /{{ base_path.split('/')[-1] }}/{% if path %}{{path}}/{% endif %}
     <hr />
     {{ lib.render_form(form, dir_url) }}
 {% endblock %}

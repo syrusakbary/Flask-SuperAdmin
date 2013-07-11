@@ -277,6 +277,9 @@ class FileAdmin(BaseView):
 
         return base_path, directory, path
 
+    def field_name(self, text):
+        return text.capitalize()
+
     @expose('/')
     @expose('/b/<path:path>')
     def index(self, path=None):
@@ -320,7 +323,8 @@ class FileAdmin(BaseView):
                            breadcrumbs=breadcrumbs,
                            get_dir_url=self._get_dir_url,
                            get_file_url=self._get_file_url,
-                           items=items)
+                           items=items,
+                           base_path=base_path)
 
     @expose('/upload/', methods=('GET', 'POST'))
     @expose('/upload/<path:path>', methods=('GET', 'POST'))
@@ -353,7 +357,11 @@ class FileAdmin(BaseView):
                 except Exception, ex:
                     flash(gettext('Failed to save file: %(error)s', error=ex))
 
-        return self.render(self.upload_template, form=form)
+        return self.render(self.upload_template,
+                           form=form,
+                           base_path=base_path,
+                           path=path,
+                           msg=gettext(u'Upload a file'))
 
     @expose('/mkdir/', methods=('GET', 'POST'))
     @expose('/mkdir/<path:path>', methods=('GET', 'POST'))
@@ -384,7 +392,10 @@ class FileAdmin(BaseView):
 
         return self.render(self.mkdir_template,
                            form=form,
-                           dir_url=dir_url)
+                           dir_url=dir_url,
+                           base_path=base_path,
+                           path=path,
+                           msg=gettext(u'Create a new directory'))
 
     @expose('/delete/', methods=('POST',))
     def delete(self):
@@ -465,4 +476,5 @@ class FileAdmin(BaseView):
                            form=form,
                            path=op.dirname(path),
                            name=op.basename(path),
-                           dir_url=return_url)
+                           dir_url=return_url,
+                           base_path=base_path)
