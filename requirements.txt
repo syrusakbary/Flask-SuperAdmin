@@ -2,5 +2,5 @@ Flask>=0.7
 Flask-WTF>=0.6
 Flask-SQLAlchemy>=0.15
 mongoengine
-https://github.com/sbook/flask-mongoengine/tarball/master
+flask-mongoengine>=0.7
 Django>=1.3
