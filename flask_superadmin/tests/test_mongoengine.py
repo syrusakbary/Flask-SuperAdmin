@@ -322,3 +322,23 @@ def test_reference_linking():
     ok_('<input class="" id="age" name="age" type="text" value="10">' in resp.data)
     ok_(dog_link in resp.data)
 
+def test_no_csrf_in_form():
+    app, admin = setup()
+
+    class Person(Document):
+        name = StringField()
+        age = IntField()
+
+    Person.drop_collection()
+    person = Person.objects.create(name='Eric', age=10)
+
+    client = app.test_client()
+
+    view = CustomModelView(Person)
+    admin.add_view(view)
+
+    resp = client.get('/admin/person/%s/' % person.pk)
+    ok_('<textarea class="" id="name" name="name">Eric</textarea>' in resp.data)
+    ok_('<input class="" id="age" name="age" type="text" value="10">' in resp.data)
+    ok_('<label for="csrf_token">Csrf Token</label>' not in resp.data)
+

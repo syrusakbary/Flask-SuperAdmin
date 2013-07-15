@@ -176,7 +176,9 @@
                     </section>
                 {% endwith %}
             {% else %}
-                {{ render_ff(form._fields[field_name]) }}
+                {% if field_name != 'csrf_token' and field_name != 'csrf' %}
+                    {{ render_ff(form._fields[field_name]) }}
+                {% endif %}
             {% endif %}
         {% endfor %}
 
