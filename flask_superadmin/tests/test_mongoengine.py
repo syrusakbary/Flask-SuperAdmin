@@ -279,3 +279,46 @@ def test_sort():
     ok_('Ron' in resp.data)
     ok_('Steve' not in resp.data)
 
+def test_reference_linking():
+    app, admin = setup()
+
+    class Dog(Document):
+        name = StringField()
+
+        def __unicode__(self):
+            return self.name
+
+    class Person(Document):
+        name = StringField()
+        age = IntField()
+        pet = ReferenceField(Dog)
+
+    class DogAdmin(ModelAdmin):
+        pass
+
+    class PersonAdmin(ModelAdmin):
+        list_display = ('name', 'age', 'pet')
+        fields = ('name', 'age', 'pet')
+        readonly_fields = ('pet',)
+
+    Dog.drop_collection()
+    Person.drop_collection()
+    dog = Dog.objects.create(name='Sparky')
+    person = Person.objects.create(name='Stan', age=10, pet=dog)
+
+    admin.register(Dog, DogAdmin, name='Dogs')
+    admin.register(Person, PersonAdmin, name='People')
+
+    client = app.test_client()
+
+    # test linking on a list page
+    resp = client.get('/admin/person/')
+    dog_link = '<a href="/admin/dog/%s/">Sparky</a>' % dog.pk
+    ok_(dog_link in resp.data)
+
+    # test linking on an edit page
+    resp = client.get('/admin/person/%s/' % person.pk)
+    ok_('<textarea class="" id="name" name="name">Stan</textarea>' in resp.data)
+    ok_('<input class="" id="age" name="age" type="text" value="10">' in resp.data)
+    ok_(dog_link in resp.data)
+
