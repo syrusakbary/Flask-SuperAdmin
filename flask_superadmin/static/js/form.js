@@ -73,6 +73,7 @@ $('.search-input').on('input', function() {
 $('.search .clear-btn').click(function() {
     $('.search .search-input').val('').focus();
     $(this).hide();
+    window.location.href = window.location.pathname;
 });
 
 // Apply automatic styles

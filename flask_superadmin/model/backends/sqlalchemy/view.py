@@ -76,26 +76,34 @@ class ModelAdmin(BaseModelAdmin):
         self.session.commit()
         return True
 
-    def construct_search(self, field_name):
-        if field_name.startswith('^'):
-            return literal(field_name[1:]).startswith
-        elif field_name.startswith('='):
-            return literal(field_name[1:]).op('=')
+    def construct_search(self, field_name, op=None):
+        if op == '^':
+            return literal_column(field_name).startswith
+        elif op == '=':
+            return literal_column(field_name).op('==')
         else:
-            return literal(field_name).contains
+            return literal_column(field_name).contains
+
+    def apply_search(self, qs, search_query):
+        or_queries = []
+        # treat spaces as if they were OR operators
+        for word in search_query.split():
+            op = word[:1]
+            if op in ['^', '=']:
+                word = word[1:]
+            orm_lookups = [self.construct_search(str(model_field), op)
+                           for model_field in self.search_fields]
+            or_queries.extend([orm_lookup(word) for orm_lookup in orm_lookups])
+        if or_queries:
+            qs = qs.filter(sum(or_queries))
+        return qs
 
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False, search_query=None):
         qs = self.get_queryset()
 
         # Filter by search query
         if search_query and self.search_fields:
-            orm_lookups = [self.construct_search(str(search_field))
-                           for search_field in self.search_fields]
-            for bit in search_query.split():
-                or_queries = [orm_lookup(bit) for orm_lookup in orm_lookups]
-                qs = qs.filter(sum(or_queries))
-
-        count = qs.count()
+            qs = self.apply_search(qs, search_query)
 
         #Order queryset
         if sort:
@@ -112,5 +120,4 @@ class ModelAdmin(BaseModelAdmin):
         if execute:
             qs = qs.all()
 
-        return count, qs
-
+        return qs.count(), qs
