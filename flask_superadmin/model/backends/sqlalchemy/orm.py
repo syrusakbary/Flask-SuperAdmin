@@ -1,7 +1,11 @@
+"""
+Tools for generating forms based on SQLAlchemy Model schemas.
+"""
+
 from sqlalchemy.orm.exc import NoResultFound
 
-from wtforms import ValidationError, fields, validators
-from wtforms.ext.sqlalchemy.orm import converts, ModelConverter
+from wtforms import Form, ValidationError, fields, validators
+from wtforms.ext.sqlalchemy.orm import converts, ModelConverter, model_form as original_model_form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 
 from flask.ext.superadmin import form
@@ -149,10 +153,8 @@ class AdminModelConverter(ModelConverter):
             if override:
                 return override(**kwargs)
 
-            return super(AdminModelConverter, self).convert(model,
-                                                            mapper,
-                                                            prop,
-                                                            kwargs)
+            return super(AdminModelConverter, self).convert(model, mapper,
+                                                            prop, kwargs)
 
     @converts('Date')
     def convert_date(self, field_args, **extra):
@@ -167,3 +169,9 @@ class AdminModelConverter(ModelConverter):
     @converts('Time')
     def convert_time(self, field_args, **extra):
         return form.TimeField(**field_args)
+
+def model_form(model, base_class=Form, fields=None, readonly_fields=None,
+               exclude=None, field_args=None, converter=None):
+    return original_model_form(model, base_class=base_class, only=fields,
+                               exclude=exclude, field_args=field_args,
+                               converter=converter)

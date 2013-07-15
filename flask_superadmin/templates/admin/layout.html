@@ -23,8 +23,7 @@
 
       <div class="row">
         <div class="span2">
-<!--           <span class="brand">{{ admin_view.admin.name }}</span>
- -->          <ul id="main-nav" class="nav nav-pills nav-stacked">
+          <ul id="main-nav" class="nav nav-pills nav-stacked">
             {% for item in admin_view.admin.menu() %}
               {% if item.is_category() %}
                 {% set children = item.get_children() %}
