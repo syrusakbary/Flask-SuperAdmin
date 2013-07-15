@@ -286,36 +286,61 @@ def test_non_int_pk():
     eq_(resp.status_code, 200)
     ok_('test2' in resp.data)
 
-
-def test_form():
-    # TODO: form_columns
-    # TODO: excluded_form_columns
-    # TODO: form_args
-    pass
-
-
-def test_field_override():
-    return
-
+def test_reference_linking():
     app, db, admin = setup()
 
-    class Model(db.Model):
-        id = db.Column(db.String, primary_key=True)
-        test = db.Column(db.String)
+    class Person(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(20))
+        pet = db.relationship("Dog", uselist=False, backref="person")
+
+        def __init__(self, name=None):
+            self.name = name
+
+    class Dog(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(20))
+        person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+
+        def __init__(self, name=None, person_id=None):
+            self.name = name
+            self.person_id = person_id
+
+        def __unicode__(self):
+            return self.name
 
     db.create_all()
 
-    view1 = CustomModelView(Model, db.session, endpoint='view1')
-    view2 = CustomModelView(Model, db.session, endpoint='view2', field_overrides=dict(test=wtf.FileField))
+    class DogAdmin(ModelAdmin):
+        session = db.session
 
-    admin.add_view(view1)
-    admin.add_view(view2)
+    class PersonAdmin(ModelAdmin):
+        list_display = ('name', 'pet')
+        fields = ('name', 'pet')
+        readonly_fields = ('pet',)
+        session = db.session
 
-    eq_(view1.get_add_form().test.field_class, wtf.TextField)
-    eq_(view2.get_add_form().test.field_class, wtf.FileField)
+    db.session.add(Person(name='Stan'))
+    db.session.commit()
+    person = db.session.query(Person).first()
 
+    db.session.add(Dog(name='Sparky', person_id=person.id))
+    db.session.commit()
+    person = db.session.query(Person).first()
+    dog = db.session.query(Dog).first()
 
-def test_relations():
-    # TODO: test relations
-    pass
+    admin.register(Dog, DogAdmin, name='Dogs')
+    admin.register(Person, PersonAdmin, name='People')
+
+    client = app.test_client()
+
+    # test linking on a list page
+    resp = client.get('/admin/person/')
+    dog_link = '<a href="/admin/dog/%s/">Sparky</a>' % dog.id
+    ok_(dog_link in resp.data)
+
+    # test linking on an edit page
+    resp = client.get('/admin/person/%s/' % person.id)
+    ok_('<input class="" id="name" name="name" type="text" value="Stan">' in resp.data)
+    ok_(dog_link in resp.data)
 
