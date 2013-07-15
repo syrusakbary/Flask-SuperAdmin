@@ -201,3 +201,4 @@ def test_double_init():
     app = Flask(__name__)
     admin = base.Admin(app)
     admin.init_app(app)
+

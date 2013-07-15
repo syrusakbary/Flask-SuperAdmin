@@ -10,7 +10,7 @@ from bson.objectid import ObjectId
 SORTABLE_FIELDS = (
     mongoengine.BooleanField,
     mongoengine.DateTimeField,
-    mongoengine.DecimalField,
+    #mongoengine.DecimalField,
     mongoengine.FloatField,
     mongoengine.IntField,
     mongoengine.StringField,

@@ -1,10 +1,9 @@
 from sqlalchemy.sql.expression import desc, literal
-from sqlalchemy import schema
-from wtforms.ext.sqlalchemy.orm import model_form
+
+from orm import model_form, AdminModelConverter
 
 from flask_superadmin.model.base import BaseModelAdmin
-
-from .orm import AdminModelConverter
+from sqlalchemy import schema
 
 
 class ModelAdmin(BaseModelAdmin):
@@ -72,9 +71,9 @@ class ModelAdmin(BaseModelAdmin):
         return instance
 
     def delete_models(self, *pks):
-        self.get_objects(*pks).delete(synchronize_session='fetch')
+        objs = self.get_objects(*pks)
+        objs.delete(synchronize_session='fetch')
         self.session.commit()
-        #for obj in self.get_objects(*pks): obj.delete()
         return True
 
     def construct_search(self, field_name):
