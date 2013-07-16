@@ -105,6 +105,9 @@ class ModelAdmin(BaseModelAdmin):
         if search_query and self.search_fields:
             qs = self.apply_search(qs, search_query)
 
+        #Calculate number of rows
+        count = qs.count()
+
         #Order queryset
         if sort:
             if sort_desc:
@@ -120,4 +123,4 @@ class ModelAdmin(BaseModelAdmin):
         if execute:
             qs = qs.all()
 
-        return qs.count(), qs
+        return count, qs
