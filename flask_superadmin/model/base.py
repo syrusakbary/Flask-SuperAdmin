@@ -133,8 +133,9 @@ class BaseModelAdmin(BaseView):
     def get_readonly_fields(self, instance):
         ret_vals = {}
         for field in self.readonly_fields:
-            if hasattr(self, field):
-                val = getattr(self, field)(instance)
+            self_field = getattr(self, field, None)
+            if callable(self_field):
+                val = self_field(instance)
             else:
                 val = getattr(instance, field)
                 if callable(val):
