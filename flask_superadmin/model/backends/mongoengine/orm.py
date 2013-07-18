@@ -121,6 +121,10 @@ class ModelConverter(object):
     def conv_File(self, model, field, kwargs):
         return f.FileField(**kwargs)
 
+    @converts('ImageField')
+    def conv_Image(self, model, field, kwargs):
+        return f.FileField(**kwargs)
+
     @converts('DecimalField')
     def conv_Decimal(self, model, field, kwargs):
         self._number_common(model, field, kwargs)
@@ -242,6 +246,17 @@ def data_to_field(field, data):
         for d in data:
             l.append(data_to_field(field.field, d))
         return l
+    elif isinstance(field, (fields.ImageField)):
+        if data.filename:
+            gfs = field.proxy_class(
+                        collection_name=field.collection_name,
+                        instance=field.owner_document(),
+                        key=field.name)
+            gfs.put(data.stream, filename=secure_filename(data.filename), content_type=data.mimetype)
+            return gfs
+        elif data.clear:
+            return _remove_file_value
+        return _unset_value
     elif isinstance(field, (fields.FileField)):
         if data.filename:
             gfs = field.proxy_class()
