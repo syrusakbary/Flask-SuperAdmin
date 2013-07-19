@@ -246,20 +246,12 @@ def data_to_field(field, data):
         for d in data:
             l.append(data_to_field(field.field, d))
         return l
-    elif isinstance(field, (fields.ImageField)):
+    elif isinstance(field, (fields.FileField)):
         if data.filename:
             gfs = field.proxy_class(
                         collection_name=field.collection_name,
                         instance=field.owner_document(),
                         key=field.name)
-            gfs.put(data.stream, filename=secure_filename(data.filename), content_type=data.mimetype)
-            return gfs
-        elif data.clear:
-            return _remove_file_value
-        return _unset_value
-    elif isinstance(field, (fields.FileField)):
-        if data.filename:
-            gfs = field.proxy_class()
             gfs.put(data.stream, filename=secure_filename(data.filename), content_type=data.mimetype)
             return gfs
         elif data.clear:
