@@ -1,4 +1,4 @@
-from sqlalchemy.sql.expression import desc, literal
+from sqlalchemy.sql.expression import desc, literal_column
 
 from orm import model_form, AdminModelConverter
 
