@@ -283,6 +283,9 @@ class FileAdmin(BaseView):
     def field_name(self, text):
         return text.capitalize()
 
+    def get_readonly_fields(self, instance):
+        return {}
+
     @expose('/')
     @expose('/b/<path:path>')
     def index(self, path=None):
