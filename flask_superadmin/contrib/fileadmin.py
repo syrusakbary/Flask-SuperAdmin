@@ -155,7 +155,7 @@ class FileAdmin(BaseView):
 
         # Convert allowed_extensions to set for quick validation
         if (self.allowed_extensions
-            and not isinstance(self.allowed_extensions, set)):
+                and not isinstance(self.allowed_extensions, set)):
             self.allowed_extensions = set(self.allowed_extensions)
 
         super(FileAdmin, self).__init__(name, category, endpoint, url)
