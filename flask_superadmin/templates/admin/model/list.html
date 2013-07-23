@@ -48,9 +48,9 @@
                                         <a href="{{ admin_view.sort_url(c if not sort_desc else None, True) }}">
                                             {{ name }}
                                             {% if sort_desc %}
-                                                <i class="icon-chevron-up"></i>
+                                                <i sort_desc="{{ sort_desc }}" class="icon-chevron-down"></i>
                                             {% else %}
-                                                <i class="icon-chevron-down"></i>
+                                                <i sort_desc="{{ sort_desc }}" class="icon-chevron-up"></i>
                                             {% endif %}
                                         </a>
                                     {% else %}
