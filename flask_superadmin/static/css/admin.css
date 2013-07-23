@@ -64,13 +64,13 @@ input {
 .table tbody tr:hover td,
 .table tbody tr:hover th {
     background: #F9F9F9;
-    word-break: break-all;
 }
 .table tbody tr.checked td{
   background:rgb(255, 255, 230)!important;
 }
 .table th, .table td {
     border-top-color:#F2F2F2;
+    word-break: break-all;
 }
 a {
     color:#3F6EC2;
