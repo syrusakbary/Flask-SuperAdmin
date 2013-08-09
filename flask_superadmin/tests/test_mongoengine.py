@@ -342,3 +342,22 @@ def test_no_csrf_in_form():
     ok_('<input class="" id="age" name="age" type="text" value="10">' in resp.data)
     ok_('<label for="csrf_token">Csrf Token</label>' not in resp.data)
 
+def test_requred_int_field():
+    app, admin = setup()
+
+    class Person(Document):
+        name = StringField()
+        age = IntField(required=True)
+
+    Person.drop_collection()
+
+    view = CustomModelView(Person)
+    admin.add_view(view)
+
+    client = app.test_client()
+
+    resp = client.post('/admin/person/add/', data=dict(name='name', age='0'))
+    eq_(resp.status_code, 302)
+    ok_('This field is required.' not in resp.data)
+    ok_('error.' not in resp.data)
+
