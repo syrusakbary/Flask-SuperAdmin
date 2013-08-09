@@ -23,12 +23,6 @@ class ModelAdmin(BaseModelAdmin):
     def model_detect(model):
         return issubclass(model, mongoengine.Document)
 
-    def __init__(self, model=None, fields_order=None, **kwargs):
-        # if self.fields_order is None and fields_order in None and model is not None:
-        #     self.fields_order = model._fields_ordered
-        super(ModelAdmin, self).__init__(model, **kwargs)
-
-
     def allow_pk(self):
         return False
 

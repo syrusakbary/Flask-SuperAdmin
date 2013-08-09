@@ -52,7 +52,12 @@ class ModelConverter(object):
             kwargs.update(field_args)
 
         if field.required:
-            kwargs['validators'].append(validators.Required())
+
+            # Hacky but necessary, since validators.Required doesn't handle 0 properly
+            if isinstance(field, IntField):
+                kwargs['validators'].append(validators.InputRequired())
+            else:
+                kwargs['validators'].append(validators.Required())
         else:
             kwargs['validators'].append(validators.Optional())
 
