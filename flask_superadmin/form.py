@@ -54,7 +54,7 @@ class TimeField(fields.Field):
         """
         super(TimeField, self).__init__(label, validators, **kwargs)
 
-        self.format = formats or ('%H:%M:%S', '%H:%M',
+        self.formats = formats or ('%H:%M:%S', '%H:%M',
                                   '%I:%M:%S%p', '%I:%M%p',
                                   '%I:%M:%S %p', '%I:%M %p')
 
@@ -62,7 +62,7 @@ class TimeField(fields.Field):
         if self.raw_data:
             return u' '.join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.format) or u''
+            return self.data and self.data.strftime(self.formats[0]) or u''
 
     def process_formdata(self, valuelist):
         if valuelist:
