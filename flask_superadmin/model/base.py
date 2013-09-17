@@ -6,10 +6,11 @@ from flask import request, url_for, redirect, flash, abort
 
 from flask_superadmin.babel import gettext
 from flask_superadmin.base import BaseView, expose
-from flask_superadmin.form import BaseForm, ChosenSelectWidget, DatePickerWidget, \
-    DateTimePickerWidget, FileField
+from flask_superadmin.form import (BaseForm, ChosenSelectWidget, FileField,
+                                   DatePickerWidget, DateTimePickerWidget)
 
 import traceback
+
 
 class AdminModelConverter(object):
     def convert(self, *args, **kwargs):
@@ -17,7 +18,8 @@ class AdminModelConverter(object):
         if field:
             widget = field.kwargs.get('widget', field.field_class.widget)
             if isinstance(widget, widgets.Select):
-                field.kwargs['widget'] = ChosenSelectWidget(multiple=widget.multiple)
+                field.kwargs['widget'] = ChosenSelectWidget(
+                    multiple=widget.multiple)
             elif issubclass(field.field_class, fields.DateTimeField):
                 field.kwargs['widget'] = DateTimePickerWidget()
             elif issubclass(field.field_class, fields.DateField):
@@ -28,6 +30,8 @@ class AdminModelConverter(object):
 
 
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
+
+
 def camelcase_to_space(name):
     return first_cap_re.sub(r'\1 \2', name)
 
@@ -128,13 +132,15 @@ class BaseModelAdmin(BaseView):
     def get_reference(self, column_value):
         for model, model_view in self.admin._models:
             if type(column_value) == model:
-                return '/admin/%s/%s/' % (model_view.endpoint, self.get_pk(column_value))
+                return '/admin/%s/%s/' % (model_view.endpoint,
+                                          self.get_pk(column_value))
 
     def get_readonly_fields(self, instance):
         ret_vals = {}
         for field in self.readonly_fields:
-            if hasattr(self, field):
-                val = getattr(self, field)(instance)
+            self_field = getattr(self, field, None)
+            if callable(self_field):
+                val = self_field(instance)
             else:
                 val = getattr(instance, field)
                 if callable(val):
@@ -277,7 +283,8 @@ class BaseModelAdmin(BaseView):
             sort = '-' + sort
         if page == 0:
             page = None
-        return url_for(self.get_url_name('index'), page=page, sort=sort, q=search_query)
+        return url_for(self.get_url_name('index'), page=page, sort=sort,
+                       q=search_query)
 
     def sort_url(self, sort, desc=None):
         if sort and desc:
@@ -293,8 +300,8 @@ class BaseModelAdmin(BaseView):
         # Grab parameters from URL
         if request.method == 'POST':
             id_list = request.form.getlist('_selected_action')
-            if id_list and (request.form.get('action-delete') or \
-                request.form.get('action', None) == 'delete'):
+            if id_list and (request.form.get('action-delete') or
+                            request.form.get('action', None) == 'delete'):
                 return self.delete(*id_list)
 
         sort, sort_desc = self.sort
@@ -322,13 +329,15 @@ class BaseModelAdmin(BaseView):
             if form.validate_on_submit():
                 try:
                     self.save_model(instance, form, adding=False)
-                    flash('Changes to %s saved successfully' % self.get_display_name(),
-                          'success')
+                    flash(
+                        'Changes to %s saved successfully' % self.get_display_name(),
+                        'success'
+                    )
                     return self.dispatch_save_redirect(instance)
                 except Exception, ex:
                     print traceback.format_exc()
-                    flash(gettext('Failed to edit model. %(error)s', error=str(ex)),
-                          'error')
+                    flash(gettext('Failed to edit model. %(error)s',
+                                  error=str(ex)), 'error')
         else:
             form = Form(obj=instance)
 
@@ -347,16 +356,16 @@ class BaseModelAdmin(BaseView):
             count = len(pks)
             self.delete_models(*pks)
 
-            flash('Successfully deleted %s %ss' % (count, self.get_display_name()),
-                  'success')
+            flash(
+                'Successfully deleted %s %ss' % (count, self.get_display_name()),
+                'success'
+            )
             return redirect(url_for(self.get_url_name('index')))
         else:
             instances = self.get_objects(*pks)
 
-        return self.render(self.delete_template,
-            instances=instances
-        )
+        return self.render(self.delete_template, instances=instances)
 
 
-class ModelAdmin(object): pass
-
+class ModelAdmin(BaseModelAdmin):
+    pass

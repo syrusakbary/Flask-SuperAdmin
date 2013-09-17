@@ -19,7 +19,7 @@
     <hr />
     <ul id="file-paths">
         <li>
-            <a href="{{ get_dir_url('.index', path=None) }}">{{ _gettext('Root') }}</a>
+            <a href="{{ get_dir_url('.index', path=None) }}">{{ base_path.split('/')[-1] }}</a>
         </li>
         {% for name, path in breadcrumbs[:-1] %}
         <li>

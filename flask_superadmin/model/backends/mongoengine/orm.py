@@ -52,7 +52,12 @@ class ModelConverter(object):
             kwargs.update(field_args)
 
         if field.required:
-            kwargs['validators'].append(validators.Required())
+
+            # Hacky but necessary, since validators.Required doesn't handle 0 properly
+            if isinstance(field, IntField):
+                kwargs['validators'].append(validators.InputRequired())
+            else:
+                kwargs['validators'].append(validators.Required())
         else:
             kwargs['validators'].append(validators.Optional())
 
@@ -119,6 +124,10 @@ class ModelConverter(object):
 
     @converts('FileField')
     def conv_File(self, model, field, kwargs):
+        return f.FileField(**kwargs)
+
+    @converts('ImageField')
+    def conv_Image(self, model, field, kwargs):
         return f.FileField(**kwargs)
 
     @converts('DecimalField')
@@ -244,7 +253,10 @@ def data_to_field(field, data):
         return l
     elif isinstance(field, (fields.FileField)):
         if data.filename:
-            gfs = field.proxy_class()
+            gfs = field.proxy_class(
+                        collection_name=field.collection_name,
+                        instance=field.owner_document(),
+                        key=field.name)
             gfs.put(data.stream, filename=secure_filename(data.filename), content_type=data.mimetype)
             return gfs
         elif data.clear:

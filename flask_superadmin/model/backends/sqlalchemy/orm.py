@@ -172,6 +172,7 @@ class AdminModelConverter(ModelConverter):
 
 def model_form(model, base_class=Form, fields=None, readonly_fields=None,
                exclude=None, field_args=None, converter=None):
-    return original_model_form(model, base_class=base_class, only=fields,
+    only = tuple(set(fields or []) - set(readonly_fields or []))
+    return original_model_form(model, base_class=base_class, only=only,
                                exclude=exclude, field_args=field_args,
                                converter=converter)

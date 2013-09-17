@@ -112,7 +112,7 @@ class BaseView(object):
 
         # Default view
         if self._default_view is None:
-            raise Exception('Attempted to instantiate admin view %s without defailt view' % self.__class__.__name__)
+            raise Exception('Attempted to instantiate admin view %s without default view' % self.__class__.__name__)
 
     def create_blueprint(self, admin):
         """ Create Flask blueprint. """
@@ -364,7 +364,7 @@ class Admin(object):
         admin_class = admin_class or ModelAdmin
 
         backend = self.model_backend(model)
-        new_class = type(admin_class.__name__,(admin_class,backend),{})
+        new_class = type(admin_class.__name__, (admin_class, backend), {})
         model_view = new_class(model, *args, **kwargs)
 
         self._models.append((model, model_view))
