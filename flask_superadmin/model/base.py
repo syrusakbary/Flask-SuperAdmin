@@ -95,6 +95,11 @@ class BaseModelAdmin(BaseView):
     # be passed an obj instance as a parameter
     extra_readonly = None
 
+    # Indicates whether the references for the objects in the list view should
+    # be bulk-fetched (this might speed things up significantly by reducing
+    # the number of queries for the list view)
+    select_related=False
+
     @staticmethod
     def model_detect(model):
         return False
