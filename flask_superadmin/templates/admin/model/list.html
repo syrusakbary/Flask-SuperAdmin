@@ -60,7 +60,7 @@
                 <thead>
                     <tr>
                         <th class="model-check"><input type="checkbox" name="selected_all_instances" value="all"></th>
-                        {% for c in admin_view.list_display %}
+                        {% for c in admin_view.get_list_display() %}
                             <th>
                                 {% set name = admin_view.field_name(c) %}
                                 {% if admin_view.is_sortable(c)%}
@@ -93,7 +93,7 @@
                             {% set pk = admin_view.get_pk(instance) %}
                             <input type="checkbox" name="_selected_action" value="{{ pk }}">
                         </td>
-                        {% for c in admin_view.list_display %}
+                        {% for c in admin_view.get_list_display() %}
                             {% if loop.first %}
                                 <td><a href="{{ url_for('.edit', pk=pk) }}">{{ admin_view.get_column(instance, c) }}</a></td>
                             {% else %}

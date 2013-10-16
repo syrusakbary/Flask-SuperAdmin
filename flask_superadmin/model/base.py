@@ -120,6 +120,9 @@ class BaseModelAdmin(BaseView):
     def get_display_name(self):
         return self.model.__name__
 
+    def get_list_display(self):
+        return self.list_display
+
     def allow_pk(self):
         return not self.model._meta.auto_increment
 
