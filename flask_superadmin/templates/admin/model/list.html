@@ -66,7 +66,7 @@
                                 {% if admin_view.is_sortable(c)%}
                                     {% if sort == c %}
                                         <a href="{{ admin_view.sort_url(c if not sort_desc else None, True) }}">
-                                            {{ name }}
+                                            {{ field_name }}
                                             {% if sort_desc %}
                                                 <i class="icon-chevron-up"></i>
                                             {% else %}
@@ -74,10 +74,10 @@
                                             {% endif %}
                                         </a>
                                     {% else %}
-                                        <a href="{{ admin_view.sort_url(c) }}">{{ name }}</a>
+                                        <a href="{{ admin_view.sort_url(c) }}">{{ field_name }}</a>
                                     {% endif %}
                                 {% else %}
-                                    {{ name }}
+                                    {{ field_name }}
                                 {% endif %}
                             </th>
                         {% else %}
