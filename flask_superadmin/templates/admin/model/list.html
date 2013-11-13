@@ -61,8 +61,8 @@
                     <tr>
                         <th class="model-check"><input type="checkbox" name="selected_all_instances" value="all"></th>
                         {% for c in admin_view.get_list_display() %}
-                            <th>
-                                {% set name = admin_view.field_name(c) %}
+                            <th class="{{ name }}-{{ c }}">
+                                {% set field_name = admin_view.field_name(c) %}
                                 {% if admin_view.is_sortable(c)%}
                                     {% if sort == c %}
                                         <a href="{{ admin_view.sort_url(c if not sort_desc else None, True) }}">
