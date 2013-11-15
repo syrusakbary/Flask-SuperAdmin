@@ -254,6 +254,7 @@ def data_to_field(field, data):
     elif isinstance(field, (fields.FileField)):
         if data.filename:
             gfs = field.proxy_class(
+                        db_alias=field.db_alias,
                         collection_name=field.collection_name,
                         instance=field.owner_document(),
                         key=field.name)
