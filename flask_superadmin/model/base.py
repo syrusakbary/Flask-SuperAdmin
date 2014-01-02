@@ -251,7 +251,7 @@ class BaseModelAdmin(BaseView):
                           error=str(ex)), 'error')
 
         else:
-            form = Form(obj=self.model())
+            form = Form()
 
         return self.render(self.add_template, model=self.model, form=form)
 
