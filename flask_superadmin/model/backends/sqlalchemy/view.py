@@ -71,10 +71,12 @@ class ModelAdmin(BaseModelAdmin):
         return instance
 
     def delete_models(self, *pks):
-        objs = self.get_objects(*pks)
-        objs.delete(synchronize_session='fetch')
+        for pk in pks:
+            user = self.model.query.get(pk)
+            self.session.delete(user)
         self.session.commit()
         return True
+
 
     def construct_search(self, field_name, op=None):
         if op == '^':
