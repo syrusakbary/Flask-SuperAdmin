@@ -153,6 +153,10 @@ class BaseModelAdmin(BaseView):
                                           model_view.get_pk(column_value))
 
     def get_readonly_fields(self, instance):
+        # if instance is undefined, just return a dict of readonly keys with None values
+        if not instance:
+            return {k: None for k in self.readonly_fields}
+
         ret_vals = {}
         if not instance:
             return ret_vals
