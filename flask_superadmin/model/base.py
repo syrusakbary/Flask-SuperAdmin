@@ -251,7 +251,12 @@ class BaseModelAdmin(BaseView):
                           error=str(ex)), 'error')
 
         else:
-            form = Form(obj=self.model())
+            try:
+                form = Form(obj=self.model())
+            except TypeError:
+                raise Exception('The database model for %r should have an '
+                                '__init__ with all arguments set to defaults.'
+                                % self.model.__name__)
 
         return self.render(self.add_template, model=self.model, form=form)
 
