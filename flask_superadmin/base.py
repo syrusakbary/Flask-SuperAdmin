@@ -274,6 +274,7 @@ class MenuItem(object):
 
 class Admin(object):
     """ Collection of the views. Also manages menu structure. """
+    app = None
 
     def __init__(self, app=None, name=None, url=None, index_view=None,
                  translations_path=None):
@@ -290,8 +291,6 @@ class Admin(object):
                 Location of the translation message catalogs. By default will use translations
                 shipped with the Flask-SuperAdmin.
         """
-        self.app = app
-
         self.translations_path = translations_path
 
         self._views = []
@@ -329,17 +328,12 @@ class Admin(object):
         # Localizations
         self.locale_selector_func = None
 
-        # Index view
-        if index_view is None:
-            index_view = AdminIndexView(url=self.url)
-
-        self.index_view = index_view
-
         # Add predefined index view
-        self.add_view(index_view)
+        self.index_view = index_view or AdminIndexView(url=self.url)
+        self.add_view(self.index_view)
 
-        if app:
-            self._init_extension()
+        if app is not None:
+            self.init_app(app)
 
     def model_backend(self, model):
         for backend in self._model_backends:
@@ -442,27 +436,15 @@ class Admin(object):
             `app`
                 Flask application instance
         """
-        if self.app is not None:
-            raise Exception('Flask-SuperAdmin is already associated with an application.')
-
         self.app = app
+
+        app.extensions = getattr(app, 'extensions', {})
+        app.extensions['admin'] = self
 
         for view in self._views:
             app.register_blueprint(view.create_blueprint(self))
             self._add_view_to_menu(view)
 
-        self._init_extension()
-
-    def _init_extension(self):
-        if not hasattr(self.app, 'extensions'):
-            self.app.extensions = dict()
-
-        if 'admin' in self.app.extensions:
-            raise Exception('Cannot have more than one instance of the Admin class associated with Flask application')
-
-        self.app.extensions['admin'] = self
-
     def menu(self):
         """ Return menu hierarchy. """
         return self._menu
-
