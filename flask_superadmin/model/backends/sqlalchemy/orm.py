@@ -170,6 +170,11 @@ class AdminModelConverter(ModelConverter):
     def convert_time(self, field_args, **extra):
         return form.TimeField(**field_args)
 
+    @converts('Text')
+    def conv_Text_fix(self, field_args, **extra):
+        return self.conv_Text(field_args, **extra)
+
+
 def model_form(model, base_class=Form, fields=None, readonly_fields=None,
                exclude=None, field_args=None, converter=None):
     only = tuple(set(fields or []) - set(readonly_fields or []))
