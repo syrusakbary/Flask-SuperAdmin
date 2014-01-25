@@ -1,5 +1,5 @@
 try:
-    from flask.ext.babel import Domain
+    from flask.ext.babelex import Domain
 
     from flask.ext.superadmin import translations
 
