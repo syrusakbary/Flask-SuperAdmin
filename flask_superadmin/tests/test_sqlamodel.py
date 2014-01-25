@@ -1,8 +1,8 @@
 from nose.tools import eq_, ok_, raises
 
-from flask import Flask
+import wtforms
 
-from flask.ext import wtf
+from flask import Flask
 
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import InvalidRequestError
@@ -50,7 +50,7 @@ def create_models(db):
 def setup():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = '1'
-    app.config['CSRF_ENABLED'] = False
+    app.config['WTF_CSRF_ENABLED'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'
 
     db = SQLAlchemy(app)
@@ -76,10 +76,10 @@ def test_model():
     # Verify form
     with app.test_request_context():
         Form = view.get_form()
-        ok_(isinstance(Form()._fields['test1'], wtf.TextField))
-        ok_(isinstance(Form()._fields['test2'], wtf.TextField))
-        ok_(isinstance(Form()._fields['test3'], wtf.TextAreaField))
-        ok_(isinstance(Form()._fields['test4'], wtf.TextAreaField))
+        ok_(isinstance(Form()._fields['test1'], wtforms.TextField))
+        ok_(isinstance(Form()._fields['test2'], wtforms.TextField))
+        ok_(isinstance(Form()._fields['test3'], wtforms.TextAreaField))
+        ok_(isinstance(Form()._fields['test4'], wtforms.TextAreaField))
 
     # Make some test clients
     client = app.test_client()

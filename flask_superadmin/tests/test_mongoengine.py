@@ -1,7 +1,8 @@
 from nose.tools import eq_, ok_, raises
 
+import wtforms
+
 from flask import Flask
-from flask.ext import wtf
 from mongoengine import *
 
 from flask_superadmin import Admin
@@ -22,7 +23,7 @@ def setup():
     connect('superadmin_test')
     app = Flask(__name__)
     app.config['SECRET_KEY'] = '1'
-    app.config['CSRF_ENABLED'] = False
+    app.config['WTF_CSRF_ENABLED'] = False
 
     admin = Admin(app)
 
@@ -49,8 +50,8 @@ def test_model():
     # Verify form
     with app.test_request_context():
         Form = view.get_form()
-        ok_(isinstance(Form()._fields['name'], wtf.TextAreaField))
-        ok_(isinstance(Form()._fields['age'], wtf.IntegerField))
+        ok_(isinstance(Form()._fields['name'], wtforms.TextAreaField))
+        ok_(isinstance(Form()._fields['age'], wtforms.IntegerField))
 
     # Make some test clients
     client = app.test_client()
