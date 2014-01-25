@@ -1,7 +1,8 @@
 from nose.tools import eq_, ok_, raises
 
+import wtforms
+
 from flask import Flask
-from flask.ext import wtf
 from flask_superadmin import Admin
 
 
@@ -65,8 +66,8 @@ def test_list():
     # Verify form
     with app.test_request_context():
         Form = view.get_form()
-        ok_(isinstance(Form()._fields['name'], wtf.TextField))
-        ok_(isinstance(Form()._fields['age'], wtf.IntegerField))
+        ok_(isinstance(Form()._fields['name'], wtforms.TextField))
+        ok_(isinstance(Form()._fields['age'], wtforms.IntegerField))
 
     # Make some test clients
     client = app.test_client()

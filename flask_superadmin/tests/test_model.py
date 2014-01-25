@@ -1,5 +1,7 @@
 from nose.tools import eq_, ok_
 
+import wtforms
+
 from flask import Flask
 
 from flask_superadmin import Admin
@@ -19,9 +21,9 @@ class Model(object):
 
 
 class Form(wtf.Form):
-    col1 = wtf.TextField()
-    col2 = wtf.TextField()
-    col3 = wtf.TextField()
+    col1 = wtforms.TextField()
+    col2 = wtforms.TextField()
+    col3 = wtforms.TextField()
 
 
 class MockModelView(base.BaseModelAdmin):

@@ -30,7 +30,7 @@ setup(
     platforms='any',
     install_requires=[
         'Flask>=0.7',
-        'Flask-WTF>=0.6'
+        'Flask-WTF>=0.9'
     ],
     tests_require=[
         'nose>=1.0',
