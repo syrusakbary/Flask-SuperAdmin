@@ -20,7 +20,7 @@ settings.configure(
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456790'
-app.config['CSRF_ENABLED'] = False
+app.config['WTF_CSRF_ENABLED'] = False
 
 admin = Admin(app)
 
