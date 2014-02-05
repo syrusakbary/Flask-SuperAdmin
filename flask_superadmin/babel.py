@@ -1,5 +1,8 @@
 try:
-    from flask.ext.babel import Domain
+    try:
+        from flask.ext.babelex import Domain
+    except:
+        from flask.ext.babel import Domain
 
     from flask.ext.superadmin import translations
 
