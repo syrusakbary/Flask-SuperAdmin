@@ -135,6 +135,10 @@ class BaseView(object):
         if self.name is None:
             self.name = self._prettify_name(self.__class__.__name__)
 
+        # Prefix endpoint if a namespace is specified
+        if admin.namespace and not self.endpoint.startswith(admin.namespace):
+            self.endpoint = '.'.join([admin.namespace, self.endpoint])
+
         # Create blueprint and register rules
         self.blueprint = Blueprint(self.endpoint, __name__,
                                    url_prefix=self.url,
@@ -277,7 +281,7 @@ class Admin(object):
     app = None
 
     def __init__(self, app=None, name=None, url=None, index_view=None,
-                 translations_path=None):
+                 namespace=None, translations_path=None):
         """
             Constructor.
 
@@ -287,6 +291,8 @@ class Admin(object):
                 Application name. Will be displayed in main menu and as a page title. If not provided, defaulted to "Admin"
             `index_view`
                 Home page view to use. If not provided, will use `AdminIndexView`.
+            `namespace`
+                The endpoint namespace. All registered views endpoint will be prefixed with this value.
             `translations_path`
                 Location of the translation message catalogs. By default will use translations
                 shipped with the Flask-SuperAdmin.
@@ -328,8 +334,12 @@ class Admin(object):
         # Localizations
         self.locale_selector_func = None
 
+        self.namespace = namespace
+
         # Add predefined index view
         self.index_view = index_view or AdminIndexView(url=self.url)
+        if self.namespace:
+            self.index_view.endpoint = namespace
         self.add_view(self.index_view)
 
         if app is not None:

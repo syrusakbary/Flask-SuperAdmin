@@ -27,7 +27,7 @@ Here is absolutely valid administrative piece::
 So, how does it help structuring administrative interface? With such building blocks, you're
 implementing reusable functional pieces that are highly customizable.
 
-For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy, Mongoengine and Django model interface. 
+For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy, Mongoengine and Django model interface.
 For SQLAlchemy it is implemented as a
 class which accepts two parameters: model and a database session, otherwise just the model parameter.
 
@@ -197,6 +197,16 @@ code to get URL will look like::
 
 3. For model-based views rule is different - it will take model class name, if endpoint name
 is not provided. Model-based views will be explained in the next section.
+
+
+You can specify a namespace for the endpoint and all endpoints will be prefixed::
+
+    admin = Admin(app, namespace='admin')
+    admin.add_view(MyView(endpoint='testadmin'))
+
+    url_for('admin.index')  # The IndexView is in the namespace root
+    url_for('admin.testadmin.index')
+    url_for('admin.myview.index')
 
 
 Model Views
