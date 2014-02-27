@@ -138,6 +138,7 @@ class ModelAdmin(BaseModelAdmin):
         qs = qs.limit(self.list_per_page)
 
         if execute:
+            raise StandardError('This should never happen')
             qs = qs.all()
 
         if self.select_related:
