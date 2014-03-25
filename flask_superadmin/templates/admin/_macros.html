@@ -117,7 +117,7 @@
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
-                <label for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.text) }}</label>
+                <label for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.field_id) }}</label>
             {% endif %}
 
             <div>
