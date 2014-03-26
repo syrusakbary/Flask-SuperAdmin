@@ -58,6 +58,10 @@ class BaseModelAdmin(BaseView):
     # filters to display in the UI
     list_filters = tuple()
 
+    # a map of filter names/values that should be active by default (e.g. they
+    # should be active when a user clicks on the side menu item)
+    default_filters = dict()
+
     # Only fields with names specified in `fields` will be displayed in the
     # form (minus the ones mentioned in `exclude`). The order is preserved,
     # too. You can also include methods that are on the model admin, or on the
