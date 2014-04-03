@@ -65,6 +65,7 @@ class BaseModelAdmin(BaseView):
     readonly_fields = tuple()
     exclude = tuple()
 
+    # A base class for form rendering. If `None`, `BaseForm` would be used.
     form = None
 
     can_edit = True
@@ -171,7 +172,9 @@ class BaseModelAdmin(BaseView):
         converter = self.get_converter()
         if isinstance(converter, type):
             converter = converter()
-        form = model_form(self.model, base_class=BaseForm, fields=self.fields,
+        base_class = self.form or BaseForm
+        form = model_form(self.model, base_class=base_class,
+                          fields=self.fields,
                           readonly_fields=self.readonly_fields,
                           exclude=self.exclude, field_args=self.field_args,
                           converter=converter)
