@@ -2,6 +2,7 @@
 Tools for generating forms based on SQLAlchemy Model schemas.
 """
 
+from sqlalchemy import Column
 from sqlalchemy.orm.exc import NoResultFound
 
 from wtforms import Form, ValidationError, fields, validators
@@ -113,6 +114,11 @@ class AdminModelConverter(ModelConverter):
             # Ignore pk/fk
             if hasattr(prop, 'columns'):
                 column = prop.columns[0]
+
+                # Column can be SQL expressions
+                # WTForms cannot convert them
+                if not isinstance(column, Column):
+                    return None
 
                 # Do not display foreign keys - use relations
                 if column.foreign_keys:
