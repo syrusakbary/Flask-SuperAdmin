@@ -7,7 +7,7 @@ from werkzeug import secure_filename
 from wtforms import Form, validators, fields as f
 
 from fields import ModelSelectField, ModelSelectMultipleField, ListField
-from mongoengine.fields import ReferenceField, IntField
+from mongoengine.fields import ReferenceField, IntField, FloatField
 
 from flask_superadmin.model import AdminModelConverter as AdminModelConverter_
 
@@ -54,7 +54,7 @@ class ModelConverter(object):
         if field.required:
 
             # Hacky but necessary, since validators.Required doesn't handle 0 properly
-            if isinstance(field, IntField):
+            if isinstance(field, IntField) or isinstance(field, FloatField):
                 kwargs['validators'].append(validators.InputRequired())
             else:
                 kwargs['validators'].append(validators.Required())
