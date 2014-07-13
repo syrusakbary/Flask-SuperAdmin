@@ -10,6 +10,9 @@
 
 {% block body %}
     <form method="POST" action="#">
+        {% if csrf_token %}
+        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+        {% endif %}
         <h1 id="main-title">{{ _gettext('%(model)s model', model=name|capitalize) }}</h1>
 
         {% if admin_view.can_create %}

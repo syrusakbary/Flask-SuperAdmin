@@ -8,6 +8,9 @@
 
     <div class="page-content">
         <form action="" method="POST" class="form-horizontal">
+            {% if csrf_token %}
+            <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+            {% endif %}
             <input type="hidden" name="action" value="delete" />
             <p>Do you really want to delete all this models?</p>
             <ul>
