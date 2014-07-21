@@ -401,6 +401,7 @@ class BaseModelAdmin(BaseView):
 
         if request.method == 'POST':
             form = Form(obj=instance)
+            form = self.manipulate_form_instance(form)
             if form.validate_on_submit():
                 try:
                     self.save_model(instance, form, adding=False)
@@ -415,9 +416,17 @@ class BaseModelAdmin(BaseView):
                                   error=str(ex)), 'error')
         else:
             form = Form(obj=instance)
+            form = self.manipulate_form_instance(form)
 
         return self.render(self.edit_template, model=self.model, form=form,
                            pk=self.get_pk(instance), instance=instance)
+
+    def manipulate_form_instance(self, form_instance):
+        """ Handy method to manipulate the form instance before it's
+        rendered/validated. You can override this method and change validators,
+        field choices, etc.
+        """
+        return form_instance
 
     @expose('/<pk>/delete/', methods=('GET', 'POST'))
     def delete(self, pk=None, *pks):
