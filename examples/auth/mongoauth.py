@@ -1,8 +1,13 @@
 from flask import Flask, url_for, redirect, render_template, request
-from mongoengine import *
+try:
+    from mongoengine import *
+except ImportError:
+    exit('You must have mongoengine installed. Install it with the command:\n\t$> easy_install mongoengine')
 
 from flask.ext import superadmin, login, wtf
 from flask.ext.superadmin.contrib import mongoenginemodel
+from wtforms.fields import TextField, PasswordField
+from wtforms.validators import Required, ValidationError
 
 # Create application
 app = Flask(__name__)
@@ -42,30 +47,30 @@ class User(Document):
 
 # Define login and registration forms (for flask-login)
 class LoginForm(wtf.Form):
-    login = wtf.TextField(validators=[wtf.required()])
-    password = wtf.PasswordField(validators=[wtf.required()])
+    login = TextField(validators=[Required()])
+    password = PasswordField(validators=[Required()])
 
     def validate_login(self, field):
         user = self.get_user()
 
         if user is None:
-            raise wtf.ValidationError('Invalid user')
+            raise ValidationError('Invalid user')
 
         if user.password != self.password.data:
-            raise wtf.ValidationError('Invalid password')
+            raise ValidationError('Invalid password')
 
     def get_user(self):
-        return User.objects.get(self.login)
+        return User.objects.get(login=self.login)
 
 
 class RegistrationForm(wtf.Form):
-    login = wtf.TextField(validators=[wtf.required()])
-    email = wtf.TextField()
-    password = wtf.PasswordField(validators=[wtf.required()])
+    login = TextField(validators=[Required()])
+    email = TextField()
+    password = PasswordField(validators=[Required()])
 
     def validate_login(self, field):
         if len(User.objects(login=self.login.data)) > 0:
-            raise wtf.ValidationError('Duplicate username')
+            raise ValidationError('Duplicate username')
 
 
 # Initialize flask-login
@@ -76,7 +81,7 @@ def init_login():
     # Create user loader function
     @login_manager.user_loader
     def load_user(user_id):
-        return User.objects.get(user_id)
+        return User.objects.get(id=user_id)
 
 
 # Create customized model view class

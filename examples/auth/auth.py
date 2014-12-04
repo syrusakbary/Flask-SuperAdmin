@@ -3,6 +3,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 from flask.ext import superadmin, login, wtf
 from flask.ext.superadmin.contrib import sqlamodel
+from wtforms.fields import TextField, PasswordField
+from wtforms.validators import Required, ValidationError
 
 # Create application
 app = Flask(__name__)
@@ -39,35 +41,35 @@ class User(db.Model):
 
     # Required for administrative interface
     def __unicode__(self):
-        return self.username
+        return self.login
 
 
 # Define login and registration forms (for flask-login)
 class LoginForm(wtf.Form):
-    login = wtf.TextField(validators=[wtf.required()])
-    password = wtf.PasswordField(validators=[wtf.required()])
+    login = TextField(validators=[Required()])
+    password = PasswordField(validators=[Required()])
 
     def validate_login(self, field):
         user = self.get_user()
 
         if user is None:
-            raise wtf.ValidationError('Invalid user')
+            raise ValidationError('Invalid user')
 
         if user.password != self.password.data:
-            raise wtf.ValidationError('Invalid password')
+            raise ValidationError('Invalid password')
 
     def get_user(self):
         return db.session.query(User).filter_by(login=self.login.data).first()
 
 
 class RegistrationForm(wtf.Form):
-    login = wtf.TextField(validators=[wtf.required()])
-    email = wtf.TextField()
-    password = wtf.PasswordField(validators=[wtf.required()])
+    login = TextField(validators=[Required()])
+    email = TextField()
+    password = PasswordField(validators=[Required()])
 
     def validate_login(self, field):
         if db.session.query(User).filter_by(login=self.login.data).count() > 0:
-            raise wtf.ValidationError('Duplicate username')
+            raise ValidationError('Duplicate username')
 
 
 # Initialize flask-login
