@@ -1,6 +1,10 @@
 Flask-SuperAdmin
 ================
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/syrusakbary/Flask-SuperAdmin
+   :target: https://gitter.im/syrusakbary/Flask-SuperAdmin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 
 .. image:: https://travis-ci.org/SyrusAkbary/Flask-SuperAdmin.png?branch=master
         :target: https://travis-ci.org/SyrusAkbary/Flask-SuperAdmin
