@@ -6,12 +6,19 @@
     <link href="{{ url_for('admin.static', filename='chosen/chosen.css') }}" rel="stylesheet">
     <link href="{{ url_for('admin.static', filename='css/datepicker.css') }}" rel="stylesheet">
     {{super()}}
+    <style type="text/css">
+        hr { margin-bottom: 10px; }
+        .extra-actions { height: 30px; }
+        .extra-actions form { display: inline-block; }
+    </style>
 {% endblock %}
 
 {% block body %}
     <h1 id="main-title">{{ _gettext('Edit %(model)s',model=name|capitalize) }}</h1>
     <div class="clearfix"></div>
     <hr />
+
+    {% block extra_actions %}{% endblock %}
 
     <div class="page-content">
         {% macro extra() %}
