@@ -72,7 +72,7 @@ class ModelAdmin(BaseModelAdmin):
 
     def delete_models(self, *pks):
         objs = self.get_objects(*pks)
-        objs.delete(synchronize_session='fetch')
+        [self.session.delete(x) for x in objs]
         self.session.commit()
         return True
 
