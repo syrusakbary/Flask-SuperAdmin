@@ -42,10 +42,10 @@ project's models (MongoEngine, Django or SQLAlchemy).
 Introduction
 ------------
 
-This is library for building adminstrative interface on top of Flask framework.
+This is library for building administrative interface on top of Flask framework.
 
 Instead of providing simple scaffolding for SQLAlchemy, MongoEngine or Django models, Flask-SuperAdmin
-provides tools that can be used to build adminstrative interface of any complexity,
+provides tools that can be used to build administrative interface of any complexity,
 using consistent look and feel.
 
 
