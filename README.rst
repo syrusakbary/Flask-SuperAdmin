@@ -51,7 +51,7 @@ using consistent look and feel.
 
 Small example (Flask initialization omitted)::
 
-    from flask.ext.superadmin import Admin, model
+    from flask.ext.superadmin import Admin
 
     app = Flask(__name__)
     admin = Admin(app)
@@ -68,8 +68,6 @@ Small example (Flask initialization omitted)::
 
     # Adding a custom view
     admin.add_view(CustomView(name='Photos', category='Cats'))
-
-    admin.setup_app(app)
 
 
 Installation
