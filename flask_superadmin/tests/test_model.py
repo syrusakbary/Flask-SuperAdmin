@@ -114,17 +114,17 @@ class MockModelView(base.BaseModelAdmin):
         return True
 
 
-def setup():
+def setup_admin(namespace=None):
     app = Flask(__name__)
     app.config['WTF_CSRF_ENABLED'] = False
     app.secret_key = '1'
-    admin = Admin(app)
+    admin = Admin(app, namespace=namespace)
 
     return app, admin
 
 
 def test_mockview():
-    app, admin = setup()
+    app, admin = setup_admin()
 
     view = MockModelView(Model)
     admin.add_view(view)
@@ -181,8 +181,66 @@ def test_mockview():
     eq_(rv.headers['location'], 'http://localhost/admin/model/')
 
 
+def test_mockview_with_namespace():
+    app, admin = setup_admin('admin')
+
+    view = MockModelView(Model)
+    admin.add_view(view)
+
+    eq_(view.model, Model)
+
+    eq_(view.name, 'Model')
+    eq_(view.url, '/admin/model')
+    eq_(view.endpoint, 'admin.model')
+    ok_(view.blueprint is not None)
+
+    client = app.test_client()
+
+    # Make model view requests
+    rv = client.get('/admin/model/')
+    eq_(rv.status_code, 200)
+
+    # Test model creation view
+    rv = client.get('/admin/model/add/')
+    eq_(rv.status_code, 200)
+
+    rv = client.post('/admin/model/add/',
+                     data=dict(col1='test1', col2='test2', col3='test3'))
+    eq_(rv.status_code, 302)
+    eq_(len(view.created_models), 1)
+
+    model = view.created_models.pop()
+    eq_(model.id, 3)
+    eq_(model.col1, 'test1')
+    eq_(model.col2, 'test2')
+    eq_(model.col3, 'test3')
+
+    # Try model edit view
+    rv = client.get('/admin/model/3/')
+    eq_(rv.status_code, 200)
+    ok_('test1' in rv.data)
+
+    rv = client.post('/admin/model/3/',
+                     data=dict(col1='test!', col2='test@', col3='test#'))
+    eq_(rv.status_code, 302)
+    eq_(len(view.updated_models), 1)
+
+    model = view.updated_models.pop()
+    eq_(model.col1, 'test!')
+    eq_(model.col2, 'test@')
+    eq_(model.col3, 'test#')
+
+    rv = client.get('/admin/modelview/4/')
+    eq_(rv.status_code, 404)
+
+    # Attempt to delete model
+    rv = client.post('/admin/model/3/delete/', data=dict(confirm_delete=True))
+    eq_(rv.status_code, 302)
+    eq_(rv.headers['location'], 'http://localhost/admin/model/')
+
+
 def test_permissions():
-    app, admin = setup()
+    app, admin = setup_admin()
 
     view = MockModelView(Model)
     admin.add_view(view)
@@ -205,7 +263,7 @@ def test_permissions():
 
 
 def test_permissions_and_add_delete_buttons():
-    app, admin = setup()
+    app, admin = setup_admin()
 
     view = MockModelView(Model)
     admin.add_view(view)
@@ -247,7 +305,7 @@ def test_permissions_and_add_delete_buttons():
 
 
 def test_templates():
-    app, admin = setup()
+    app, admin = setup_admin()
 
     view = MockModelView(Model)
     admin.add_view(view)
@@ -269,7 +327,7 @@ def test_templates():
 
 
 def test_list_display_header():
-    app, admin = setup()
+    app, admin = setup_admin()
 
     view = MockModelView(Model, list_display=['test_header'])
     admin.add_view(view)
@@ -283,7 +341,7 @@ def test_list_display_header():
 
 
 def test_search_fields():
-    app, admin = setup()
+    app, admin = setup_admin()
 
     view = MockModelView(Model, search_fields=['col1', 'col2'])
     admin.add_view(view)

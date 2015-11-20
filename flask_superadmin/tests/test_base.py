@@ -52,6 +52,9 @@ def test_base_defaults():
     eq_(len(admin._views), 1)
     eq_(admin._views[0], admin.index_view)
 
+    # Ensure index view has a default endpoint
+    eq_(admin.index_view.endpoint, 'admin')
+
 
 def test_base_registration():
     app = Flask(__name__)
@@ -108,6 +111,47 @@ def test_baseview_registration():
     view = MockView(url='/test/test')
     view.create_blueprint(base.Admin())
     eq_(view.url, '/test/test')
+
+
+def test_baseview_registration_with_namespace():
+    admin = base.Admin(namespace='custom')
+
+    view = MockView()
+    bp = view.create_blueprint(admin)
+
+    # Base properties
+    eq_(view.admin, admin)
+    ok_(view.blueprint is not None)
+
+    # Calculated properties
+    eq_(view.endpoint, 'custom.mockview')
+    eq_(view.url, '/admin/mockview')
+    eq_(view.name, 'Mock View')
+
+    # Verify generated blueprint properties
+    eq_(bp.name, view.endpoint)
+    eq_(bp.url_prefix, view.url)
+    eq_(bp.template_folder, 'templates')
+    eq_(bp.static_folder, view.static_folder)
+
+    # Verify customizations
+    view = MockView(name='Test', endpoint='foobar')
+    view.create_blueprint(admin)
+
+    eq_(view.name, 'Test')
+    eq_(view.endpoint, 'custom.foobar')
+    eq_(view.url, '/admin/foobar')
+
+    view = MockView(url='test')
+    view.create_blueprint(base.Admin())
+    eq_(view.url, '/admin/test')
+
+    view = MockView(url='/test/test')
+    view.create_blueprint(base.Admin())
+    eq_(view.url, '/test/test')
+
+    # Ensure index view is on namespace root
+    eq_(admin.index_view.endpoint, admin.namespace)
 
 
 def test_baseview_urls():
