@@ -328,7 +328,7 @@ class BaseModelAdmin(BaseView):
         args.pop('page', None)
         args.pop('q', None)
 
-        args = { k: args[k][0] for k in args if args[k] and args[k][0] }
+        args = { k: v[0] for k, v in args.items() if k and v and v[0] }
         return args
 
     def get_list_filters(self):
