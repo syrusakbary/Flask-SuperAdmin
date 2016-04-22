@@ -53,7 +53,7 @@ class ModelAdmin(BaseModelAdmin):
     def get_queryset(self, filters=None):
         qs = self.session.query(self.model)
         if filters:
-            pass  # TODO
+            qs = qs.filter_by(**filters)
         return qs
 
     def get_objects(self, *pks):
