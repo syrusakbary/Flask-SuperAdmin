@@ -343,7 +343,7 @@ def test_no_csrf_in_form():
     ok_('<input class="" id="age" name="age" type="text" value="10">' in resp.data)
     ok_('<label for="csrf_token">Csrf Token</label>' not in resp.data)
 
-def test_requred_int_field():
+def test_reqiured_int_field():
     app, admin = setup()
 
     class Person(Document):

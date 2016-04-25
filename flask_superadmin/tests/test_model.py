@@ -122,32 +122,41 @@ def setup():
 
     return app, admin
 
-
-def test_mockview():
+def test_modelview_instantiation():
     app, admin = setup()
-
     view = MockModelView(Model)
     admin.add_view(view)
 
     eq_(view.model, Model)
-
     eq_(view.name, 'Model')
     eq_(view.url, '/admin/model')
     eq_(view.endpoint, 'model')
     ok_(view.blueprint is not None)
 
+def test_modelview_list():
+    app, admin = setup()
+    view = MockModelView(Model)
+    admin.add_view(view)
     client = app.test_client()
 
     # Make model view requests
     rv = client.get('/admin/model/')
     eq_(rv.status_code, 200)
 
-    # Test model creation view
+def test_modelview_create():
+    app, admin = setup()
+    view = MockModelView(Model)
+    admin.add_view(view)
+    client = app.test_client()
+
     rv = client.get('/admin/model/add/')
     eq_(rv.status_code, 200)
 
-    rv = client.post('/admin/model/add/',
-                     data=dict(col1='test1', col2='test2', col3='test3'))
+    rv = client.post('/admin/model/add/', data={
+        'col1': 'test1',
+        'col2': 'test2',
+        'col3': 'test3'
+    })
     eq_(rv.status_code, 302)
     eq_(len(view.created_models), 1)
 
@@ -157,13 +166,31 @@ def test_mockview():
     eq_(model.col2, 'test2')
     eq_(model.col3, 'test3')
 
-    # Try model edit view
+def test_modelview_edit():
+    app, admin = setup()
+    view = MockModelView(Model)
+    admin.add_view(view)
+    client = app.test_client()
+
+    # Create a model
+    rv = client.post('/admin/model/add/', data={
+        'col1': 'test1',
+        'col2': 'test2',
+        'col3': 'test3'
+    })
+    eq_(rv.status_code, 302)
+
+    # Make sure we can access the edit page
     rv = client.get('/admin/model/3/')
     eq_(rv.status_code, 200)
     ok_('test1' in rv.data)
 
-    rv = client.post('/admin/model/3/',
-                     data=dict(col1='test!', col2='test@', col3='test#'))
+    # Post the changes via the edit page
+    rv = client.post('/admin/model/3/', data={
+        'col1': 'test!',
+        'col2': 'test@',
+        'col3': 'test#'
+    })
     eq_(rv.status_code, 302)
     eq_(len(view.updated_models), 1)
 
@@ -172,21 +199,46 @@ def test_mockview():
     eq_(model.col2, 'test@')
     eq_(model.col3, 'test#')
 
-    rv = client.get('/admin/modelview/4/')
-    eq_(rv.status_code, 404)
+def test_modelview_delete():
+    app, admin = setup()
+    view = MockModelView(Model)
+    admin.add_view(view)
+    client = app.test_client()
+
+    # Create a model
+    rv = client.post('/admin/model/add/', data={
+        'col1': 'test1',
+        'col2': 'test2',
+        'col3': 'test3'
+    })
+    eq_(rv.status_code, 302)
+
+    # Make sure the model exists
+    rv = client.get('/admin/model/3/')
+    eq_(rv.status_code, 200)
 
     # Attempt to delete model
     rv = client.post('/admin/model/3/delete/', data=dict(confirm_delete=True))
     eq_(rv.status_code, 302)
     eq_(rv.headers['location'], 'http://localhost/admin/model/')
 
+    # Make sure the model doesn't exist any more
+    rv = client.get('/admin/model/3/')
+    eq_(rv.status_code, 404)
+
+def test_modelview_edit_wrong_id():
+    app, admin = setup()
+    view = MockModelView(Model)
+    admin.add_view(view)
+    client = app.test_client()
+
+    rv = client.get('/admin/modelview/4/')
+    eq_(rv.status_code, 404)
 
 def test_permissions():
     app, admin = setup()
-
     view = MockModelView(Model)
     admin.add_view(view)
-
     client = app.test_client()
 
     view.can_create = False
@@ -203,13 +255,10 @@ def test_permissions():
     rv = client.post('/admin/model/1/delete/')
     eq_(rv.status_code, 403)
 
-
 def test_permissions_and_add_delete_buttons():
     app, admin = setup()
-
     view = MockModelView(Model)
     admin.add_view(view)
-
     client = app.test_client()
 
     resp = client.get('/admin/model/')
@@ -245,13 +294,10 @@ def test_permissions_and_add_delete_buttons():
     ok_('Save and stay on page' in resp.data)
     ok_('Delete' not in resp.data)
 
-
 def test_templates():
     app, admin = setup()
-
     view = MockModelView(Model)
     admin.add_view(view)
-
     client = app.test_client()
 
     view.list_template = 'mock.html'
@@ -267,31 +313,60 @@ def test_templates():
     rv = client.get('/admin/model/1/')
     eq_(rv.data, 'Success!')
 
-
 def test_list_display_header():
     app, admin = setup()
-
     view = MockModelView(Model, list_display=['test_header'])
     admin.add_view(view)
+    client = app.test_client()
 
     eq_(len(view.list_display), 1)
-
-    client = app.test_client()
 
     rv = client.get('/admin/model/')
     ok_('Test Header' in rv.data)
 
-
 def test_search_fields():
     app, admin = setup()
-
     view = MockModelView(Model, search_fields=['col1', 'col2'])
     admin.add_view(view)
+    client = app.test_client()
 
     eq_(view.search_fields, ['col1', 'col2'])
 
-    client = app.test_client()
 
     rv = client.get('/admin/model/')
     ok_('<div class="search">' in rv.data)
+
+def test_extra_readonly():
+
+    # Override the original MockModelView to include extra read-only field
+    class ExtraMockModelView(MockModelView):
+        fields = ['col1']
+        extra_readonly = ['get_col1_upper']
+
+        def get_col1_upper(v, obj):
+            return {
+                'label': '1st Column In All Caps',
+                'value': obj.col1.upper()
+            }
+
+    app, admin = setup()
+    view = ExtraMockModelView(Model)
+    admin.add_view(view)
+    client = app.test_client()
+
+    # Create a model
+    rv = client.post('/admin/model/add/', data={
+        'col1': 'test1',
+        'col2': 'test2',
+        'col3': 'test3'
+    })
+    eq_(rv.status_code, 302)
+
+    # Make sure the model's edit page contains the extra fields
+    rv = client.get('/admin/model/3/')
+    eq_(rv.status_code, 200)
+    print rv.data
+    ok_('<label>1st Column In All Caps</label>' in rv.data)
+    ok_('<div class="readonly-value">' in rv.data)
+    ok_('TEST1' in rv.data)
 
