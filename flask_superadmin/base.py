@@ -251,6 +251,9 @@ class MenuItem(object):
             return self._cached_url
 
         self._cached_url = url_for('%s.%s' % (self._view.endpoint, self._view._default_view))
+        if getattr(self._view, 'default_filters', None):
+            self._cached_url += '?' + urllib.urlencode(self._view.default_filters)
+
         return self._cached_url
 
     def is_active(self, view):

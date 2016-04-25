@@ -59,6 +59,20 @@ input {
         color:#717E93;
     }*/
 
+.filter-choices label {
+    width: auto;
+    margin-right: 5px;
+    min-width: 80px;
+}
+
+.filter-choices .filters a {
+    margin: 0 8px 0 8px;
+}
+
+.filter-choices .filters a.active {
+    font-weight: bold;
+}
+
 .navbar-inner {
     background: none;
     box-shadow: none;
