@@ -4,4 +4,3 @@ Flask-SQLAlchemy>=0.15
 mongoengine
 flask-mongoengine>=0.7
 Django>=1.3
-pysqlite>=2.6
