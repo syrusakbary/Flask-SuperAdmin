@@ -362,3 +362,37 @@ def test_requred_int_field():
     ok_('This field is required.' not in resp.data)
     ok_('error.' not in resp.data)
 
+def test_filters():
+
+    app, admin = setup()
+
+    class Person(Document):
+        name = StringField(required=True)
+        gender = StringField(required=True, choices=[('f', 'Female'), ('m', 'Male')])
+
+    Person.drop_collection()
+    person = Person.objects.create(name='Eric', gender='m')
+    person = Person.objects.create(name='Sophia', gender='f')
+
+    view = CustomModelView(Person, list_display=['name'], list_filters=['gender'])
+    admin.add_view(view)
+
+    client = app.test_client()
+
+    resp = client.get('/admin/person/')
+    eq_(resp.status_code, 200)
+    ok_('<div class="filter-choices">' in resp.data)
+    ok_('<a href="/admin/person/?gender=f" >Female</a>' in resp.data)
+    ok_('<a href="/admin/person/?gender=m" >Male</a>' in resp.data)
+    ok_('Eric' in resp.data)
+    ok_('Sophia' in resp.data)
+
+    resp = client.get('/admin/person/?gender=m')
+    eq_(resp.status_code, 200)
+    ok_('Eric' in resp.data)
+    ok_('Sophia' not in resp.data)
+
+    resp = client.get('/admin/person/?gender=f')
+    eq_(resp.status_code, 200)
+    ok_('Sophia' in resp.data)
+    ok_('Eric' not in resp.data)
