@@ -344,3 +344,26 @@ def test_reference_linking():
     ok_('<input class="" id="name" name="name" type="text" value="Stan">' in resp.data)
     ok_(dog_link in resp.data)
 
+def test_filters():
+    app, db, admin = setup()
+    Model1, Model2 = create_models(db)
+
+    view = CustomModelView(Model1, db.session)
+
+    admin.add_view(view)
+
+    db.session.add(Model1('data1'))
+    db.session.add(Model1('data2'))
+    db.session.commit()
+
+    client = app.test_client()
+
+    # empty
+    resp = client.get('/admin/model1/?test1=invalid')
+    ok_('data1' not in resp.data)
+
+    # not like
+    resp = client.get('/admin/model1/?test1=data1')
+    ok_('data1' in resp.data)
+    ok_('data2' not in resp.data)
+
