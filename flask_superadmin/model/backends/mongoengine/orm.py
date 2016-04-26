@@ -42,8 +42,8 @@ class ModelConverter(object):
 
     def convert(self, model, field, field_args, multiple=False):
         kwargs = {
-            'label': unicode(field.verbose_name or field.name or ''),
-            'description': field.help_text or '',
+            'label': unicode(getattr(field, 'verbose_name', None) or field.name or ''),
+            'description': getattr(field, 'help_text', None) or '',
             'validators': [],
             'filters': [],
             'default': field.default,
@@ -160,7 +160,7 @@ class ModelConverter(object):
         kwargs = kwargs or {
             'validators': [],
             'filters': [],
-            'label': unicode(field.verbose_name or field.name or ''),
+            'label': unicode(getattr(field, 'verbose_name', None) or field.name or ''),
         }
         if field.field.choices:
             return self.convert(model, field.field, None, multiple=True)
