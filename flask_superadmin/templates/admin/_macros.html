@@ -172,6 +172,18 @@
                                     {{ f.value }}
                                 {% endif %}
                             </div>
+                            {#
+                                Technically read-only fields shouldn't have errors, but
+                                sometimes they do. Validation errors should never go
+                                unnoticed - that's why we expose them here.
+                            #}
+                            {% if field_name in form._fields %}
+                                {% with ff = form._fields[field_name] %}
+                                    {% for error in ff.errors %}
+                                        &nbsp;<span class="label label-important">{{ error }}</span>
+                                    {% endfor %}
+                                {% endwith %}
+                            {% endif %}
                         </div>
                     </section>
                 {% endwith %}
