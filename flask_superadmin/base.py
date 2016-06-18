@@ -443,7 +443,7 @@ class Admin(object):
         self.app = app
 
         app.extensions = getattr(app, 'extensions', {})
-        app.extensions['admin'] = self
+        app.extensions['superadmin'] = self
 
         for view in self._views:
             app.register_blueprint(view.create_blueprint(self))
