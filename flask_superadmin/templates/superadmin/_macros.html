@@ -117,7 +117,7 @@
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
-                <label for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.text) }}</label>
+                <label for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.field_id) }}</label>
             {% endif %}
 
             <div>
@@ -172,6 +172,18 @@
                                     {{ f.value }}
                                 {% endif %}
                             </div>
+                            {#
+                                Technically read-only fields shouldn't have errors, but
+                                sometimes they do. Validation errors should never go
+                                unnoticed - that's why we expose them here.
+                            #}
+                            {% if field_name in form._fields %}
+                                {% with ff = form._fields[field_name] %}
+                                    {% for error in ff.errors %}
+                                        &nbsp;<span class="label label-important">{{ error }}</span>
+                                    {% endfor %}
+                                {% endwith %}
+                            {% endif %}
                         </div>
                     </section>
                 {% endwith %}
@@ -182,6 +194,22 @@
             {% endif %}
         {% endfor %}
 
+        {% if instance and instance.id %}
+            {% for f in admin_view.get_extra_readonly(instance) %}
+                <section class="field">
+                    <label>{{ f.label }}</label>
+                    <div>
+                        <div class="readonly-value">
+                            {% if f.url %}
+                                <a href="{{ f.url }}"{% if f.url.startswith('http') %}target="_blank"{% endif %}>{{ f.value }}</a>
+                            {% else %}
+                                {{ f.value }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+            {% endfor %}
+        {% endif %}
     </fieldset>
 {% endmacro %}
 

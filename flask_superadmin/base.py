@@ -1,4 +1,5 @@
 import re
+import urllib
 
 from functools import wraps
 
@@ -216,7 +217,7 @@ class AdminIndexView(BaseView):
     def __init__(self, name=None, category=None, endpoint=None, url=None):
         super(AdminIndexView, self).__init__(name or babel.lazy_gettext('Home'),
                                              category,
-                                             endpoint or 'admin',
+                                             'superadmin',
                                              url or '/admin',
                                              'static')
 
@@ -251,6 +252,9 @@ class MenuItem(object):
             return self._cached_url
 
         self._cached_url = url_for('%s.%s' % (self._view.endpoint, self._view._default_view))
+        if getattr(self._view, 'default_filters', None):
+            self._cached_url += '?' + urllib.urlencode(self._view.default_filters)
+
         return self._cached_url
 
     def is_active(self, view):
@@ -439,7 +443,7 @@ class Admin(object):
         self.app = app
 
         app.extensions = getattr(app, 'extensions', {})
-        app.extensions['admin'] = self
+        app.extensions['superadmin'] = self
 
         for view in self._views:
             app.register_blueprint(view.create_blueprint(self))

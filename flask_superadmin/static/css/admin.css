@@ -17,47 +17,33 @@ body
     padding-bottom:36px;
  }
 }
+
 input {
   line-height: 1em;
 }
-    #main-nav > .active > a, #main-nav > .active > a:hover {
-        background: none;
-        color:#717E93;
-        border-color:#717E93;
-        border-radius: 0;
-/*        text-shadow: none;
-        background-color:#717E93;
-        color:white;
-        border-radius: 4px;
-*/    }
-    #main-nav a {
-/*        border-left:2px solid transparent;;
-*//*        border-top:2px solid transparent;
-        border-bottom:2px solid transparent;
-*/        font-size:13px;
-        line-height: 1.3em;
-        font-weight: 600;
-        padding:8px 8px;
-        margin:0;
-        text-transform: uppercase;;
-    }
-    #main-nav li {
-        border-top: 1px solid rgba(113, 126, 147, 0.1);
-        line-height: 1em;
-    }
-    #main-nav {
-        border-bottom: 1px solid rgba(113, 126, 147, 0.1);
 
-    }
-/*    #main-nav > .active > a, #main-nav > .active > a:hover {
-        background-color:#717E93;
-        border-radius:3px;
-        text-shadow: white 0 1px 0 rgba(0, 0, 0, .1);
-        color:white;
-    }
-    #main-nav a:hover {
-        color:#717E93;
-    }*/
+#main-nav > .active > a, #main-nav > .active > a:hover {
+    background: none;
+    color:#717E93;
+    border-color:#717E93;
+    border-radius: 0;
+}
+#main-nav a {
+    font-size:13px;
+    line-height: 1.3em;
+    font-weight: 600;
+    padding:8px 8px;
+    margin:0;
+    text-transform: uppercase;;
+}
+#main-nav li {
+    border-top: 1px solid rgba(113, 126, 147, 0.1);
+    line-height: 1em;
+}
+#main-nav {
+    border-bottom: 1px solid rgba(113, 126, 147, 0.1);
+
+}
 
 .navbar-inner {
     background: none;
@@ -84,6 +70,7 @@ input {
 }
 .table th, .table td {
     border-top-color:#F2F2F2;
+    word-break: break-all;
 }
 a {
     color:#3F6EC2;
@@ -340,3 +327,16 @@ form.search-form a.clear i {
     font-family: arial;
 }
 
+.filter-choices label {
+    width: auto;
+    margin-right: 5px;
+    min-width: 80px;
+}
+
+.filter-choices .filters a {
+    margin: 0 8px 0 8px;
+}
+
+.filter-choices .filters a.active {
+    font-weight: bold;
+}

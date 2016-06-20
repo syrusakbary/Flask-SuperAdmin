@@ -1,5 +1,5 @@
-{% extends 'admin/layout.html' %}
-{% import 'admin/_macros.html' as lib with context %}
+{% extends 'superadmin/layout.html' %}
+{% import 'superadmin/_macros.html' as lib with context %}
 {% set name = admin_view.get_display_name() %}
 
 {% block head_css %}
@@ -31,6 +31,23 @@
 
         <div class="total-count">Total count: {{ count }}</div>
 
+        {% block list_filters %}
+            {% if admin_view.list_filters %}
+                <br />
+                <div class="filter-choices">
+                    {% for list_filter in admin_view.get_list_filters() %}
+                        <div class="extra-actions filters">
+                            <label>{{ list_filter.label }}:</label>
+                            <a href="{{ admin_view.filter_url(list_filter.lookup, '') }}" {% if not list_filter.selected %}class="active"{% endif %}>All</a>
+                            {% for value, label in list_filter.choices %}
+                                <a href="{{ admin_view.filter_url(list_filter.lookup, value) }}" {% if list_filter.selected == value %}class="active"{% endif %}>{{ label }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endblock %}
+
         <div class="page-content">
             {% if admin_view.search_fields %}
                 <div class="search">
@@ -43,13 +60,13 @@
                 <thead>
                     <tr>
                         <th class="model-check"><input type="checkbox" name="selected_all_instances" value="all"></th>
-                        {% for c in admin_view.list_display %}
-                            <th>
-                                {% set name = admin_view.field_name(c) %}
+                        {% for c in admin_view.get_list_display() %}
+                            <th class="{{ name }}-{{ c }}">
+                                {% set field_name = admin_view.field_name(c) %}
                                 {% if admin_view.is_sortable(c)%}
                                     {% if sort == c %}
                                         <a href="{{ admin_view.sort_url(c if not sort_desc else None, True) }}">
-                                            {{ name }}
+                                            {{ field_name }}
                                             {% if sort_desc %}
                                                 <i class="icon-chevron-up"></i>
                                             {% else %}
@@ -57,10 +74,10 @@
                                             {% endif %}
                                         </a>
                                     {% else %}
-                                        <a href="{{ admin_view.sort_url(c) }}">{{ name }}</a>
+                                        <a href="{{ admin_view.sort_url(c) }}">{{ field_name }}</a>
                                     {% endif %}
                                 {% else %}
-                                    {{ name }}
+                                    {{ field_name }}
                                 {% endif %}
                             </th>
                         {% else %}
@@ -76,7 +93,7 @@
                             {% set pk = admin_view.get_pk(instance) %}
                             <input type="checkbox" name="_selected_action" value="{{ pk }}">
                         </td>
-                        {% for c in admin_view.list_display %}
+                        {% for c in admin_view.get_list_display() %}
                             {% if loop.first %}
                                 <td><a href="{{ url_for('.edit', pk=pk) }}">{{ admin_view.get_column(instance, c) }}</a></td>
                             {% else %}

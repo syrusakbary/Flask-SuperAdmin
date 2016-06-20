@@ -1,22 +1,33 @@
-{% extends 'admin/layout.html' %}
-{% import 'admin/_macros.html' as lib with context %}
+{% extends 'superadmin/layout.html' %}
+{% import 'superadmin/_macros.html' as lib with context %}
 {% set name = admin_view.get_display_name() %}
 
 {% block head_css %}
     <link href="{{ url_for('admin.static', filename='chosen/chosen.css') }}" rel="stylesheet">
     <link href="{{ url_for('admin.static', filename='css/datepicker.css') }}" rel="stylesheet">
     {{super()}}
+    <style type="text/css">
+        hr { margin-bottom: 10px; }
+        .extra-actions { height: 30px; }
+        .extra-actions form { display: inline-block; }
+    </style>
 {% endblock %}
 
 {% block body %}
-    <h1 id="main-title">{{ _gettext('Add %(model)s',model=name|capitalize) }}</h1>
+    <h1 id="main-title">{{ _gettext('Edit %(model)s',model=name|capitalize) }}</h1>
     <div class="clearfix"></div>
     <hr />
 
+    {% block extra_actions %}{% endblock %}
+
     <div class="page-content">
         {% macro extra() %}
-            <input name="_add_another" type="submit" class="btn" value="{{ _gettext('Save and create other') }}" />
-            <input name="_edit" type="submit" class="btn" value="{{ _gettext('Save and stay on page') }}" />
+            {% if admin_view.can_delete %}
+                <a href="{{ url_for('.delete', pk=pk) }}" class="btn btn-danger">{{ _gettext('Delete') }}</a>
+            {% endif %}
+            {% if admin_view.can_edit %}
+                <input name="_edit" type="submit" class="btn" value="{{ _gettext('Save and stay on page') }}" />
+            {% endif %}
         {% endmacro %}
 
         {{ lib.render_form(form, extra(), admin_view.can_edit, admin_view.can_delete) }}
