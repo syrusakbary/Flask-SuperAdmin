@@ -1,8 +1,8 @@
-{% extends 'admin/layout.html' %}
-{% import 'admin/_macros.html' as lib with context %}
+{% extends 'superadmin/layout.html' %}
+{% import 'superadmin/_macros.html' as lib with context %}
 
 {% block head_css %}
-    <link href="{{ url_for('admin.static', filename='css/file.css') }}" rel="stylesheet">
+    <link href="{{ url_for('superadmin.static', filename='css/file.css') }}" rel="stylesheet">
     {{super()}}
 {% endblock %}
 
