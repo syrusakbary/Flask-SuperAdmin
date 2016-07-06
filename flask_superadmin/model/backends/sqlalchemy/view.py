@@ -82,10 +82,12 @@ class ModelAdmin(BaseModelAdmin):
         elif op == '=':
             return literal_column(field_name).op('=')
         else:
-            return literal_column(field_name).contains
+            # return literal_column(field_name).contains
+            return literal_column(field_name).ilike
 
     def apply_search(self, qs, search_query):
         or_queries = []
+
         # treat spaces as if they were OR operators
         for word in search_query.split():
             op = word[:1]
@@ -93,9 +95,12 @@ class ModelAdmin(BaseModelAdmin):
                 word = word[1:]
             orm_lookups = [self.construct_search(str(model_field), op)
                            for model_field in self.search_fields]
-            or_queries.extend([orm_lookup(word) for orm_lookup in orm_lookups])
+
+            or_queries.extend([orm_lookup('% {} %'.format(word)) for orm_lookup in orm_lookups])
+
         if or_queries:
             qs = qs.filter(or_(*or_queries))
+
         return qs
 
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False, search_query=None):
