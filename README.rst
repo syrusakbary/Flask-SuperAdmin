@@ -1,20 +1,14 @@
 Flask-SuperAdmin
 ================
 
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/syrusakbary/Flask-SuperAdmin
-   :target: https://gitter.im/syrusakbary/Flask-SuperAdmin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-
-
-.. image:: https://travis-ci.org/SyrusAkbary/Flask-SuperAdmin.png?branch=master
-        :target: https://travis-ci.org/SyrusAkbary/Flask-SuperAdmin
+This is a fork of unmaintained [Flask-SuperAdmin](https://github.com/syrusakbary/Flask-SuperAdmin)
 
 Flask-Superadmin is the **best** admin interface framework for `Flask <http://flask.pocoo.org/>`_. As good as Django admin.
 
 Batteries included:
 
 * Admin interface
-* **Scaffolding for MongoEngine, Django and SQLAlchemy**
+* Scaffolding for MongoEngine, Django and SQLAlchemy
 * File administrator (optional)
 
 Requirements:
@@ -51,7 +45,7 @@ using consistent look and feel.
 
 Small example (Flask initialization omitted)::
 
-    from flask.ext.superadmin import Admin, model
+    from flask_superadmin import Admin, model
 
     app = Flask(__name__)
     admin = Admin(app)
@@ -76,29 +70,8 @@ Installation
 ------------
 
 For installing you have to do::
-
-    pip install Flask-SuperAdmin
-
-Or::
-
     python setup.py install
 
-
-Examples
---------
-
-Library comes with a lot of examples, you can find them in `examples <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/>`_ directory.
-
-- `MongoEngine <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/mongoengine>`_
-- `SQLAlchemy <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/sqlalchemy>`_
-- `Django <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/django>`_
-- `Flask-Login integration <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/auth>`_
-
-
-Documentation
--------------
-
-Flask-SuperAdmin is extensively documented, you can find `documentation here <http://flask-superadmin.readthedocs.org/>`_.
 
 
 3rd Party Stuff
