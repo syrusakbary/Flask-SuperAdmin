@@ -1,7 +1,7 @@
 Flask-SuperAdmin
 ================
 
-This is a fork of unmaintained [Flask-SuperAdmin](https://github.com/syrusakbary/Flask-SuperAdmin)
+This is a fork of unmaintained `Flask-SuperAdmin <https://github.com/syrusakbary/Flask-SuperAdmin>`_
 
 Flask-Superadmin is the **best** admin interface framework for `Flask <http://flask.pocoo.org/>`_. As good as Django admin.
 
