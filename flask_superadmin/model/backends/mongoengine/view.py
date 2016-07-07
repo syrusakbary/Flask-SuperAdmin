@@ -1,11 +1,12 @@
 from flask_superadmin.model.base import BaseModelAdmin
 
-from orm import model_form, AdminModelConverter
+from .orm import model_form, AdminModelConverter
 
 import operator
 import mongoengine
 
 from bson.objectid import ObjectId
+from functools import reduce
 
 SORTABLE_FIELDS = (
     mongoengine.BooleanField,

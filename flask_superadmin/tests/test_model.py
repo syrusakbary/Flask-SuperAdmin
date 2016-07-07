@@ -33,7 +33,7 @@ class MockModelView(base.BaseModelAdmin):
     def __init__(self, model, name=None, category=None, endpoint=None,
                  url=None, **kwargs):
         # Allow to set any attributes from parameters
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
         super(MockModelView, self).__init__(model, name, category, endpoint, url)
@@ -73,7 +73,7 @@ class MockModelView(base.BaseModelAdmin):
         columns = ['col1', 'col2', 'col3']
 
         if self.excluded_list_columns:
-            return filter(lambda x: x not in self.excluded_list_columns, columns)
+            return [x for x in columns if x not in self.excluded_list_columns]
 
         return columns
 
@@ -90,7 +90,7 @@ class MockModelView(base.BaseModelAdmin):
 
     def get_list(self, page, sort, sort_desc, search_query):
         self.search_arguments.append((page, sort, sort_desc, search_query))
-        return len(self.all_models), self.all_models.itervalues()
+        return len(self.all_models), iter(self.all_models.values())
 
     def save_model(self, instance, form, adding=False):
         if adding:

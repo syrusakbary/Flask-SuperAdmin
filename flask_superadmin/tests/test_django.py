@@ -32,7 +32,7 @@ from examples.django.utils import install_models
 class CustomModelView(ModelAdmin):
     def __init__(self, model, name=None, category=None, endpoint=None,
                  url=None, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
         super(CustomModelView, self).__init__(model, name, category, endpoint,
@@ -49,7 +49,7 @@ def test_list():
     # Create tables in the database if they don't exists
     try:
         install_models(Person)
-    except DatabaseError, e:
+    except DatabaseError as e:
         if 'already exists' not in e.message:
             raise
 

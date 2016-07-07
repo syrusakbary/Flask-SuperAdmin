@@ -1,6 +1,6 @@
 from sqlalchemy.sql.expression import desc, literal_column, or_
 
-from orm import model_form, AdminModelConverter
+from .orm import model_form, AdminModelConverter
 
 from flask_superadmin.model.base import BaseModelAdmin
 from sqlalchemy import schema

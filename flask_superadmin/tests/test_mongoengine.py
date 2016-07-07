@@ -12,7 +12,7 @@ from flask_superadmin.model.backends.mongoengine.view import ModelAdmin
 class CustomModelView(ModelAdmin):
     def __init__(self, model, name=None, category=None, endpoint=None,
                  url=None, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
         super(CustomModelView, self).__init__(model, name, category, endpoint,
@@ -137,7 +137,7 @@ def test_exclude():
     # Verify form
     with app.test_request_context():
         Form = view.get_form()
-        eq_(Form()._fields.keys(), ['csrf_token', 'age'])
+        eq_(list(Form()._fields.keys()), ['csrf_token', 'age'])
 
 def test_fields():
     app, admin = setup()
@@ -154,7 +154,7 @@ def test_fields():
     # Verify form
     with app.test_request_context():
         Form = view.get_form()
-        eq_(Form()._fields.keys(), ['csrf_token', 'name'])
+        eq_(list(Form()._fields.keys()), ['csrf_token', 'name'])
 
 def test_fields_and_exclude():
     app, admin = setup()
@@ -171,7 +171,7 @@ def test_fields_and_exclude():
     # Verify form
     with app.test_request_context():
         Form = view.get_form()
-        eq_(Form()._fields.keys(), ['csrf_token', 'age'])
+        eq_(list(Form()._fields.keys()), ['csrf_token', 'age'])
 
 def test_search_fields():
     app, admin = setup()

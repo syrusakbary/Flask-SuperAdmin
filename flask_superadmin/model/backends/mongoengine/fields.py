@@ -56,7 +56,7 @@ class QuerySelectField(SelectFieldBase):
 
         if get_label is None:
             self.get_label = lambda x: x
-        elif isinstance(get_label, (str, basestring)):
+        elif isinstance(get_label, str):
             self.get_label = operator.attrgetter(get_label)
         else:
             self.get_label = get_label
@@ -183,7 +183,7 @@ class ModelSelectField(QuerySelectField):
     Like a QuerySetSelectField, except takes a model class instead of a
     queryset and lists everything in it.
     """
-    def __init__(self, label=u'', validators=None, model=None, **kwargs):
+    def __init__(self, label='', validators=None, model=None, **kwargs):
         super(ModelSelectField, self).__init__(label, validators,
               query_factory=model.objects, **kwargs)
 
@@ -193,7 +193,7 @@ class ModelSelectMultipleField(QuerySelectMultipleField):
     Like a QuerySetSelectField, except takes a model class instead of a
     queryset and lists everything in it.
     """
-    def __init__(self, label=u'', validators=None, model=None, **kwargs):
+    def __init__(self, label='', validators=None, model=None, **kwargs):
         super(ModelSelectMultipleField, self).__init__(label, validators,
               query_factory=model.objects, **kwargs)
 
