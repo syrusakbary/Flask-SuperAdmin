@@ -68,7 +68,7 @@ class AdminViewMeta(type):
                 setattr(cls, p, _wrap_view(attr))
 
 
-class BaseView(object):
+class BaseView(object, metaclass=AdminViewMeta):
     """
         Base administrative view.
 
@@ -79,7 +79,6 @@ class BaseView(object):
                 def index(self):
                     return 'Hello World!'
     """
-    __metaclass__ = AdminViewMeta
 
     def __init__(self, name=None, category=None, endpoint=None, url=None, static_folder=None):
         """

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask.ext.superadmin import Admin, model
 
-from utils import install_models
+from .utils import install_models
 
 
 #For using with django

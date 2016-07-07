@@ -1,7 +1,7 @@
 import time
 import datetime
+import flask_wtf as wtf
 
-from flask.ext import wtf
 from wtforms import fields, widgets
 
 from flask_superadmin.babel import gettext
@@ -60,13 +60,13 @@ class TimeField(fields.Field):
 
     def _value(self):
         if self.raw_data:
-            return u' '.join(self.raw_data)
+            return ' '.join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.formats[0]) or u''
+            return self.data and self.data.strftime(self.formats[0]) or ''
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = u' '.join(valuelist)
+            date_str = ' '.join(valuelist)
 
             for format in self.formats:
                 try:
@@ -89,9 +89,9 @@ class ChosenSelectWidget(widgets.Select):
     """
     def __call__(self, field, **kwargs):
         if getattr(field, 'allow_blank', False) and not self.multiple:
-            kwargs['data-role'] = u'chosenblank'
+            kwargs['data-role'] = 'chosenblank'
         else:
-            kwargs['data-role'] = u'chosen'
+            kwargs['data-role'] = 'chosen'
 
         return super(ChosenSelectWidget, self).__call__(field, **kwargs)
 
@@ -153,7 +153,7 @@ class DatePickerWidget(widgets.TextInput):
         You must include bootstrap-datepicker.js and form.js for styling to work.
     """
     def __call__(self, field, **kwargs):
-        kwargs['data-role'] = u'datepicker'
+        kwargs['data-role'] = 'datepicker'
         return super(DatePickerWidget, self).__call__(field, **kwargs)
 
 
@@ -164,7 +164,7 @@ class DateTimePickerWidget(widgets.TextInput):
         You must include bootstrap-datepicker.js and form.js for styling to work.
     """
     def __call__(self, field, **kwargs):
-        kwargs['data-role'] = u'datetimepicker'
+        kwargs['data-role'] = 'datetimepicker'
         return super(DateTimePickerWidget, self).__call__(field, **kwargs)
 
 # def format_form(form):

@@ -1,6 +1,8 @@
 import math
 import re
 
+from collections import Callable
+
 from wtforms import fields, widgets
 from flask import request, url_for, redirect, flash, abort
 
@@ -8,8 +10,6 @@ from flask_superadmin.babel import gettext
 from flask_superadmin.base import BaseView, expose
 from flask_superadmin.form import (BaseForm, ChosenSelectWidget, FileField,
                                    DatePickerWidget, DateTimePickerWidget)
-
-import traceback
 
 
 class AdminModelConverter(object):
@@ -118,11 +118,11 @@ class BaseModelAdmin(BaseView):
             # admin's methods have higher priority than the fields/methods on
             # the model or document. If a callable is found on the admin
             # level, it's also passed an instance object
-            if hasattr(self, p) and callable(getattr(self, p)):
+            if hasattr(self, p) and isinstance(getattr(self, p), Callable):
                 value = getattr(self, p)(instance)
             else:
                 value = getattr(value, p, None)
-                if callable(value):
+                if isinstance(value, Callable):
                     value = value()
 
             if not value:
@@ -142,11 +142,11 @@ class BaseModelAdmin(BaseView):
             return ret_vals
         for field in self.readonly_fields:
             self_field = getattr(self, field, None)
-            if callable(self_field):
+            if isinstance(self_field, Callable):
                 val = self_field(instance)
             else:
                 val = getattr(instance, field)
-                if callable(val):
+                if isinstance(val, Callable):
                     val = val()
             if not isinstance(val, dict):
                 # Check if the value is a reference field to a doc/model
@@ -248,8 +248,8 @@ class BaseModelAdmin(BaseView):
                     flash(gettext('New %(model)s saved successfully',
                           model=self.get_display_name()), 'success')
                     return self.dispatch_save_redirect(instance)
-                except Exception, ex:
-                    print traceback.format_exc()
+                except Exception as ex:
+                    print(ex)
                     if hasattr(self, 'session'):
                         self.session.rollback()
                     flash(gettext('Failed to add model. %(error)s',
@@ -344,8 +344,8 @@ class BaseModelAdmin(BaseView):
                         'success'
                     )
                     return self.dispatch_save_redirect(instance)
-                except Exception, ex:
-                    print traceback.format_exc()
+                except Exception as ex:
+                    print(ex)
                     flash(gettext('Failed to edit model. %(error)s',
                                   error=str(ex)), 'error')
         else:

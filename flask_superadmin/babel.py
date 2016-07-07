@@ -1,10 +1,10 @@
 try:
     try:
-        from flask.ext.babelex import Domain
+        from flask_babelex import Domain
     except:
-        from flask.ext.babel import Domain
+        from flask_babel import Domain
 
-    from flask.ext.superadmin import translations
+    from flask_superadmin import translations
 
     class CustomDomain(Domain):
         def __init__(self):
@@ -12,7 +12,7 @@ try:
                   domain='admin')
 
         def get_translations_path(self, ctx):
-            print ctx
+            print(ctx)
 
             dirname = ctx.app.extensions['admin'].translations_path
             if dirname is not None:
