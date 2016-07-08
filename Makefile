@@ -41,6 +41,10 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
+fsa:
+	pip uninstall flask_superadmin
+	pip install -e .
+
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo

@@ -84,7 +84,7 @@ class BaseModelAdmin(BaseView):
     field_overrides = {}
 
     # This dictionary can override the label of the column with the value given, e.g.
-    # {'surname': 'Surnames'}
+    # {'surname': {'label': 'Surnames', 'description': 'Descripcion'}
     field_name_overrides = {}
 
     # A dictionary of field_name: overridden_params_dict, e.g.
@@ -92,8 +92,6 @@ class BaseModelAdmin(BaseView):
     # Parameters that can be overridden: label, description, validators,
     # filters, default
     field_args = None
-
-    field_descriptions = {}
 
     @staticmethod
     def model_detect(model):
@@ -191,6 +189,7 @@ class BaseModelAdmin(BaseView):
                           readonly_fields=self.readonly_fields,
                           exclude=self.exclude, field_args=self.field_args,
                           converter=converter)
+
         return form
 
     def get_add_form(self):
@@ -215,8 +214,8 @@ class BaseModelAdmin(BaseView):
         return False
 
     def field_name(self, field):
-        # return prettify(field)
-        return prettify(self.field_name_overrides.get(field, field))
+        return prettify(self.field_name_overrides.get(field, {})
+                                                 .get('label', field))
 
     def construct_search(self, field_name):
         raise NotImplemented()

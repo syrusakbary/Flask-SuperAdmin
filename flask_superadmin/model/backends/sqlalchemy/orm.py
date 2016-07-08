@@ -59,7 +59,8 @@ class AdminModelConverter(ModelConverter):
             return field_args['label']
 
         if self.view.field_name_overrides:
-            return self.view.field_name_overrides.get(name)
+            return self.view.field_name_overrides.get(name, {})\
+                                                 .get('label', name)
 
         return None
 
@@ -68,9 +69,8 @@ class AdminModelConverter(ModelConverter):
             return self.view.field_overrides.get(name)
 
     def _get_description(self, name):
-        print('Getting description for {}'.format(name))
-        print('Response with {}'.format(self.view.field_descriptions.get(name, 'FAIL'))
-        return self.view.field_descriptions.get(name, '')
+        return self.view.field_name_overrides.get(name, {})\
+                                             .get('description', '')
 
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {
@@ -80,6 +80,7 @@ class AdminModelConverter(ModelConverter):
 
         if field_args:
             kwargs.update(field_args)
+            kwargs.update({'description': 'jamones'})
 
         if hasattr(prop, 'direction'):
             remote_model = prop.mapper.class_
@@ -159,6 +160,8 @@ class AdminModelConverter(ModelConverter):
 
             # Apply label
             kwargs['label'] = self._get_label(prop.key, kwargs)
+
+            kwargs['description'] = self._get_description(prop.key)
 
             # Override field type if necessary
             override = self._get_field_override(prop.key)

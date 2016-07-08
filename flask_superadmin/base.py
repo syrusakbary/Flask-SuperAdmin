@@ -301,19 +301,20 @@ class Admin(object):
         try:
             from flask_superadmin.model.backends import mongoengine
             self.add_model_backend(mongoengine.ModelAdmin)
-        except:
+        except Exception as e:
             pass
 
         try:
             from flask_superadmin.model.backends import sqlalchemy
             self.add_model_backend(sqlalchemy.ModelAdmin)
-        except:
+        except Exception as e:
+            print(e)
             pass
 
         try:
             from flask_superadmin.model.backends import django
             self.add_model_backend(django.ModelAdmin)
-        except:
+        except Exception as e:
             pass
 
         if name is None:
