@@ -276,7 +276,6 @@ class BaseModelAdmin(BaseView):
                                 '__init__ with all arguments set to defaults.'
                                 % self.model.__name__)
 
-        from ipdb import set_trace; set_trace()
         return self.render(self.add_template, model=self.model, form=form)
 
     @property

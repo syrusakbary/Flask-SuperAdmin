@@ -68,6 +68,8 @@ class AdminModelConverter(ModelConverter):
             return self.view.field_overrides.get(name)
 
     def _get_description(self, name):
+        print('Getting description for {}'.format(name))
+        print('Response with {}'.format(self.view.field_descriptions.get(name, 'FAIL'))
         return self.view.field_descriptions.get(name, '')
 
     def convert(self, model, mapper, prop, field_args, *args):
