@@ -87,7 +87,7 @@
 
 {% macro render_ff (ff, delete) %}
     {% set parent_class='form-group' %}
-    {% if ff.errors|length>0 %} {% set parent_class=parent_class+' has error' %}{% endif %}
+    {% if ff.errors|length>0 %} {% set parent_class=parent_class+' has-error' %}{% endif %}
     <div class="{{ parent_class  }}">
                 
         {% if ff.type == "FormField" %}
