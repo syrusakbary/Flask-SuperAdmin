@@ -15,8 +15,8 @@
 
     <div class="page-content">
         {% macro extra() %}
-            <input name="_add_another" type="submit" class="btn" value="{{ _gettext('Guardar y crear otro') }}" />
-            <input name="_edit" type="submit" class="btn" value="{{ _gettext('Guardar y quedarse en la página') }}" />
+            <input name="_add_another" type="submit" class="btn btn-default" value="{{ _gettext('Guardar y crear otro') }}" />
+            <input name="_edit" type="submit" class="btn btn-default" value="{{ _gettext('Guardar y quedarse en la página') }}" />
         {% endmacro %}
 
         {{ lib.render_form(form, extra(), admin_view.can_edit, admin_view.can_delete) }}

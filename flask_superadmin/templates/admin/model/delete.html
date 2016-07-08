@@ -23,9 +23,9 @@
                 {% endfor %}
             </ul>
             <div class="form-buttons">
-                <input name="confirm_delete" type="submit" class="btn btn-danger btn-large" value="{{ _gettext('Confirm') }}" />
-                <a href="{{ cancel_url }}" class="btn">{{ _gettext('Cancel') }}</a>
-            </div>
+                <input name="confirm_delete" type="submit" class="btn btn-danger" value="{{ _gettext('Confirm') }}" />
+                <a href="{{ cancel_url }}" class="btn btn-default">{{ _gettext('Cancel') }}</a>
+            </div> 
         </form>
     </div>
 {% endblock %}

@@ -19,7 +19,7 @@
                 <a href="{{ url_for('.delete', pk=pk) }}" class="btn btn-danger">{{ _gettext('Delete') }}</a>
             {% endif %}
             {% if admin_view.can_edit %}
-                <input name="_edit" type="submit" class="btn" value="{{ _gettext('Save and stay on page') }}" />
+                <input name="_edit" type="submit" class="btn btn-default" value="{{ _gettext('Save and stay on page') }}" />
             {% endif %}
         {% endmacro %}
 

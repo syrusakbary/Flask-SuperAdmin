@@ -10,7 +10,8 @@
     {% block head_css %}
         <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
         <link href="{{ url_for('admin.static', filename='bootstrap/css/bootstrap.css') }}" rel="stylesheet">
-        <link href="{{ url_for('admin.static', filename='bootstrap/css/bootstrap-responsive.css') }}" rel="stylesheet">
+        <link href="{{ url_for('admin.static', filename='bootstrap/css/bootstrap-theme.css') }}" rel="stylesheet">
+        <!-- <link href="{{ url_for('admin.static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"> -->
         <link href="{{ url_for('admin.static', filename='css/admin.css') }}" rel="stylesheet">
         <link href="{{ url_for('admin.static', filename='css/forms.css') }}" rel="stylesheet">
         <link rel="icon" href="{{ url_for('admin.static', filename='img/favicon.png') }}" type="image/png">
@@ -25,7 +26,7 @@
       <div class="container">
 
       <div class="row">
-        <div class="span2">
+        <div class="col-md-4">
           <ul id="main-nav" class="nav nav-pills nav-stacked">
             {% for item in admin_view.admin.menu() %}
               {% if item.is_category() %}
@@ -54,7 +55,7 @@
         </div>
 
 
-    <div id="content" class="span10">
+    <div id="content" class="col-md-8">
           {% with messages = get_flashed_messages(with_categories=True) %}
       {% if messages %}
         {% for category, m in messages %}
