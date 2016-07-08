@@ -58,8 +58,8 @@ class AdminModelConverter(ModelConverter):
         if 'label' in field_args:
             return field_args['label']
 
-        # if self.view.rename_columns:
-        #     return self.view.rename_columns.get(name)
+        if self.view.rename_columns:
+            return self.view.rename_columns.get(name)
 
         return None
 
@@ -178,9 +178,7 @@ class AdminModelConverter(ModelConverter):
 
     @converts('Text')
     def conv_Text_fix(self, field_args, **extra):
-        # field_args['widget'] = form.TextWidget()
-        return fields.TextField('form-control', **field_args)
-        # return self.conv_Text(field_args, **extra)
+        return self.conv_Text(field_args, **extra)
 
 
 def model_form(model, base_class=Form, fields=None, readonly_fields=None,

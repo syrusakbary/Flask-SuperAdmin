@@ -168,12 +168,6 @@ class DateTimePickerWidget(widgets.TextInput):
         return super(DateTimePickerWidget, self).__call__(field, **kwargs)
 
 
-class TextWidget(widgets.TextInput):
-    def __call__(self, field, **kwargs):
-        kwargs['class'] = 'form-control'
-        return super(TextWidget, self).__call__(field, **kwargs)
-
-
 # def format_form(form):
 #     for field in form:
 #         if isinstance(field,fields.SelectField):
