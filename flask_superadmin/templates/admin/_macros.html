@@ -156,6 +156,8 @@
                 {% for error in ff.errors %}
                     <span id="helpBlock" class="help-block">{{ error }}</span>
                 {% endfor %}
+                
+                {{ ff }}
 
                 {% if ff.description %}
                     <span id="helpBlock" class="help-block">{{ ff.description }}</span>
