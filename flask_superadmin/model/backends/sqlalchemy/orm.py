@@ -68,8 +68,7 @@ class AdminModelConverter(ModelConverter):
             return self.view.field_overrides.get(name)
 
     def _get_description(self, name):
-        if self.view.field_descriptions is not None:
-            return self.view.field_descriptions.get(name)
+        return self.view.field_descriptions.get(name, '')
 
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {
