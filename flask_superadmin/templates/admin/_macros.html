@@ -155,7 +155,8 @@
 {% endmacro %}
 
 {% macro render_formfield(form) %}
-    <fieldset>
+    <!-- <fieldset> -->
+    <div class="form-group">
         {% set readonly_fields = admin_view.get_readonly_fields(instance) %}
         {% set field_names = admin_view.fields or form._fields.keys() %}
         
@@ -181,8 +182,8 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
-
-    </fieldset>
+    </div>
+    <!-- </fieldset> -->
 {% endmacro %}
 
 {% macro render_form(form, extra=None, can_edit=True, can_delete=True) -%}
