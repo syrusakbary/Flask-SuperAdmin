@@ -178,8 +178,8 @@ class AdminModelConverter(ModelConverter):
 
     @converts('Text')
     def conv_Text_fix(self, field_args, **extra):
-        field_args['widget'] = form.TextWidget()
-        return fields.TextField(**field_args)
+        # field_args['widget'] = form.TextWidget()
+        return fields.TextField('form-control', **field_args)
         # return self.conv_Text(field_args, **extra)
 
 
