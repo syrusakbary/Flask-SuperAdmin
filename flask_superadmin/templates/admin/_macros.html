@@ -117,6 +117,12 @@
                 <div class="clear"></div>
             </div>
         
+        {% elif ff.type == "BooleanField" %}
+            <div class="col-md-offset-3 col-md-9">
+                <label class="checkbox-inline">
+                    ff(class="form-control")
+                </label>
+
         {% else %}
             
             {% if delete %}
