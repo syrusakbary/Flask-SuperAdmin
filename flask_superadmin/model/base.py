@@ -77,6 +77,8 @@ class BaseModelAdmin(BaseView):
     add_template = 'admin/model/add.html'
     delete_template = 'admin/model/delete.html'
 
+    display_name = None
+
     search_fields = tuple()
 
     field_overrides = {}
@@ -109,6 +111,9 @@ class BaseModelAdmin(BaseView):
             self.model = model
 
     def get_display_name(self):
+        if self.display_name is not None:
+            return self.display_name
+
         return self.model.__name__
 
     def allow_pk(self):
