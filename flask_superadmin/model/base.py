@@ -252,6 +252,7 @@ class BaseModelAdmin(BaseView):
             abort(403)
 
         Form = self.get_add_form()
+
         if request.method == 'POST':
             form = Form()
             if form.validate_on_submit():
@@ -275,6 +276,7 @@ class BaseModelAdmin(BaseView):
                                 '__init__ with all arguments set to defaults.'
                                 % self.model.__name__)
 
+        from ipdb import set_trace; set_trace()
         return self.render(self.add_template, model=self.model, form=form)
 
     @property
