@@ -167,6 +167,7 @@ class DateTimePickerWidget(widgets.TextInput):
         kwargs['data-role'] = 'datetimepicker'
         return super(DateTimePickerWidget, self).__call__(field, **kwargs)
 
+
 class TextWidget(widgets.TextInput):
     def __call__(self, field, **kwargs):
         kwargs['class'] = 'form-control'
