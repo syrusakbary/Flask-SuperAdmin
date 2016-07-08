@@ -67,6 +67,10 @@ class AdminModelConverter(ModelConverter):
         if self.view.field_overrides:
             return self.view.field_overrides.get(name)
 
+    def _get_description(self, name):
+        if self.view.field_descriptions is not None:
+            return self.view.field_descriptions.get(name)
+
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {
             'validators': [],
@@ -83,6 +87,7 @@ class AdminModelConverter(ModelConverter):
             kwargs.update({
                 'allow_blank': local_column.nullable,
                 'label': self._get_label(prop.key, kwargs),
+                'description': self._get_description(prop.key),
                 'query_factory': lambda: self.view.session.query(remote_model)
             })
             if local_column.nullable:
