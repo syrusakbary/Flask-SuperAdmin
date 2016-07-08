@@ -26,7 +26,7 @@
       <div class="container">
 
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-2">
           <ul id="main-nav" class="nav nav-pills nav-stacked">
             {% for item in admin_view.admin.menu() %}
               {% if item.is_category() %}
@@ -55,7 +55,7 @@
         </div>
 
 
-    <div id="content" class="col-md-8">
+    <div id="content" class="col-md-10">
           {% with messages = get_flashed_messages(with_categories=True) %}
       {% if messages %}
         {% for category, m in messages %}
