@@ -93,6 +93,8 @@ class BaseModelAdmin(BaseView):
     # filters, default
     field_args = None
 
+    field_descriptions = {}
+
     @staticmethod
     def model_detect(model):
         return False
