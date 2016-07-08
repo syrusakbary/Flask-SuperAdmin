@@ -58,8 +58,8 @@ class AdminModelConverter(ModelConverter):
         if 'label' in field_args:
             return field_args['label']
 
-        if self.view.rename_columns:
-            return self.view.rename_columns.get(name)
+        if self.view.field_name_overrides:
+            return self.view.field_name_overrides.get(name)
 
         return None
 

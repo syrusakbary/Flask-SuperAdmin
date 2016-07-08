@@ -81,8 +81,6 @@ class BaseModelAdmin(BaseView):
 
     field_overrides = {}
 
-    rename_columns = {}
-
     # This dictionary can override the label of the column with the value given, e.g.
     # {'surname': 'Surnames'}
     field_name_overrides = {}

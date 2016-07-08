@@ -86,7 +86,10 @@
 {% endmacro %}
 
 {% macro render_ff (ff, delete) %}
-    <section class="field">
+    {% set parent_class='form-group' %}
+    {% if ff.errors|length>0 %} {% set parent_class=parent_class+' has error' %}{% endif %}
+    <div class="{{ parent_class  }}">
+                
         {% if ff.type == "FormField" %}
       
             {% if delete %}
@@ -96,6 +99,7 @@
             {% endif %}
 
             <div>{{ render_formfield(ff.form) }}</div>
+        
         {% elif ff.type == "ListField" %}
             <h3>{{ admin_view.field_name(ff.short_name) }}</h3>
             {% if delete %}
@@ -112,24 +116,22 @@
                 {% endif %}
                 <div class="clear"></div>
             </div>
+        
         {% else %}
             
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
-                <label for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.text) }}</label>
+                <label class="col-md-2" for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.text) }}</label>
             {% endif %}
 
-            <div>
+            <div class="col-md-10">
                 {% set class='form-control' %}
                 {% if ff.type == "DateTimeField" %}
                     {% set data_type="datetimepicker" %}
                 {% endif %}
 
-                {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
-
                 {% if not admin_view.can_edit and instance %}
-
                     {% with reference = admin_view.get_reference(ff.data) %}
                         {% if reference %}
                             <div class="readonly-value"><a href="{{ reference }}">{{ ff.data }}</a></div>
@@ -143,20 +145,22 @@
                 {% endif %}
         
                 {% for error in ff.errors %}
-                    &nbsp;<span class="label label-important">{{ error }}</span>
+                    <span id="helpBlock" class="help-block">{{ error }}</span>
                 {% endfor %}
 
                 {% if ff.description %}
-                    <p class="help-block">{{ ff.description }}</p>
+                    <span id="helpBlock" class="help-block">{{ ff.description }}</span>
                 {% endif %}
             </div>
         {% endif %}
-   </section>
+
+    </div>
+        
 {% endmacro %}
 
 {% macro render_formfield(form) %}
     <!-- <fieldset> -->
-    <div class="form-group">
+    <div class="form-horizontal">
         {% set readonly_fields = admin_view.get_readonly_fields(instance) %}
         {% set field_names = admin_view.fields or form._fields.keys() %}
         
@@ -196,7 +200,7 @@
         {% if can_edit or can_delete %}
             <div class="form-buttons">
                 {% if can_edit or not instance %}
-                    <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
+                    <input type="submit" class="btn btn-primary" value="{{ _gettext('Guardar') }}" />
                 {% endif %}
                 {% if extra %}
                     {{ extra }}
