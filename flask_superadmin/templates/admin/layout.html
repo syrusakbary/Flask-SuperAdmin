@@ -18,8 +18,12 @@
         <link rel="shortcut icon" href="{{ url_for('admin.static', filename='img/favicon.png') }}" type="image/png">
     {% endblock %}
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-    <script>tinymce.init({selector: 'textarea',
-                          menubar: false});</script>
+    <script>
+        tinymce.init({selector: 'textarea',
+                      menubar: false,
+                      plugins: 'link',
+                      toolbar: 'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | subscript superscript | link'});
+    </script>
   {% endblock %}</head>
   <body>
     {% block page_body %}
