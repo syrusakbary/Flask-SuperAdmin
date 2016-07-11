@@ -72,6 +72,10 @@ class AdminModelConverter(ModelConverter):
         return self.view.field_name_overrides.get(name, {})\
                                              .get('description', '')
 
+    def _get_placeholder(self, name):
+        return self.view.field_name_overrides.get(name, {})\
+                                             .get('placeholder', '')
+
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {
             'validators': [],
@@ -90,6 +94,7 @@ class AdminModelConverter(ModelConverter):
                 'allow_blank': local_column.nullable,
                 'label': self._get_label(prop.key, kwargs),
                 'description': self._get_description(prop.key),
+                # 'placeholder': self._get_placeholder(prop.key),
                 'query_factory': lambda: self.view.session.query(remote_model)
             })
             if local_column.nullable:
@@ -162,6 +167,7 @@ class AdminModelConverter(ModelConverter):
             kwargs['label'] = self._get_label(prop.key, kwargs)
 
             kwargs['description'] = self._get_description(prop.key)
+            # kwargs['placeholder'] = self._get_placeholder(prop.key)
 
             # Override field type if necessary
             override = self._get_field_override(prop.key)
