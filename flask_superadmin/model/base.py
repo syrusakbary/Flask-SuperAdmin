@@ -257,14 +257,14 @@ class BaseModelAdmin(BaseView):
             if form.validate_on_submit():
                 try:
                     instance = self.save_model(self.model(), form, adding=True)
-                    flash(gettext('New %(model)s saved successfully',
+                    flash(gettext('Nuevo %(model)s guardado correctamente',
                           model=self.get_display_name()), 'success')
                     return self.dispatch_save_redirect(instance)
                 except Exception as ex:
                     print(ex)
                     if hasattr(self, 'session'):
                         self.session.rollback()
-                    flash(gettext('Failed to add model. %(error)s',
+                    flash(gettext('Error al guardar. %(error)s',
                           error=str(ex)), 'error')
 
         else:
