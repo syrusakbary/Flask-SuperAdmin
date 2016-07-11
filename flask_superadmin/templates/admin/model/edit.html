@@ -9,17 +9,17 @@
 {% endblock %}
 
 {% block body %}
-    <h1 id="main-title">{{ _gettext('Edit %(model)s',model=name|capitalize) }}</h1>
+    <h1 id="main-title">{{ _gettext('Editar %(model)s',model=name|capitalize) }}</h1>
     <div class="clearfix"></div>
     <hr />
 
     <div class="page-content">
         {% macro extra() %}
             {% if admin_view.can_delete %}
-                <a href="{{ url_for('.delete', pk=pk) }}" class="btn btn-danger">{{ _gettext('Delete') }}</a>
+                <a href="{{ url_for('.delete', pk=pk) }}" class="btn btn-danger">{{ _gettext('Eliminar') }}</a>
             {% endif %}
             {% if admin_view.can_edit %}
-                <input name="_edit" type="submit" class="btn btn-default" value="{{ _gettext('Save and stay on page') }}" />
+                <input name="_edit" type="submit" class="btn btn-default" value="{{ _gettext('Guardar y permanecer en la página') }}" />
             {% endif %}
         {% endmacro %}
 

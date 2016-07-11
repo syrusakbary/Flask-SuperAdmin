@@ -13,29 +13,29 @@
         {% if csrf_token %}
         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
         {% endif %}
-        <h1 id="main-title">{{ _gettext('%(model)s model', model=name|capitalize) }}</h1>
+        <h1 id="main-title">{{ _gettext('%(model)s', model=name|capitalize) }}</h1>
 
         {% if admin_view.can_create %}
-            <a class="btn btn-primary btn-title" href="{{ url_for('.add') }}">{{ _gettext('Add %(model)s', model=name) }}</a>
+            <a class="btn btn-primary btn-title" href="{{ url_for('.add') }}">{{ _gettext('Añadir %(model)s', model=name) }}</a>
         {% endif %}
 
-        <select class="actions btn-title hidden" name="action" data-placeholder="{{ _gettext('Choose action') }}">
+        <select class="actions btn-title hidden" name="action" data-placeholder="{{ _gettext('Acciones') }}">
             <option value=""></option>
             {% if admin_view.can_delete %}
-                <option value="delete">{{ _gettext('Delete selected') }}</option>
+                <option value="delete">{{ _gettext('Eliminar seleccionados') }}</option>
             {% endif %}
         </select>
 
         <div class="clearfix"></div>
         <hr />
 
-        <div class="total-count">Total count: {{ count }}</div>
+        <div class="total-count">Elementos totales: {{ count }}</div>
 
         <div class="page-content">
             {% if admin_view.search_fields %}
                 <div class="search">
                     <div class="clear-btn{% if not search_query %}hide{% endif %}"></div>
-                    <input type="text" tabindex="0" autofocus="autofocus" name="q" class="search-input" placeholder="Search" {% if search_query %}value="{{ search_query }}"{% endif %}/>
+                    <input type="text" tabindex="0" autofocus="autofocus" name="q" class="search-input" placeholder="Buscar" {% if search_query %}value="{{ search_query }}"{% endif %}/>
                 </div>
             {% endif %}
 
