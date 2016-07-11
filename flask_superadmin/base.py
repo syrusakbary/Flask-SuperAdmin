@@ -308,7 +308,6 @@ class Admin(object):
             from flask_superadmin.model.backends import sqlalchemy
             self.add_model_backend(sqlalchemy.ModelAdmin)
         except Exception as e:
-            print(e)
             pass
 
         try:
