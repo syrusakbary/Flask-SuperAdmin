@@ -5,7 +5,10 @@
 {% block head_css %}
     <link href="{{ url_for('admin.static', filename='chosen/chosen.css') }}" rel="stylesheet">
     <link href="{{ url_for('admin.static', filename='css/datepicker.css') }}" rel="stylesheet">
-    {{super()}}
+
+        {{super()}}
+
+    
 {% endblock %}
 
 {% block body %}
@@ -46,7 +49,7 @@
                 </div>
             {% endif %}
 
-            <table class="table model-list">
+            <table id="sorted-table" class="table table-striped table-bordered model-list">
                 <thead>
                     <tr>
                         <th class="model-check"><input type="checkbox" name="selected_all_instances" value="all"></th>

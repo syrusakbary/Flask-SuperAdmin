@@ -21,20 +21,20 @@
 
                 {% if min > 0 %}
                     <li>
-                        <a href="{{ generator(0) }}">&laquo;</a>
+                        <a href="{{ generator(0) }}">Primera</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&laquo;</a>
+                        <a href="#">Primera</a>
                     </li>
                 {% endif %}
                 {% if page > 0 %}
                     <li>
-                        <a href="{{ generator(page-1) }}">&lt;</a>
+                        <a href="{{ generator(page-1) }}">Anterior</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&lt;</a>
+                        <a href="#">Anterior</a>
                     </li>
                 {% endif %}
 
@@ -52,20 +52,22 @@
 
                 {% if page + 1 < pages %}
                     <li>
-                        <a href="{{ generator(page + 1) }}">&gt;</a>
+                        <a href="{{ generator(page + 1) }}">Siguiente</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&gt;</a>
+                        <a href="#">Siguiente</a>
                     </li>
                 {% endif %}
                 {% if max < pages %}
                     <li>
-                        <a href="{{ generator(pages - 1) }}">&raquo;</a>
+                        <!-- <a href="{{ generator(pages - 1) }}">&raquo;</a> -->
+                        <a href="{{ generator(pages - 1) }}">Última</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&raquo;</a>
+                        <!-- <a href="#">&raquo;</a> -->
+                        <a href="#">Última</a>
                     </li>
                 {% endif %}
             </ul>
@@ -88,6 +90,7 @@
 {% macro render_ff (ff, delete) %}
     {% set parent_class='form-group' %}
     {% if ff.errors|length>0 %} {% set parent_class=parent_class+' has-error' %}{% endif %}
+
     <div class="{{ parent_class  }}">
                 
         {% if ff.type == "FormField" %}
