@@ -289,9 +289,9 @@ form.search-form a.clear i {
     border: solid 1px #999;
     background: #fff url("../img/search-input-icon.png") 10px 10px no-repeat;
     resize: none;
-    -webkit-border-radius: 16px;
-    -moz-border-radius: 16px;
-    border-radius: 16px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding;
     background-clip: padding-box;
@@ -307,7 +307,7 @@ form.search-form a.clear i {
     left: 225px;
     top: 7px;
     background: #ddd;
-    border-radius: 16px;
+    border-radius: 5px;
     width: 16px;
     height: 16px;
     color: white;
