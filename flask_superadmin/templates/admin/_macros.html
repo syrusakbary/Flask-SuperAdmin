@@ -61,19 +61,17 @@
                 {% endif %}
                 {% if max < pages %}
                     <li>
-                        <!-- <a href="{{ generator(pages - 1) }}">&raquo;</a> -->
                         <a href="{{ generator(pages - 1) }}">Última</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <!-- <a href="#">&raquo;</a> -->
                         <a href="#">Última</a>
                     </li>
                 {% endif %}
             </ul>
         </div>
     {% endif %}
-{%- endmacro %}
+{% endmacro %}
 
 {% macro render_field(field, show_error_list=True) %}
     <div {% if show_error_list and field.errors %}class="error"{% endif %}>
