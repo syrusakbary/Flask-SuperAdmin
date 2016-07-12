@@ -47,6 +47,8 @@ class BaseModelAdmin(BaseView):
     by the user-defined admin classes inheriting from ModelAdmin.
     """
 
+    join = []
+
     # Number of objects to display per page in the list view
     list_per_page = 20
 
