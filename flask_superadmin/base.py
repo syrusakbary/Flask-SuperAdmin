@@ -5,7 +5,7 @@ from functools import wraps
 from flask import Blueprint, render_template, url_for, abort
 
 from flask_superadmin import babel
-
+from flask_login import current_user
 
 def expose(url='/', methods=('GET',)):
     """
@@ -101,6 +101,9 @@ class BaseView(object, metaclass=AdminViewMeta):
         """
         self.name = name
         self.category = category
+
+        self.user = current_user
+
         self.endpoint = endpoint
         self.url = url
         self.static_folder = static_folder

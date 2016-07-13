@@ -1,7 +1,6 @@
 /* Global styles */
 body
 {
-    padding-top:20px;
     background: #F6F6F6 url(../img/background.png);
     font-family:'Open Sans',sans-serif;
 }
@@ -15,7 +14,6 @@ body
 
 @media (min-width: 767px) {
  body {
-    padding-top:48px;
     padding-bottom:36px;
  }
 }
