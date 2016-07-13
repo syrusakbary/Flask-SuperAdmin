@@ -4,6 +4,7 @@ import re
 from collections import Callable
 
 from wtforms import fields, widgets
+
 from flask import request, url_for, redirect, flash, abort
 
 from flask_superadmin.babel import gettext
@@ -78,6 +79,7 @@ class BaseModelAdmin(BaseView):
     edit_template = 'admin/model/edit.html'
     add_template = 'admin/model/add.html'
     delete_template = 'admin/model/delete.html'
+    login_template = 'admin/model/login.html'
 
     display_name = None
 

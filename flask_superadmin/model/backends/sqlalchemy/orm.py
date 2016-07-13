@@ -84,7 +84,7 @@ class AdminModelConverter(ModelConverter):
 
         if field_args:
             kwargs.update(field_args)
-            kwargs.update({'description': 'jamones'})
+            kwargs.update({'description': ''})
             kwargs.update({'id': 'rich_text' if self._is_rich_text(prop.key) else ''})
 
         if hasattr(prop, 'direction'):
@@ -194,6 +194,11 @@ class AdminModelConverter(ModelConverter):
 
     @converts('Text')
     def conv_Text_fix(self, field_args, **extra):
+        return self.conv_Text(field_args, **extra)
+
+    @converts('PasswordType')
+    def convert_password(self, field_args, **extra):
+        field_args['widget'] = form.PasswordWidget()
         return self.conv_Text(field_args, **extra)
 
 

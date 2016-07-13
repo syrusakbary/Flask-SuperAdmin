@@ -168,6 +168,15 @@ class DateTimePickerWidget(widgets.TextInput):
         return super(DateTimePickerWidget, self).__call__(field, **kwargs)
 
 
+class PasswordWidget(widgets.TextInput):
+    """
+        Password widget. Justo password type
+    """
+    def __call__(self, field, **kwargs):
+        kwargs['type'] = 'password'
+        return super(PasswordWidget, self).__call__(field, **kwargs)
+
+
 # def format_form(form):
 #     for field in form:
 #         if isinstance(field,fields.SelectField):
