@@ -1,25 +1,44 @@
-{% extends "layout.html" %}
-{% block body %}
-  <form action="" method=post class="form-horizontal">
-    <h2>Signin to FlaskLogin(Todo) Application </h2>
-    <div class="control-group">
-        <div class="controls">
-          <input type="text" id="username" name="username" class="input-xlarge"
-            placeholder="Enter Username" required>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
+        <link href="{{ url_for('admin.static', filename='bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+        <link href="{{ url_for('admin.static', filename='bootstrap/css/bootstrap-theme.css') }}" rel="stylesheet">
+        <link rel="icon" href="{{ url_for('admin.static', filename='img/favicon.png') }}" type="image/png">
+        <link rel="shortcut icon" href="{{ url_for('admin.static', filename='img/favicon.png') }}" type="image/png">
+  </head>  
+  <body>
+    <div class="container">
+    <header class="jumbotron hero-spacer"> 
+        <h1 class="text-center"> HundredRooms LogIn </h1>
+        <br></br>
+        <form action="" method=post class="form-horizontal">
+            <div class="form-group">
+                <label for="lblusername" class="col-sm-2 control-label">Nombre de usuario</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
+                </div>
+            </div>
  
-    <div class="control-group">
-        <div class="controls">
-          <input type="password" id="password" name="password" class="input-xlarge"
-            placeholder="Enter Password" required>
-        </div>
+            <div class="form-group">
+                <label for="lblpassword" class="col-sm-2 control-label">Contraseña</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-success">Iniciar sesión</button>
+                </div>
+            </div>
+
+        </form>
+    </header>
     </div>
- 
-    <div class="control-group">
-        <div class="controls">
-          <button type="submit" class="btn btn-success">Signin</button>
-        </div>
-    </div>
-  </form>
-{% endblock %}
+  </body>
+</html>
