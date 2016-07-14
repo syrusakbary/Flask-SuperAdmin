@@ -71,6 +71,7 @@ class AdminModelConverter(ModelConverter):
         return self.view.field_name_overrides.get(name, {}).get('description', '')
 
     def _is_rich_text(self, name):
+        print('tonto')
         return self.view.field_name_overrides.get(name, {}).get('rich_text', False)
 
     def convert(self, model, mapper, prop, field_args, *args):
