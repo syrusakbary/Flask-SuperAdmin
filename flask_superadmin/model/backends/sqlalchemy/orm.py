@@ -59,8 +59,7 @@ class AdminModelConverter(ModelConverter):
             return field_args['label']
 
         if self.view.field_name_overrides:
-            return self.view.field_name_overrides.get(name, {})\
-                                                 .get('label', name)
+            return self.view.field_name_overrides.get(name, {}).get('label', name)
 
         return None
 
@@ -69,12 +68,10 @@ class AdminModelConverter(ModelConverter):
             return self.view.field_overrides.get(name)
 
     def _get_description(self, name):
-        return self.view.field_name_overrides.get(name, {})\
-                                             .get('description', '')
+        return self.view.field_name_overrides.get(name, {}).get('description', '')
 
     def _is_rich_text(self, name):
-        return self.view.field_name_overrides.get(name, {})\
-                                             .get('rich_text', False)
+        return self.view.field_name_overrides.get(name, {}).get('rich_text', False)
 
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {
