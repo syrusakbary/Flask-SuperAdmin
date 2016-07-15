@@ -395,3 +395,7 @@ class BaseModelAdmin(BaseView):
 
 class ModelAdmin(BaseModelAdmin):
     pass
+
+
+class ImageModelAdmin(BaseModelAdmin):
+    pass
