@@ -148,4 +148,5 @@ class ImageModelAdmin(ModelAdmin):
         self._primary_key = self.pk_key
 
     def save_model(self, instance, form, adding=False):
-        print('Im a fucking crack!', self.cdn_conn)
+        print('Im a fucking crack!')
+        print(self.cdn_conn)
