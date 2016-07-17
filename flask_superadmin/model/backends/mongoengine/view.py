@@ -83,7 +83,7 @@ class ModelAdmin(BaseModelAdmin):
         return self.get_queryset().filter(pk__in=pks)
 
     def get_object(self, pk):
-        return self.get_queryset().get(pk=pk)
+        return self.get_queryset().filter(pk=pk).first()
 
     def get_pk(self, instance):
         return str(instance.id)

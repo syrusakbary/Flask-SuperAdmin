@@ -392,9 +392,8 @@ class BaseModelAdmin(BaseView):
 
     @expose('/<pk>/', methods=('GET', 'POST'))
     def edit(self, pk):
-        try:
-            instance = self.get_object(pk)
-        except self.model.DoesNotExist:
+        instance = self.get_object(pk)
+        if not instance:
             abort(404)
 
         Form = self.get_form()
