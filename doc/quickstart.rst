@@ -10,7 +10,7 @@ Introduction
 While developing the library, I attempted to make it as flexible as possible. Developers should
 not monkey-patch anything to achieve desired functionality.
 
-The Library uses one simple, but powerful concept - administrative pieces are built as classes with
+The library uses one simple, but powerful concept - administrative pieces are built as classes with
 view methods.
 
 Below is an absolutely valid administrative piece::
@@ -64,7 +64,7 @@ You can change application name by passing `name` parameter to the :class:`~flas
 
 Name is displayed in the menu section.
 
-You don't have to pass Flask application object to the constructor - you can call :meth:`~flask.ext.superadmin.base.Admin.init_app` later::
+You don't have to pass the Flask application object to the constructor - you can call :meth:`~flask.ext.superadmin.base.Admin.init_app` later::
 
     admin = Admin(name='My App')
     # Add views here
