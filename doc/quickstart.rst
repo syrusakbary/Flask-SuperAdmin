@@ -1,19 +1,19 @@
 Quick Start
 ===========
 
-This page gives quick introduction to Flask-SuperAdmin library. It is assumed that reader has some prior
+This page gives a quick introduction to Flask-SuperAdmin library. It is assumed that reader has some prior
 knowledge of the `Flask <http://flask.pocoo.org/>`_ framework.
 
 Introduction
 ------------
 
-While developing the library, I attempted to make it as flexible as possible. Developer should
+While developing the library, I attempted to make it as flexible as possible. Developers should
 not monkey-patch anything to achieve desired functionality.
 
-Library uses one simple, but powerful concept - administrative pieces are built as classes with
+The Library uses one simple, but powerful concept - administrative pieces are built as classes with
 view methods.
 
-Here is absolutely valid administrative piece::
+Below is an absolutely valid administrative piece::
 
     class MyView(BaseView):
         @expose('/')
@@ -24,12 +24,12 @@ Here is absolutely valid administrative piece::
         def test(self):
             return self.render('admin/test.html')
 
-So, how does it help structuring administrative interface? With such building blocks, you're
+So, how does it help in structuring administrative interface? With such building blocks, you're
 implementing reusable functional pieces that are highly customizable.
 
 For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy, Mongoengine and Django model interface. 
 For SQLAlchemy it is implemented as a
-class which accepts two parameters: model and a database session, otherwise just the model parameter.
+class which accepts two parameters: a model and a database session, otherwise just the model parameter.
 
 While it exposes some
 class-level variables which change behavior of the interface (somewhat similar to django.contrib.admin),
@@ -90,7 +90,7 @@ Now, lets add an administrative view. To do this, you need to derive from :class
 
     app.run()
 
-If you will run this example, you will see that menu has two items: Home and Hello.
+If you run this example, you will see that menu has two items: Home and Hello.
 
 Each view class should have default page - view method with '/' url. Following code won't work::
 
@@ -99,7 +99,7 @@ Each view class should have default page - view method with '/' url. Following c
         def index(self):
             return self.render('index.html')
 
-Now, create `templates` directory and then create new `index.html` file with following content::
+Now, create the `templates` directory and then create new `index.html` file with following content::
 
     {% extends 'admin/master.html' %}
     {% block body %}
@@ -108,13 +108,13 @@ Now, create `templates` directory and then create new `index.html` file with fol
 
 All administrative pages should derive from the 'admin/master.html' to maintain same look and feel.
 
-If you will refresh 'Hello' administrative page again you should see greeting in the content section.
+If you refresh the 'Hello' administrative page again you should see the greeting in the content section.
 
     .. image:: images/quickstart/quickstart_2.png
         :width: 640
         :target: ../_images/quickstart_2.png
 
-You're not limited to top level menu. It is possible to pass category name and it will be used as a
+You're not limited to the top level menu. It is possible to pass a category name and it will be used as a
 top menu item. For example::
 
     from flask import Flask
@@ -142,12 +142,12 @@ Will look like this:
 Authentication
 --------------
 
-By default, administrative interface is visible to everyone, as Flask-SuperAdmin does not make
-any assumptions about authentication system you're using.
+By default, the administrative interface is visible to everyone, as Flask-SuperAdmin does not make
+any assumptions about the authentication system you're using.
 
-If you want to control who can access administrative views and who can not, derive from the
-administrative view class and implement `is_accessible` method. So, if you use Flask-Login and
-want to expose administrative interface only to logged in users, you can do something like
+If you want to control access to the administrative views, derive from the
+administrative view class and implement the `is_accessible` method. So, if you use Flask-Login and
+want to expose the administrative interface only to logged in users, you can do something like
 this::
 
     class MyView(BaseView):
@@ -156,7 +156,7 @@ this::
 
 
 You can implement policy-based security, conditionally allow or disallow access to parts of the
-administrative interface and if user does not have access to the view, he won't see menu item
+administrative interface and if user does not have access to the view, he won't see the menu item
 as well.
 
 Generating URLs
@@ -178,24 +178,24 @@ prefix to get URL to a local view::
         def test(self):
             return self.render('test.html')
 
-If you want to generate URL to the particular view method from outside, following rules apply:
+If you want to generate URL to the particular view method from outside, the following rules apply:
 
-1. You have ability to override endpoint name by passing `endpoint` parameter to the view class
+1. You have the ability to override an endpoint name by passing the `endpoint` parameter to the view class
 constructor::
 
     admin = Admin(app)
     admin.add_view(MyView(endpoint='testadmin'))
 
-In this case, you can generate links by concatenating view method name with a endpoint::
+In this case, you can generate links by concatenating the view method name with a endpoint::
 
     url_for('testadmin.index')
 
-2. If you don't override endpoint name, it will use lower case class name. For previous example,
-code to get URL will look like::
+2. If you don't override the endpoint name, it will use the lower case representation of the class name. For the previous example,
+the code to get the URL will look like this::
 
     url_for('myview.index')
 
-3. For model-based views rule is different - it will take model class name, if endpoint name
+3. For model-based views, the rule is different - it will take the model class name, if an endpoint name
 is not provided. Model-based views will be explained in the next section.
 
 
@@ -213,7 +213,7 @@ Flask-SuperAdmin comes with built-in SQLAlchemy model administrative interface. 
 
 This will create administrative interface for `User` model with default settings.
 
-Here is how default list view looks like:
+Here is how the default list view looks like:
 
     .. image:: images/quickstart/quickstart_4.png
         :width: 640
@@ -221,10 +221,10 @@ Here is how default list view looks like:
 
 If you want to customize model views, you have two options:
 
-1. Change behavior by overriding public properties that control how view works
-2. Change behavior by overriding methods
+1. Change the behavior by overriding public properties that control how view works
+2. Change the behavior by overriding methods
 
-For example, if you want to disable model creation, show only 'login' and 'email' columns in the list view,
+For example, if you want to disable model creation and show only the 'login' and 'email' columns in the list view,
 you can do something like this::
 
     from flask.ext.superadmin import Admin, model
@@ -249,7 +249,7 @@ File Admin
 
 Flask-SuperAdmin comes with another handy battery - file admin. It gives you ability to manage files on your server (upload, delete, rename, etc).
 
-Here is simple example::
+Here is a simple example::
 
     from flask.ext.superadmin import Admin
     from flask.ext.superadmin.contrib.fileadmin import FileAdmin
