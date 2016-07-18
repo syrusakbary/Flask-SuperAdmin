@@ -2,7 +2,7 @@ from flask_superadmin.model import ModelAdmin
 
 
 def print_kwargs(d):
-    return ', '.join(['{}=...'.format(k) for k in d.keys())
+    return ', '.join(['{}=...'.format(k) for k in d.keys()])
 
 
 class DeprecatedModelView(object):

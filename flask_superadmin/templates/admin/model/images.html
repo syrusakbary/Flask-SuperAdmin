@@ -1,0 +1,97 @@
+{% extends 'admin/layout.html' %}
+{% import 'admin/_macros.html' as lib with context %}
+{% set name = Imágenes %}
+
+{% block head_css %}
+    <link href="{{ url_for('admin.static', filename='chosen/chosen.css') }}" rel="stylesheet">
+    <link href="{{ url_for('admin.static', filename='css/datepicker.css') }}" rel="stylesheet">
+
+        {{super()}}
+
+    
+{% endblock %}
+
+{% block body %}
+    <form method="POST" action="#">
+        {% if csrf_token %}
+        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+        {% endif %}
+
+        <div class="row">
+        
+            <div class="col-md-6">
+                <div class="page-header">
+                    <h1>Imágenes</h1>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <a class="btn btn-primary btn-title" href="{{ url_for('.add') }}">{{ _gettext('Añadir %(model)s', model=name) }}</a>
+
+                <select class="actions btn-title hidden" name="action" data-placeholder="{{ _gettext('Acciones') }}">
+                    <option value=""></option>
+                    <option value="delete">{{ _gettext('Eliminar seleccionados') }}</option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                Elementos totales: <span class="badge">{{ count }}</span>
+            </div>
+
+            <!-- <div class="col-sm-9 text-right"> -->
+            <!--     {% if admin_view.search_fields %} -->
+            <!--     <div class="search"> -->
+            <!--         <div class="clear-btn {% if not search_query %}hide{% endif %}"></div> -->
+            <!--         <input type="text" tabindex="0" autofocus="autofocus" name="q" class="search-input" placeholder="Buscar" {% if search_query %}value="{{ search_query }}"{% endif %}/> -->
+            <!--     </div> -->
+            <!--     {% endif %} -->
+            <!-- </div> -->
+        </div>
+        
+        {% set images_per_column = 0 %}
+        <div class="page-content">
+            <div class="container">
+            
+                {% for instance in data %}
+                    {% if images_per_column == 0 %}
+                        <div class="row">
+                    {% endif %}
+
+                    <div class="col-xs-3">
+                        <div class="thumbnail">
+                            <img src="{{ instance.path }}">
+                            <div class="caption">
+                                <h2>{{ instance.name }}</h2>
+                                <p>{{ instance.width }}x{{ instance.height }}, {{ instance.mimetype }}</p>
+                                <p>
+                                    <a href="{{ url_for('.delete', pk=instance.id) }}" class="btn btn-danger">Eliminar</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    {% set images_per_column = images_per_column + 1 %}
+
+                    {% if images_per_column == 4 %}
+                        </div>
+                        {% set images_per_column = 0 %}
+                    {% endif %}
+                
+                {% endfor %}
+
+            </div>
+            
+            {{ lib.pager(page, total_pages, admin_view.page_url) }}
+
+        </div>
+    </form>
+{% endblock %}
+
+{% block tail %}
+    <script src="{{ url_for('admin.static', filename='js/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ url_for('admin.static', filename='js/form.js') }}"></script>
+    <script src="{{ url_for('admin.static', filename='js/filters.js') }}"></script>
+{% endblock %}

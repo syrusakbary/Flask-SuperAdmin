@@ -30,7 +30,10 @@ setup(
     platforms='any',
     install_requires=[
         'Flask>=0.11',
-        'Flask-WTF>=0.12'
+        'Flask-WTF>=0.12',
+        'Flask-Login==0.3.2',
+        'passlib==1.6.5',
+        'cloudinary==1.4.0'
     ],
     tests_require=[
         'nose>=1.0',

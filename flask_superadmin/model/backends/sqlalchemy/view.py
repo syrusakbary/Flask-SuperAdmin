@@ -135,18 +135,3 @@ class ModelAdmin(BaseModelAdmin):
 
         return count, qs
 
-
-class ImageModelAdmin(ModelAdmin):
-     def __init__(self, model, session=None, cdn_conn=None, *args, **kwargs):
-        super(ImageModelAdmin, self).__init__(model, session=session, *args, **kwargs)
-        if session:
-            self.session = session
-
-        if cdn_conn:
-            self.cdn_conn = cdn_conn
-
-        self._primary_key = self.pk_key
-
-    def save_model(self, instance, form, adding=False):
-        print('Im a fucking crack!')
-        print(self.cdn_conn)

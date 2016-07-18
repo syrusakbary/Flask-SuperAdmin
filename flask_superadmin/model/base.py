@@ -258,7 +258,9 @@ class BaseModelAdmin(BaseView):
 
         if request.method == 'POST':
             form = Form()
-            if form.validate_on_submit():
+            print(type(form))
+            # if form.validate_on_submit():
+            if True:
                 try:
                     instance = self.save_model(self.model(), form, adding=True)
                     flash(gettext('Nuevo %(model)s guardado correctamente',

@@ -177,6 +177,23 @@ class PasswordWidget(widgets.TextInput):
         return super(PasswordWidget, self).__call__(field, **kwargs)
 
 
+class TextInputWidget(widgets.TextInput):
+    """
+    """
+    def __call__(self, field, **kwargs):
+        kwargs['type'] = 'text'
+        return super(TextInputWidget, self).__call__(field, **kwargs)
+
+
+class FileWidget(widgets.FileInput):
+    """
+    """
+    def __call__(self, field, **kwargs):
+        # kwargs['type'] = 'file'
+        return super(FileWidget, self).__call__(field, **kwargs)
+
+
+
 # def format_form(form):
 #     for field in form:
 #         if isinstance(field,fields.SelectField):

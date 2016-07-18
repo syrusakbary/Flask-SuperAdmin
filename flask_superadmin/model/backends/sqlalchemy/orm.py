@@ -73,6 +73,9 @@ class AdminModelConverter(ModelConverter):
     def _is_rich_text(self, name):
         return self.view.field_name_overrides.get(name, {}).get('rich_text', False)
 
+    def _is_file_field(self, name):
+        return self.view.field_name_overrides.get(name, {}).get('file', False)
+
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {
             'validators': [],
@@ -95,6 +98,7 @@ class AdminModelConverter(ModelConverter):
                 'id': 'rich_text' if self._is_rich_text(prop.key) else '',
                 'query_factory': lambda: self.view.session.query(remote_model)
             })
+
             if local_column.nullable:
                 kwargs['validators'].append(validators.Optional())
             elif prop.direction.name not in ('MANYTOMANY', 'ONETOMANY'):
@@ -167,6 +171,9 @@ class AdminModelConverter(ModelConverter):
             kwargs['description'] = self._get_description(prop.key)
             kwargs['id'] = 'rich_text' if self._is_rich_text(prop.key) else ''
 
+            if self._is_file_field(prop.key):
+                kwargs.update({'validators': []})
+
             # Override field type if necessary
             override = self._get_field_override(prop.key)
             if override:
@@ -198,10 +205,21 @@ class AdminModelConverter(ModelConverter):
         field_args['widget'] = form.PasswordWidget()
         return self.conv_Text(field_args, **extra)
 
+    @converts('String')
+    def convert_string(self, field_args, **extra):
+        if self._is_file_field(extra.get('prop').key):
+            field_args['widget'] = form.FileWidget()
+
+        else:
+            field_args['widget'] = form.TextInputWidget()
+
+        return self.conv_Text(field_args, **extra)
+
 
 def model_form(model, base_class=Form, fields=None, readonly_fields=None,
                exclude=None, field_args=None, converter=None):
     only = tuple(set(fields or []) - set(readonly_fields or []))
+
     return original_model_form(model, base_class=base_class, only=only,
                                exclude=exclude, field_args=field_args,
                                converter=converter)
