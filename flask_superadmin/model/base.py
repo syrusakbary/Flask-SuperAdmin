@@ -12,6 +12,8 @@ from flask_superadmin.base import BaseView, expose
 from flask_superadmin.form import (BaseForm, ChosenSelectWidget, FileField,
                                    DatePickerWidget, DateTimePickerWidget)
 
+from flask_login import current_user
+
 
 class AdminModelConverter(object):
     def convert(self, *args, **kwargs):
@@ -181,6 +183,9 @@ class BaseModelAdmin(BaseView):
         view.
         """
         raise NotImplemented()
+
+    def get_current_user(self):
+        return current_user
 
     def get_form(self):
         model_form = self.get_model_form()
