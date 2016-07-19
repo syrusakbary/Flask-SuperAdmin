@@ -41,14 +41,14 @@
                 Elementos totales: <span class="badge">{{ count }}</span>
             </div>
 
-            <!-- <div class="col-sm-9 text-right"> -->
-            <!--     {% if admin_view.search_fields %} -->
-            <!--     <div class="search"> -->
-            <!--         <div class="clear-btn {% if not search_query %}hide{% endif %}"></div> -->
-            <!--         <input type="text" tabindex="0" autofocus="autofocus" name="q" class="search-input" placeholder="Buscar" {% if search_query %}value="{{ search_query }}"{% endif %}/> -->
-            <!--     </div> -->
-            <!--     {% endif %} -->
-            <!-- </div> -->
+            <div class="col-sm-9 text-right">
+                {% if admin_view.search_fields %}
+                <div class="search">
+                    <div class="clear-btn {% if not search_query %}hide{% endif %}"></div>
+                    <input type="text" tabindex="0" autofocus="autofocus" name="q" class="search-input" placeholder="Buscar" {% if search_query %}value="{{ search_query }}"{% endif %}/>
+                </div>
+                {% endif %}
+            </div>
         </div>
         
         {% set images_per_column = 0 %}

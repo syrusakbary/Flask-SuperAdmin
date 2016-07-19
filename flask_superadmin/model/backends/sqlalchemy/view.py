@@ -66,8 +66,13 @@ class ModelAdmin(BaseModelAdmin):
     def get_pk(self, instance):
         return getattr(instance, self._primary_key)
 
+    def pre_save_model(self, instance):
+        return instance
+
     def save_model(self, instance, form, adding=False):
         form.populate_obj(instance)
+        instance = self.pre_save_model(instance)
+
         if adding:
             self.session.add(instance)
         self.session.commit()

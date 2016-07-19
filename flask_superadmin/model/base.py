@@ -208,6 +208,9 @@ class BaseModelAdmin(BaseView):
     def get_pk(self, instance):
         return
 
+    def pre_save_model(self, instance):
+        return instance
+
     def save_model(self, instance, form, adding=False):
         raise NotImplemented()
 
