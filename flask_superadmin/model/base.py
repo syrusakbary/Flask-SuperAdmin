@@ -1,7 +1,10 @@
 import math
 import re
 
+from collections import Callable
+
 from wtforms import fields, widgets
+
 from flask import request, url_for, redirect, flash, abort
 
 from flask_superadmin.babel import gettext
@@ -9,7 +12,7 @@ from flask_superadmin.base import BaseView, expose
 from flask_superadmin.form import (BaseForm, ChosenSelectWidget, FileField,
                                    DatePickerWidget, DateTimePickerWidget)
 
-import traceback
+from flask_login import current_user
 
 
 class AdminModelConverter(object):
@@ -47,6 +50,8 @@ class BaseModelAdmin(BaseView):
     by the user-defined admin classes inheriting from ModelAdmin.
     """
 
+    join = []
+
     # Number of objects to display per page in the list view
     list_per_page = 20
 
@@ -76,10 +81,17 @@ class BaseModelAdmin(BaseView):
     edit_template = 'admin/model/edit.html'
     add_template = 'admin/model/add.html'
     delete_template = 'admin/model/delete.html'
+    login_template = 'admin/model/login.html'
+
+    display_name = None
 
     search_fields = tuple()
 
     field_overrides = {}
+
+    # This dictionary can override the label of the column with the value given, e.g.
+    # {'surname': {'label': 'Surnames', 'description': 'Descripcion'}
+    field_name_overrides = {}
 
     # A dictionary of field_name: overridden_params_dict, e.g.
     #   { 'name': { 'label': 'Name', 'description': 'This is a name' } }
@@ -105,6 +117,9 @@ class BaseModelAdmin(BaseView):
             self.model = model
 
     def get_display_name(self):
+        if self.display_name is not None:
+            return self.display_name
+
         return self.model.__name__
 
     def allow_pk(self):
@@ -118,11 +133,11 @@ class BaseModelAdmin(BaseView):
             # admin's methods have higher priority than the fields/methods on
             # the model or document. If a callable is found on the admin
             # level, it's also passed an instance object
-            if hasattr(self, p) and callable(getattr(self, p)):
+            if hasattr(self, p) and isinstance(getattr(self, p), Callable):
                 value = getattr(self, p)(instance)
             else:
                 value = getattr(value, p, None)
-                if callable(value):
+                if isinstance(value, Callable):
                     value = value()
 
             if not value:
@@ -142,11 +157,11 @@ class BaseModelAdmin(BaseView):
             return ret_vals
         for field in self.readonly_fields:
             self_field = getattr(self, field, None)
-            if callable(self_field):
+            if isinstance(self_field, Callable):
                 val = self_field(instance)
             else:
                 val = getattr(instance, field)
-                if callable(val):
+                if isinstance(val, Callable):
                     val = val()
             if not isinstance(val, dict):
                 # Check if the value is a reference field to a doc/model
@@ -169,6 +184,9 @@ class BaseModelAdmin(BaseView):
         """
         raise NotImplemented()
 
+    def get_current_user(self):
+        return current_user
+
     def get_form(self):
         model_form = self.get_model_form()
         converter = self.get_converter()
@@ -180,6 +198,7 @@ class BaseModelAdmin(BaseView):
                           readonly_fields=self.readonly_fields,
                           exclude=self.exclude, field_args=self.field_args,
                           converter=converter)
+
         return form
 
     def get_add_form(self):
@@ -194,6 +213,9 @@ class BaseModelAdmin(BaseView):
     def get_pk(self, instance):
         return
 
+    def pre_save_model(self, instance):
+        return instance
+
     def save_model(self, instance, form, adding=False):
         raise NotImplemented()
 
@@ -204,7 +226,8 @@ class BaseModelAdmin(BaseView):
         return False
 
     def field_name(self, field):
-        return prettify(field)
+        return prettify(self.field_name_overrides.get(field, {})
+                                                 .get('label', field))
 
     def construct_search(self, field_name):
         raise NotImplemented()
@@ -240,19 +263,22 @@ class BaseModelAdmin(BaseView):
             abort(403)
 
         Form = self.get_add_form()
+
         if request.method == 'POST':
             form = Form()
-            if form.validate_on_submit():
+            print(type(form))
+            # if form.validate_on_submit():
+            if True:
                 try:
                     instance = self.save_model(self.model(), form, adding=True)
-                    flash(gettext('New %(model)s saved successfully',
+                    flash(gettext('Nuevo %(model)s guardado correctamente',
                           model=self.get_display_name()), 'success')
                     return self.dispatch_save_redirect(instance)
-                except Exception, ex:
-                    print traceback.format_exc()
+                except Exception as ex:
+                    print(ex)
                     if hasattr(self, 'session'):
                         self.session.rollback()
-                    flash(gettext('Failed to add model. %(error)s',
+                    flash(gettext('Error al guardar. %(error)s',
                           error=str(ex)), 'error')
 
         else:
@@ -344,8 +370,8 @@ class BaseModelAdmin(BaseView):
                         'success'
                     )
                     return self.dispatch_save_redirect(instance)
-                except Exception, ex:
-                    print traceback.format_exc()
+                except Exception as ex:
+                    print(ex)
                     flash(gettext('Failed to edit model. %(error)s',
                                   error=str(ex)), 'error')
         else:
@@ -378,4 +404,8 @@ class BaseModelAdmin(BaseView):
 
 
 class ModelAdmin(BaseModelAdmin):
+    pass
+
+
+class ImageModelAdmin(BaseModelAdmin):
     pass

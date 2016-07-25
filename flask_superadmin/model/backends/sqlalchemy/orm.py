@@ -9,7 +9,7 @@ from wtforms import Form, ValidationError, fields, validators
 from wtforms.ext.sqlalchemy.orm import converts, ModelConverter, model_form as original_model_form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 
-from flask.ext.superadmin import form
+from flask_superadmin import form
 
 
 class Unique(object):
@@ -39,7 +39,7 @@ class Unique(object):
 
             if not hasattr(form, '_obj') or not form._obj == obj:
                 if self.message is None:
-                    self.message = field.gettext(u'Already exists.')
+                    self.message = field.gettext('Already exists.')
                 raise ValidationError(self.message)
         except NoResultFound:
             pass
@@ -58,14 +58,23 @@ class AdminModelConverter(ModelConverter):
         if 'label' in field_args:
             return field_args['label']
 
-        # if self.view.rename_columns:
-        #     return self.view.rename_columns.get(name)
+        if self.view.field_name_overrides:
+            return self.view.field_name_overrides.get(name, {}).get('label', name)
 
         return None
 
     def _get_field_override(self, name):
         if self.view.field_overrides:
             return self.view.field_overrides.get(name)
+
+    def _get_description(self, name):
+        return self.view.field_name_overrides.get(name, {}).get('description', '')
+
+    def _is_rich_text(self, name):
+        return self.view.field_name_overrides.get(name, {}).get('rich_text', False)
+
+    def _is_file_field(self, name):
+        return self.view.field_name_overrides.get(name, {}).get('file', False)
 
     def convert(self, model, mapper, prop, field_args, *args):
         kwargs = {
@@ -75,6 +84,8 @@ class AdminModelConverter(ModelConverter):
 
         if field_args:
             kwargs.update(field_args)
+            kwargs.update({'description': ''})
+            kwargs.update({'id': 'rich_text' if self._is_rich_text(prop.key) else ''})
 
         if hasattr(prop, 'direction'):
             remote_model = prop.mapper.class_
@@ -83,8 +94,11 @@ class AdminModelConverter(ModelConverter):
             kwargs.update({
                 'allow_blank': local_column.nullable,
                 'label': self._get_label(prop.key, kwargs),
+                'description': self._get_description(prop.key),
+                'id': 'rich_text' if self._is_rich_text(prop.key) else '',
                 'query_factory': lambda: self.view.session.query(remote_model)
             })
+
             if local_column.nullable:
                 kwargs['validators'].append(validators.Optional())
             elif prop.direction.name not in ('MANYTOMANY', 'ONETOMANY'):
@@ -154,6 +168,12 @@ class AdminModelConverter(ModelConverter):
             # Apply label
             kwargs['label'] = self._get_label(prop.key, kwargs)
 
+            kwargs['description'] = self._get_description(prop.key)
+            kwargs['id'] = 'rich_text' if self._is_rich_text(prop.key) else ''
+
+            if self._is_file_field(prop.key):
+                kwargs.update({'validators': []})
+
             # Override field type if necessary
             override = self._get_field_override(prop.key)
             if override:
@@ -180,10 +200,26 @@ class AdminModelConverter(ModelConverter):
     def conv_Text_fix(self, field_args, **extra):
         return self.conv_Text(field_args, **extra)
 
+    @converts('PasswordType')
+    def convert_password(self, field_args, **extra):
+        field_args['widget'] = form.PasswordWidget()
+        return self.conv_Text(field_args, **extra)
+
+    @converts('String')
+    def convert_string(self, field_args, **extra):
+        if self._is_file_field(extra.get('prop').key):
+            field_args['widget'] = form.FileWidget()
+
+        else:
+            field_args['widget'] = form.TextInputWidget()
+
+        return self.conv_Text(field_args, **extra)
+
 
 def model_form(model, base_class=Form, fields=None, readonly_fields=None,
                exclude=None, field_args=None, converter=None):
     only = tuple(set(fields or []) - set(readonly_fields or []))
+
     return original_model_form(model, base_class=base_class, only=only,
                                exclude=exclude, field_args=field_args,
                                converter=converter)

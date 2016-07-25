@@ -2,7 +2,7 @@
 {% set name = admin_view.get_display_name() %}
 
 {% block body %}
-    <h1 id="main-title">{{ _gettext('Delete') }}</h1>
+    <h1 id="main-title">{{ _gettext('Eliminar') }}</h1>
     <div class="clearfix"></div>
     <hr />
 
@@ -12,7 +12,7 @@
             <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
             {% endif %}
             <input type="hidden" name="action" value="delete" />
-            <p>Do you really want to delete all this models?</p>
+            <p>Estas seguro que deseas eliminar estos modelos?</p>
             <ul>
                 {% for instance in instances %}
                     {% set pk = admin_view.get_pk(instance) %}
@@ -23,9 +23,9 @@
                 {% endfor %}
             </ul>
             <div class="form-buttons">
-                <input name="confirm_delete" type="submit" class="btn btn-danger btn-large" value="{{ _gettext('Confirm') }}" />
-                <a href="{{ cancel_url }}" class="btn">{{ _gettext('Cancel') }}</a>
-            </div>
+                <input name="confirm_delete" type="submit" class="btn btn-danger" value="{{ _gettext('Confirmar') }}" />
+                <a href="{{ cancel_url }}" class="btn btn-default">{{ _gettext('Cancelar') }}</a>
+            </div> 
         </form>
     </div>
 {% endblock %}

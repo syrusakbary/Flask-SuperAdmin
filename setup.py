@@ -17,11 +17,11 @@ def desc():
 
 setup(
     name='Flask-SuperAdmin',
-    version='1.7.1',
-    url='https://github.com/syrusakbary/flask-superadmin/',
+    version='2.0.0',
+    url='https://github.com/HundredRooms/flask-superadmin/',
     license='BSD',
-    author='Syrus Akbary',
-    author_email='me@syrusakbary.com',
+    author='HundredRooms',
+    author_email='epina@hundredrooms.com',
     description='The best admin interface framework for Python. With scaffolding for MongoEngine, Django and SQLAlchemy.',
     long_description=desc(),
     packages=find_packages(),
@@ -29,8 +29,11 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'Flask>=0.7',
-        'Flask-WTF>=0.9'
+        'Flask>=0.11',
+        'Flask-WTF>=0.12',
+        'Flask-Login==0.3.2',
+        'passlib==1.6.5',
+        'cloudinary==1.4.0'
     ],
     tests_require=[
         'nose>=1.0',

@@ -5,7 +5,7 @@ from functools import wraps
 from flask import Blueprint, render_template, url_for, abort
 
 from flask_superadmin import babel
-
+from flask_login import current_user
 
 def expose(url='/', methods=('GET',)):
     """
@@ -68,7 +68,7 @@ class AdminViewMeta(type):
                 setattr(cls, p, _wrap_view(attr))
 
 
-class BaseView(object):
+class BaseView(object, metaclass=AdminViewMeta):
     """
         Base administrative view.
 
@@ -79,7 +79,6 @@ class BaseView(object):
                 def index(self):
                     return 'Hello World!'
     """
-    __metaclass__ = AdminViewMeta
 
     def __init__(self, name=None, category=None, endpoint=None, url=None, static_folder=None):
         """
@@ -102,6 +101,9 @@ class BaseView(object):
         """
         self.name = name
         self.category = category
+
+        self.user = current_user
+
         self.endpoint = endpoint
         self.url = url
         self.static_folder = static_folder
@@ -302,19 +304,19 @@ class Admin(object):
         try:
             from flask_superadmin.model.backends import mongoengine
             self.add_model_backend(mongoengine.ModelAdmin)
-        except:
+        except Exception as e:
             pass
 
         try:
             from flask_superadmin.model.backends import sqlalchemy
             self.add_model_backend(sqlalchemy.ModelAdmin)
-        except:
+        except Exception as e:
             pass
 
         try:
             from flask_superadmin.model.backends import django
             self.add_model_backend(django.ModelAdmin)
-        except:
+        except Exception as e:
             pass
 
         if name is None:

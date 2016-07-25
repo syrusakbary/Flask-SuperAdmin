@@ -1,0 +1,16 @@
+body {
+  background-color: #F6F6F6;
+}
+
+h1 {
+  font-weight: 200;
+}
+
+.jumbotron {
+  outline: 1px solid #DBDBDB;
+  background-color: #F6F6F6;
+}
+
+label {
+  font-weight: 300;
+}

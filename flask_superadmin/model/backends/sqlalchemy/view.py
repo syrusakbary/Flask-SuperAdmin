@@ -1,8 +1,11 @@
 from sqlalchemy.sql.expression import desc, literal_column, or_
 
-from orm import model_form, AdminModelConverter
+from .orm import model_form, AdminModelConverter
 
 from flask_superadmin.model.base import BaseModelAdmin
+
+from flask_superadmin.model.backends.sqlalchemy.model import User
+
 from sqlalchemy import schema
 
 
@@ -63,8 +66,13 @@ class ModelAdmin(BaseModelAdmin):
     def get_pk(self, instance):
         return getattr(instance, self._primary_key)
 
+    def pre_save_model(self, instance):
+        return instance
+
     def save_model(self, instance, form, adding=False):
         form.populate_obj(instance)
+        instance = self.pre_save_model(instance)
+
         if adding:
             self.session.add(instance)
         self.session.commit()
@@ -85,7 +93,11 @@ class ModelAdmin(BaseModelAdmin):
             return literal_column(field_name).contains
 
     def apply_search(self, qs, search_query):
+        for j in self.join:
+            qs = qs.join(j['table'], j['on'])
+
         or_queries = []
+
         # treat spaces as if they were OR operators
         for word in search_query.split():
             op = word[:1]
@@ -93,9 +105,12 @@ class ModelAdmin(BaseModelAdmin):
                 word = word[1:]
             orm_lookups = [self.construct_search(str(model_field), op)
                            for model_field in self.search_fields]
-            or_queries.extend([orm_lookup(word) for orm_lookup in orm_lookups])
+
+            or_queries.extend([orm_lookup('{}'.format(word)) for orm_lookup in orm_lookups])
+
         if or_queries:
             qs = qs.filter(or_(*or_queries))
+
         return qs
 
     def get_list(self, page=0, sort=None, sort_desc=None, execute=False, search_query=None):
@@ -124,3 +139,4 @@ class ModelAdmin(BaseModelAdmin):
             qs = qs.all()
 
         return count, qs
+

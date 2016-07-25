@@ -1,7 +1,7 @@
 {% macro pager(page, pages, generator) -%}
     {% if pages > 1 %}
-        <div class="pagination">
-            <ul>
+        <div>
+            <ul class="pagination">
                 {% set min = page - 3 %}
                 {% set max = page + 3 + 1 %}
 
@@ -21,20 +21,20 @@
 
                 {% if min > 0 %}
                     <li>
-                        <a href="{{ generator(0) }}">&laquo;</a>
+                        <a href="{{ generator(0) }}">Primera</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&laquo;</a>
+                        <a href="#">Primera</a>
                     </li>
                 {% endif %}
                 {% if page > 0 %}
                     <li>
-                        <a href="{{ generator(page-1) }}">&lt;</a>
+                        <a href="{{ generator(page-1) }}">Anterior</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&lt;</a>
+                        <a href="#">Anterior</a>
                     </li>
                 {% endif %}
 
@@ -52,26 +52,26 @@
 
                 {% if page + 1 < pages %}
                     <li>
-                        <a href="{{ generator(page + 1) }}">&gt;</a>
+                        <a href="{{ generator(page + 1) }}">Siguiente</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&gt;</a>
+                        <a href="#">Siguiente</a>
                     </li>
                 {% endif %}
                 {% if max < pages %}
                     <li>
-                        <a href="{{ generator(pages - 1) }}">&raquo;</a>
+                        <a href="{{ generator(pages - 1) }}">Última</a>
                     </li>
                 {% else %}
                     <li class="disabled">
-                        <a href="#">&raquo;</a>
+                        <a href="#">Última</a>
                     </li>
                 {% endif %}
             </ul>
         </div>
     {% endif %}
-{%- endmacro %}
+{% endmacro %}
 
 {% macro render_field(field, show_error_list=True) %}
     <div {% if show_error_list and field.errors %}class="error"{% endif %}>
@@ -86,9 +86,13 @@
 {% endmacro %}
 
 {% macro render_ff (ff, delete) %}
-    <section class="field">
+    {% set parent_class='form-group' %}
+    {% if ff.errors|length>0 %} {% set parent_class=parent_class+' has-error' %}{% endif %}
+
+    <div class="{{ parent_class  }}">
+
         {% if ff.type == "FormField" %}
-      
+
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
@@ -96,6 +100,7 @@
             {% endif %}
 
             <div>{{ render_formfield(ff.form) }}</div>
+
         {% elif ff.type == "ListField" %}
             <h3>{{ admin_view.field_name(ff.short_name) }}</h3>
             {% if delete %}
@@ -112,24 +117,31 @@
                 {% endif %}
                 <div class="clear"></div>
             </div>
+
+        {% elif ff.type == "BooleanField" %}
+            <div class="col-md-offset-2 col-md-10">
+                <label class="checkbox-inline">
+                    {{ ff(class="") }}
+                    {{ admin_view.field_name(ff.label.text) }}
+                </label>
+            </div>
+            <br>
+
         {% else %}
-            
+
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
-                <label for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.text) }}</label>
+                <label class="col-md-2 control-label" for="{{ ff.label.field_id }}">{{ admin_view.field_name(ff.label.text) }}</label>
             {% endif %}
 
-            <div>
-                {% set class='' %}
+            <div class="col-md-10">
+                {% set class='form-control' %}
                 {% if ff.type == "DateTimeField" %}
                     {% set data_type="datetimepicker" %}
                 {% endif %}
 
-                {% if ff.errors|length>0 %} {% set class=class+' error' %}{% endif %}
-
                 {% if not admin_view.can_edit and instance %}
-
                     {% with reference = admin_view.get_reference(ff.data) %}
                         {% if reference %}
                             <div class="readonly-value"><a href="{{ reference }}">{{ ff.data }}</a></div>
@@ -141,24 +153,28 @@
                 {% else %}
                     {{ ff(class=class) }}
                 {% endif %}
-        
+
                 {% for error in ff.errors %}
-                    &nbsp;<span class="label label-important">{{ error }}</span>
+                    <span id="helpBlock" class="help-block">{{ error }}</span>
                 {% endfor %}
 
                 {% if ff.description %}
-                    <p class="help-block">{{ ff.description }}</p>
+                    <span id="helpBlock" class="help-block">{{ ff.description }}</span>
                 {% endif %}
+
             </div>
         {% endif %}
-   </section>
+
+    </div>
+
 {% endmacro %}
 
 {% macro render_formfield(form) %}
-    <fieldset>
+    <!-- <fieldset> -->
+    <div class="form-horizontal">
         {% set readonly_fields = admin_view.get_readonly_fields(instance) %}
         {% set field_names = admin_view.fields or form._fields.keys() %}
-        
+
         {% for field_name in field_names %}
             {% if field_name in readonly_fields %}
                 {% with f = readonly_fields[field_name] %}
@@ -181,12 +197,12 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
-
-    </fieldset>
+    </div>
+    <!-- </fieldset> -->
 {% endmacro %}
 
 {% macro render_form(form, extra=None, can_edit=True, can_delete=True) -%}
-    <form action="#" method="POST"{% if form.has_file_field %} enctype="multipart/form-data"{% endif %}>
+    <form action="#" method="POST"  enctype="multipart/form-data">
         {{ form.hidden_tag() if form.hidden_tag is defined }}
 
         {{ render_formfield(form) }}
@@ -195,7 +211,7 @@
         {% if can_edit or can_delete %}
             <div class="form-buttons">
                 {% if can_edit or not instance %}
-                    <input type="submit" class="btn btn-primary" value="{{ _gettext('Submit') }}" />
+                    <input type="submit" class="btn btn-primary" value="{{ _gettext('Guardar') }}" />
                 {% endif %}
                 {% if extra %}
                     {{ extra }}
@@ -204,4 +220,3 @@
         {% endif %}
     </form>
 {% endmacro %}
-
