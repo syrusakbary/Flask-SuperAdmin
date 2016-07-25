@@ -79,10 +79,10 @@ class BaseModelAdmin(BaseView):
     can_create = True
     can_delete = True
 
-    list_template = 'admin/model/list.html'
-    edit_template = 'admin/model/edit.html'
-    add_template = 'admin/model/add.html'
-    delete_template = 'admin/model/delete.html'
+    list_template = 'superadmin/model/list.html'
+    edit_template = 'superadmin/model/edit.html'
+    add_template = 'superadmin/model/add.html'
+    delete_template = 'superadmin/model/delete.html'
 
     search_fields = tuple()
 

@@ -217,7 +217,7 @@ class AdminIndexView(BaseView):
     def __init__(self, name=None, category=None, endpoint=None, url=None):
         super(AdminIndexView, self).__init__(name or babel.lazy_gettext('Home'),
                                              category,
-                                             endpoint or 'admin',
+                                             'superadmin',
                                              url or '/admin',
                                              'static')
 
