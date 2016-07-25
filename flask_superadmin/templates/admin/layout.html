@@ -29,7 +29,6 @@
     {% block page_body %}
 
     <nav class="navbar navbar-inverse" role="navigation">
-        <div class="row">
             <div class="col-md-1"></div>
             <div class="col-md-10">
             <div class="navbar-header">
@@ -39,15 +38,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">HundredRooms Panel</a>
+                <a class="navbar-brand">HundredRooms Panel</a>
             </div>
-            
+
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <p class="navbar-text navbar-right">Bienvenido  @<a href="/logout" class="navbar-link">{{ admin_view.user.username }}</a></p>
             </div>
             </div>
-            <!-- /.navbar-collapse -->
-        </div>
     </nav>
 
 
@@ -101,7 +98,7 @@
 
       {% block body %}{% endblock %}
     </div>
-  
+
     {% endblock %}
   </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script>

@@ -8,7 +8,7 @@
 
         {{super()}}
 
-    
+
 {% endblock %}
 
 {% block body %}
@@ -18,7 +18,7 @@
         {% endif %}
 
         <div class="row">
-        
+
             <div class="col-md-6">
                 <div class="page-header">
                     <h1>Imágenes</h1>
@@ -50,21 +50,19 @@
                 {% endif %}
             </div>
         </div>
-        
+
         {% set images_per_column = 0 %}
         <div class="page-content">
-            <div class="container">
-            
+
                 {% for instance in data %}
                     {% if images_per_column == 0 %}
-                        <div class="row">
                     {% endif %}
 
-                    <div class="col-xs-3">
-                        <div class="thumbnail">
+                    <div class="col-xs-4">
+                        <div class="thumbnail image-card">
                             <img src="{{ instance.path }}">
                             <div class="caption">
-                                <h2>{{ instance.name }}</h2>
+                                <h2 class="image-title">{{ instance.name }}</h2>
                                 <p>{{ instance.width }}x{{ instance.height }}, {{ instance.mimetype }}</p>
                                 <p>
                                     <a href="{{ url_for('.delete', pk=instance.id) }}" class="btn btn-danger">Eliminar</a>
@@ -72,18 +70,15 @@
                             </div>
                         </div>
                     </div>
-    
+
                     {% set images_per_column = images_per_column + 1 %}
 
                     {% if images_per_column == 4 %}
-                        </div>
                         {% set images_per_column = 0 %}
                     {% endif %}
-                
+
                 {% endfor %}
 
-            </div>
-            
             {{ lib.pager(page, total_pages, admin_view.page_url) }}
 
         </div>

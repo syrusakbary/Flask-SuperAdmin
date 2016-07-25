@@ -90,9 +90,9 @@
     {% if ff.errors|length>0 %} {% set parent_class=parent_class+' has-error' %}{% endif %}
 
     <div class="{{ parent_class  }}">
-                
+
         {% if ff.type == "FormField" %}
-      
+
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
@@ -100,7 +100,7 @@
             {% endif %}
 
             <div>{{ render_formfield(ff.form) }}</div>
-        
+
         {% elif ff.type == "ListField" %}
             <h3>{{ admin_view.field_name(ff.short_name) }}</h3>
             {% if delete %}
@@ -117,7 +117,7 @@
                 {% endif %}
                 <div class="clear"></div>
             </div>
-        
+
         {% elif ff.type == "BooleanField" %}
             <div class="col-md-offset-2 col-md-10">
                 <label class="checkbox-inline">
@@ -128,7 +128,7 @@
             <br>
 
         {% else %}
-            
+
             {% if delete %}
                 <span class="delete">Delete</span>
             {% else %}
@@ -153,11 +153,11 @@
                 {% else %}
                     {{ ff(class=class) }}
                 {% endif %}
-        
+
                 {% for error in ff.errors %}
                     <span id="helpBlock" class="help-block">{{ error }}</span>
                 {% endfor %}
-                
+
                 {% if ff.description %}
                     <span id="helpBlock" class="help-block">{{ ff.description }}</span>
                 {% endif %}
@@ -166,7 +166,7 @@
         {% endif %}
 
     </div>
-        
+
 {% endmacro %}
 
 {% macro render_formfield(form) %}
@@ -174,7 +174,7 @@
     <div class="form-horizontal">
         {% set readonly_fields = admin_view.get_readonly_fields(instance) %}
         {% set field_names = admin_view.fields or form._fields.keys() %}
-        
+
         {% for field_name in field_names %}
             {% if field_name in readonly_fields %}
                 {% with f = readonly_fields[field_name] %}
@@ -220,4 +220,3 @@
         {% endif %}
     </form>
 {% endmacro %}
-

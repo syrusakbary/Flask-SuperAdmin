@@ -1,7 +1,7 @@
 /* Global styles */
 body
 {
-    background: #F6F6F6 url(../img/background.png);
+    background: #F6F6F6;
     font-family:'Open Sans',sans-serif;
 }
 
@@ -9,7 +9,6 @@ body
     font-size:15px;
     color: #999;
     font-weight: 400;
-    text-shadow:  0 1px rgba(255, 255, 255, .75);
 }
 
 @media (min-width: 767px) {
@@ -45,6 +44,10 @@ input {
 
 #main-nav {
     border-bottom: 1px solid rgba(113, 126, 147, 0.1);
+}
+
+.navbar {
+  border-radius: 0 !Important;
 }
 
 .navbar-inner {
@@ -185,7 +188,6 @@ h1,h2,h3,h4,h5,h6{
 
 .btn-primary, .btn-danger {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
-    text-shadow: 0 1px 0 #717E93;
 }
 
 .btn-primary:hover, .btn-danger:hover {
@@ -252,7 +254,6 @@ form.search-form a.clear i {
 
 .dropdown-menu input {
     width:100%;
-    background: none;
     text-align: left;
     border: none;
     box-shadow:none;
@@ -265,15 +266,13 @@ form.search-form a.clear i {
 .dropdown-menu .active > input,
 .dropdown-menu .active > input:hover {
     color: #ffffff;
-    text-decoration: none;
-    background-color: #3875D7;
+    background-color: #363636;
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3875d7', endColorstr='#2a62bc', GradientType=0 );
     background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(20%, #3875D7), color-stop(90%, #2A62BC));
     background-image: -webkit-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
     background-image: -moz-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
     background-image: -o-linear-gradient(top, #3875D7 20%, #2A62BC 90%);
     background-image: linear-gradient(#3875D7 20%, #2A62BC 90%);
-    color: white;
 }
 
 .search {
@@ -301,14 +300,11 @@ form.search-form a.clear i {
 
 .search .clear-btn {
     position: absolute;
-    right: auto;
-    left: 225px;
+    right: 10px;
     top: 7px;
-    background: #ddd;
-    border-radius: 5px;
     width: 16px;
     height: 16px;
-    color: white;
+    color: black;
     line-height: 0;
     cursor: pointer;
     -webkit-touch-callout: none;
@@ -328,3 +324,31 @@ form.search-form a.clear i {
     font-family: arial;
 }
 
+.image-card {
+  float: left;
+  height: 280px;
+}
+
+h2.image-title {
+  font-size: 20px;
+}
+
+.thumbnail {
+  border-radius: 0 !Important;
+}
+
+img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-inner > .item > img, .carousel-inner > .item > a > img {
+  max-height: 140px;
+}
+
+ul.dropdown-menu {
+  background-color: #363636;
+}
+
+ul.dropdown-menu .active > a {
+  background-color: #F6F6F6 !Important;
+}
+
+ul.dropdown-menu::hover {
+  background-color: #F6F6F6;
+}
