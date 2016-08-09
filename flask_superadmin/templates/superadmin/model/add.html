@@ -3,8 +3,8 @@
 {% set name = admin_view.get_display_name() %}
 
 {% block head_css %}
-    <link href="{{ url_for('admin.static', filename='chosen/chosen.css') }}" rel="stylesheet">
-    <link href="{{ url_for('admin.static', filename='css/datepicker.css') }}" rel="stylesheet">
+    <link href="{{ url_for('superadmin.static', filename='chosen/chosen.css') }}" rel="stylesheet">
+    <link href="{{ url_for('superadmin.static', filename='css/datepicker.css') }}" rel="stylesheet">
     {{super()}}
 {% endblock %}
 
@@ -24,6 +24,6 @@
 {% endblock %}
 
 {% block tail %}
-    <script src="{{ url_for('admin.static', filename='js/bootstrap-datepicker.js') }}"></script>
-    <script src="{{ url_for('admin.static', filename='js/form.js') }}"></script>
+    <script src="{{ url_for('superadmin.static', filename='js/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ url_for('superadmin.static', filename='js/form.js') }}"></script>
 {% endblock %}
