@@ -15,7 +15,7 @@ from flask_superadmin.base import BaseView, expose
 from flask_superadmin.babel import gettext, lazy_gettext
 from flask_superadmin import form
 from flask_wtf.file import FileField
-from wtforms import TextField, ValidationError
+from wtforms import StringField, ValidationError
 
 
 class NameForm(form.BaseForm):
@@ -24,7 +24,7 @@ class NameForm(form.BaseForm):
 
         Validates if provided name is valid for *nix and Windows systems.
     """
-    name = TextField()
+    name = StringField()
 
     regexp = re.compile(r'^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)'
                         r'(\..+)?$)[^\x00-\x1f\\?*:\";|/]+$')
