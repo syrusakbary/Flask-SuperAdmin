@@ -1,7 +1,7 @@
 Flask-SuperAdmin
 ================
 
-Flask-Superadmin he **best** admin interface framework for `Flask <http://flask.pocoo.org/>`_. As good as Django admin.
+Flask-Superadmin the **best** admin interface framework for `Flask <http://flask.pocoo.org/>`_. As good as Django admin.
 
 Batteries included:
 
