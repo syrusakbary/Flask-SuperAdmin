@@ -16,7 +16,7 @@ There are few assumptions about models:
 
 Steps to add new model backend:
 
-    1. Create new class and derive it from :class:`~flask.ext.superadmin.model.base.BaseModelAdmin`::
+    1. Create new class and derive it from :class:`~flask_superadmin.model.base.BaseModelAdmin`::
 
         class MyDbModel(BaseModelView):
             pass
@@ -24,6 +24,6 @@ Steps to add new model backend:
     By default, all model views accept model class and it
     will be stored as ``self.model``.
 
-    2. **PLEASE VIEW** :class:`~flask.ext.superadmin.model.backends.sqlalchemy.ModelAdmin` for how to do a new backend.
+    2. **PLEASE VIEW** :class:`~flask_superadmin.model.backends.sqlalchemy.ModelAdmin` for how to do a new backend.
 
 Feel free ask questions if you have problem adding new model backend.

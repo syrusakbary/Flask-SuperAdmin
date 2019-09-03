@@ -27,7 +27,7 @@ Here is absolutely valid administrative piece::
 So, how does it help structuring administrative interface? With such building blocks, you're
 implementing reusable functional pieces that are highly customizable.
 
-For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy, Mongoengine and Django model interface. 
+For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy, Mongoengine and Django model interface.
 For SQLAlchemy it is implemented as a
 class which accepts two parameters: model and a database session, otherwise just the model parameter.
 
@@ -39,11 +39,11 @@ functionality.
 Initialization
 --------------
 
-To start using Flask-SuperAdmin, you have to create :class:`~flask.ext.superadmin.base.Admin` class instance and associate it with the Flask
+To start using Flask-SuperAdmin, you have to create :class:`~flask_superadmin.base.Admin` class instance and associate it with the Flask
 application instance::
 
     from flask import Flask
-    from flask.ext.superadmin import Admin
+    from flask_superadmin import Admin
 
     app = Flask(__name__)
 
@@ -58,13 +58,13 @@ you should see empty "Home" page with a navigation bar on top
     .. image:: images/quickstart/quickstart_1.png
         :target: ../_images/quickstart_1.png
 
-You can change application name by passing `name` parameter to the :class:`~flask.ext.superadmin.base.Admin` class constructor::
+You can change application name by passing `name` parameter to the :class:`~flask_superadmin.base.Admin` class constructor::
 
     admin = Admin(app, name='My App')
 
 Name is displayed in the menu section.
 
-You don't have to pass Flask application object to the constructor - you can call :meth:`~flask.ext.superadmin.base.Admin.init_app` later::
+You don't have to pass Flask application object to the constructor - you can call :meth:`~flask_superadmin.base.Admin.init_app` later::
 
     admin = Admin(name='My App')
     # Add views here
@@ -73,10 +73,10 @@ You don't have to pass Flask application object to the constructor - you can cal
 Adding views
 ------------
 
-Now, lets add an administrative view. To do this, you need to derive from :class:`~flask.ext.superadmin.base.BaseView` class::
+Now, lets add an administrative view. To do this, you need to derive from :class:`~flask_superadmin.base.BaseView` class::
 
     from flask import Flask
-    from flask.ext.superadmin import Admin, BaseView, expose
+    from flask_superadmin import Admin, BaseView, expose
 
     class MyView(BaseView):
         @expose('/')
@@ -118,7 +118,7 @@ You're not limited to top level menu. It is possible to pass category name and i
 top menu item. For example::
 
     from flask import Flask
-    from flask.ext.superadmin import Admin, BaseView, expose
+    from flask_superadmin import Admin, BaseView, expose
 
     class MyView(BaseView):
         @expose('/')
@@ -204,7 +204,7 @@ Model Views
 
 Flask-SuperAdmin comes with built-in SQLAlchemy model administrative interface. It is very easy to use::
 
-    from flask.ext.superadmin import Admin
+    from flask_superadmin import Admin
 
     # Flask and Flask-SQLAlchemy initialization here
 
@@ -227,7 +227,7 @@ If you want to customize model views, you have two options:
 For example, if you want to disable model creation, show only 'login' and 'email' columns in the list view,
 you can do something like this::
 
-    from flask.ext.superadmin import Admin, model
+    from flask_superadmin import Admin, model
 
     # Flask and Flask-SQLAlchemy initialization here
 
@@ -239,10 +239,10 @@ you can do something like this::
     admin.register(User, UserModel)
 
 
-It is relatively easy to add support for different database backends by inheriting from :class:`~flask.ext.superadmin.model.BaseModelAdmin`.
+It is relatively easy to add support for different database backends by inheriting from :class:`~flask_superadmin.model.BaseModelAdmin`.
 class and implementing database-related methods.
 
-Please refer to :mod:`flask.ext.superadmin.model.mongoengine` documentation on how to customize behavior of model-based administrative views.
+Please refer to :mod:`flask_superadmin.model.mongoengine` documentation on how to customize behavior of model-based administrative views.
 
 File Admin
 ----------
@@ -251,8 +251,8 @@ Flask-SuperAdmin comes with another handy battery - file admin. It gives you abi
 
 Here is simple example::
 
-    from flask.ext.superadmin import Admin
-    from flask.ext.superadmin.contrib.fileadmin import FileAdmin
+    from flask_superadmin import Admin
+    from flask_superadmin.contrib.fileadmin import FileAdmin
 
     import os.path as op
 
@@ -270,7 +270,7 @@ Sample screenshot:
         :target: ../_images/quickstart_5.png
 
 You can disable uploads, disable file or directory deletion, restrict file uploads to certain types and so on.
-Check :mod:`flask.ext.superadmin.contrib.fileadmin` documentation on how to do it.
+Check :mod:`flask_superadmin.contrib.fileadmin` documentation on how to do it.
 
 Examples
 --------

@@ -4,8 +4,10 @@ try:
 except ImportError:
     exit('You must have mongoengine installed. Install it with the command:\n\t$> easy_install mongoengine')
 
-from flask.ext import superadmin, login, wtf
-from flask.ext.superadmin.contrib import mongoenginemodel
+import flask_superadmin as superadmin
+import flask_login as login
+import flask_wtf as wtf
+from flask_superadmin.contrib import mongoenginemodel
 from wtforms.fields import TextField, PasswordField
 from wtforms.validators import Required, ValidationError
 

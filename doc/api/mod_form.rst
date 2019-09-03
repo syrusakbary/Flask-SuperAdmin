@@ -1,7 +1,7 @@
-``flask.ext.superadmin.form``
+``flask_superadmin.form``
 ========================
 
-.. automodule:: flask.ext.superadmin.form
+.. automodule:: flask_superadmin.form
 
     .. autoclass:: BaseForm
         :members:

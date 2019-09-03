@@ -51,7 +51,7 @@ using consistent look and feel.
 
 Small example (Flask initialization omitted)::
 
-    from flask.ext.superadmin import Admin, model
+    from flask_superadmin import Admin, model
 
     app = Flask(__name__)
     admin = Admin(app)

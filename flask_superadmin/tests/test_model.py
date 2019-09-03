@@ -7,7 +7,7 @@ from flask import Flask
 from flask_superadmin import Admin
 from flask_superadmin.model import base
 
-from flask.ext import wtf
+import flask_wtf as wtf
 
 
 class Model(object):

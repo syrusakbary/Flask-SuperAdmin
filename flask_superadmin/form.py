@@ -1,7 +1,7 @@
 import time
 import datetime
 
-from flask.ext import wtf
+import flask_wtf as wtf
 from wtforms import fields, widgets
 
 from flask_superadmin.babel import gettext

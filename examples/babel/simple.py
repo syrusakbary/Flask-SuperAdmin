@@ -1,8 +1,8 @@
 from flask import Flask, request, session
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
-from flask.ext.superadmin import Admin, model
-from flask.ext.babelex import Babel
+from flask_superadmin import Admin, model
+from flask_babelex import Babel
 
 
 # Create application

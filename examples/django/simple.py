@@ -1,5 +1,5 @@
 from flask import Flask
-from flask.ext.superadmin import Admin, model
+from flask_superadmin import Admin, model
 
 from utils import install_models
 

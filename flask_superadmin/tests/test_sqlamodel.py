@@ -4,7 +4,7 @@ import wtforms
 
 from flask import Flask
 
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import InvalidRequestError
 from flask_superadmin import Admin
 from flask_superadmin.model.backends.sqlalchemy.view import ModelAdmin

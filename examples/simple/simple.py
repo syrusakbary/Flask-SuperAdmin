@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 
-from flask.ext import superadmin
+from flask_superadmin import superadmin
 
 
 # Create custom admin view
