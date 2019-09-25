@@ -199,13 +199,13 @@ class ModelSelectMultipleField(QuerySelectMultipleField):
 
 
 class ListField(FieldList):
-    def new_generic(self):
+    def new_generic(self, form):
         assert not self.max_entries or len(self.entries) < self.max_entries, \
             'You cannot have more than max_entries entries in this FieldList'
         new_index = '__new__'
         name = '%s-%s' % (self.short_name, new_index)
         id = '%s-%s' % (self.id, new_index)
-        field = self.unbound_field.bind(form=None, name=name,
+        field = self.unbound_field.bind(form=form, name=name,
                                         prefix=self._prefix, id=id)
         field.process(None, None)
         return field

@@ -85,7 +85,7 @@
     </div>
 {% endmacro %}
 
-{% macro render_ff (ff, delete) %}
+{% macro render_ff (form, ff, delete) %}
     <section class="field">
         {% if ff.type == "FormField" %}
       
@@ -101,11 +101,11 @@
             {% if delete %}
                 <span class="delete">Delete</span>
             {% endif %}
-            {% set a = ff.new_generic() %}
+            {% set a = ff.new_generic(form) %}
             <div class="list_par">
-                <div class="append-list" style="display:none;">{{ render_ff(a, True) }}</div>
+                <div class="append-list" style="display:none;">{{ render_ff(form, a, True) }}</div>
                 {% for field in ff %}
-                    {{ render_ff(field, admin_view.can_edit or not instance) }}
+                    {{ render_ff(form, field, admin_view.can_edit or not instance) }}
                 {% endfor %}
                 {% if admin_view.can_edit or not instance %}
                     <button class="append btn">+</button>
@@ -189,7 +189,7 @@
                 {% endwith %}
             {% else %}
                 {% if field_name != 'csrf_token' and field_name != 'csrf' %}
-                    {{ render_ff(form._fields[field_name]) }}
+                    {{ render_ff(form, form._fields[field_name]) }}
                 {% endif %}
             {% endif %}
         {% endfor %}
