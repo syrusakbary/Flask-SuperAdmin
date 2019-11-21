@@ -1,7 +1,10 @@
 """
 Tools for generating forms based on Django Model schemas.
 """
+from __future__ import unicode_literals
 
+from builtins import object
+from future.utils import native_str
 from wtforms import fields as f
 from wtforms import Form
 from wtforms import validators
@@ -9,9 +12,7 @@ from wtforms.ext.django.fields import ModelSelectField
 
 from flask_superadmin import form
 
-__all__ = (
-    'AdminModelConverter', 'model_fields', 'model_form'
-)
+__all__ = ("AdminModelConverter", "model_fields", "model_form")
 
 
 class ModelConverterBase(object):
@@ -20,48 +21,53 @@ class ModelConverterBase(object):
 
     def convert(self, model, field, field_args):
         kwargs = {
-            'label': field.verbose_name,
-            'description': field.help_text,
-            'validators': [],
-            'filters': [],
-            'default': field.default,
+            "label": field.verbose_name,
+            "description": field.help_text,
+            "validators": [],
+            "filters": [],
+            "default": field.default,
         }
         if field_args:
             kwargs.update(field_args)
 
         if field.blank:
-            kwargs['validators'].append(validators.Optional())
+            kwargs["validators"].append(validators.Optional())
         if field.max_length is not None and field.max_length > 0:
-            kwargs['validators'].append(validators.Length(max=field.max_length))
+            kwargs["validators"].append(validators.Length(max=field.max_length))
 
         ftype = type(field).__name__
         if field.choices:
-            kwargs['choices'] = field.choices
+            kwargs["choices"] = field.choices
             return f.SelectField(widget=form.ChosenSelectWidget(), **kwargs)
         elif ftype in self.converters:
             return self.converters[ftype](model, field, kwargs)
         else:
-            converter = getattr(self, 'conv_%s' % ftype, None)
+            converter = getattr(self, "conv_%s" % ftype, None)
             if converter is not None:
                 return converter(model, field, kwargs)
 
 
 class AdminModelConverter(ModelConverterBase):
     DEFAULT_SIMPLE_CONVERSIONS = {
-        f.IntegerField: ['AutoField', 'IntegerField', 'SmallIntegerField',
-                         'PositiveIntegerField', 'PositiveSmallIntegerField'],
-        f.DecimalField: ['DecimalField', 'FloatField'],
-        f.FileField: ['FileField', 'FilePathField', 'ImageField'],
-        f.BooleanField: ['BooleanField'],
-        f.TextField: ['CharField', 'PhoneNumberField', 'SlugField'],
-        f.TextAreaField: ['TextField', 'XMLField'],
+        f.IntegerField: [
+            "AutoField",
+            "IntegerField",
+            "SmallIntegerField",
+            "PositiveIntegerField",
+            "PositiveSmallIntegerField",
+        ],
+        f.DecimalField: ["DecimalField", "FloatField"],
+        f.FileField: ["FileField", "FilePathField", "ImageField"],
+        f.BooleanField: ["BooleanField"],
+        f.TextField: ["CharField", "PhoneNumberField", "SlugField"],
+        f.TextAreaField: ["TextField", "XMLField"],
     }
 
     def __init__(self, extra_converters=None, simple_conversions=None):
         converters = {}
         if simple_conversions is None:
             simple_conversions = self.DEFAULT_SIMPLE_CONVERSIONS
-        for field_type, django_fields in simple_conversions.iteritems():
+        for field_type, django_fields in simple_conversions.items():
             converter = self.make_simple_converter(field_type)
             for name in django_fields:
                 converters[name] = converter
@@ -73,11 +79,13 @@ class AdminModelConverter(ModelConverterBase):
     def make_simple_converter(self, field_type):
         def _converter(model, field, kwargs):
             return field_type(**kwargs)
+
         return _converter
 
     def conv_ForeignKey(self, model, field, kwargs):
-        return ModelSelectField(widget=form.ChosenSelectWidget(),
-                                model=field.rel.to, **kwargs)
+        return ModelSelectField(
+            widget=form.ChosenSelectWidget(), model=field.rel.to, **kwargs
+        )
 
     def conv_TimeField(self, model, field, kwargs):
         def time_only(obj):
@@ -85,9 +93,11 @@ class AdminModelConverter(ModelConverterBase):
                 return obj.time()
             except AttributeError:
                 return obj
-        kwargs['filters'].append(time_only)
-        return f.DateTimeField(widget=form.DateTimePickerWidget(),
-                               format='%H:%M:%S', **kwargs)
+
+        kwargs["filters"].append(time_only)
+        return f.DateTimeField(
+            widget=form.DateTimePickerWidget(), format="%H:%M:%S", **kwargs
+        )
 
     def conv_DateTimeField(self, model, field, kwargs):
         def time_only(obj):
@@ -95,9 +105,11 @@ class AdminModelConverter(ModelConverterBase):
                 return obj.time()
             except AttributeError:
                 return obj
-        kwargs['filters'].append(time_only)
-        return f.DateTimeField(widget=form.DateTimePickerWidget(),
-                               format='%H:%M:%S', **kwargs)
+
+        kwargs["filters"].append(time_only)
+        return f.DateTimeField(
+            widget=form.DateTimePickerWidget(), format="%H:%M:%S", **kwargs
+        )
 
     def conv_DateField(self, model, field, kwargs):
         def time_only(obj):
@@ -105,19 +117,20 @@ class AdminModelConverter(ModelConverterBase):
                 return obj.date()
             except AttributeError:
                 return obj
-        kwargs['filters'].append(time_only)
+
+        kwargs["filters"].append(time_only)
         return f.DateField(widget=form.DatePickerWidget(), **kwargs)
 
     def conv_EmailField(self, model, field, kwargs):
-        kwargs['validators'].append(validators.email())
+        kwargs["validators"].append(validators.email())
         return f.TextField(**kwargs)
 
     def conv_IPAddressField(self, model, field, kwargs):
-        kwargs['validators'].append(validators.ip_address())
+        kwargs["validators"].append(validators.ip_address())
         return f.TextField(**kwargs)
 
     def conv_URLField(self, model, field, kwargs):
-        kwargs['validators'].append(validators.url())
+        kwargs["validators"].append(validators.url())
         return f.TextField(**kwargs)
 
     def conv_USStateField(self, model, field, kwargs):
@@ -130,18 +143,24 @@ class AdminModelConverter(ModelConverterBase):
 
     def conv_NullBooleanField(self, model, field, kwargs):
         def coerce_nullbool(value):
-            d = {'None': None, None: None, 'True': True, 'False': False}
+            d = {"None": None, None: None, "True": True, "False": False}
             if value in d:
                 return d[value]
             else:
                 return bool(int(value))
 
-        choices = ((None, 'Unknown'), (True, 'Yes'), (False, 'No'))
+        choices = ((None, "Unknown"), (True, "Yes"), (False, "No"))
         return f.SelectField(choices=choices, coerce=coerce_nullbool, **kwargs)
 
 
-def model_fields(model, fields=None, readonly_fields=None, exclude=None,
-                 field_args=None, converter=None):
+def model_fields(
+    model,
+    fields=None,
+    readonly_fields=None,
+    exclude=None,
+    field_args=None,
+    converter=None,
+):
     """
     Generate a dictionary of fields for a given Django model.
 
@@ -165,8 +184,15 @@ def model_fields(model, fields=None, readonly_fields=None, exclude=None,
     return field_dict
 
 
-def model_form(model, base_class=Form, fields=None, readonly_fields=None,
-               exclude=None, field_args=None, converter=None):
+def model_form(
+    model,
+    base_class=Form,
+    fields=None,
+    readonly_fields=None,
+    exclude=None,
+    field_args=None,
+    converter=None,
+):
     """
     Create a wtforms Form for a given Django model class::
 
@@ -192,8 +218,8 @@ def model_form(model, base_class=Form, fields=None, readonly_fields=None,
         A converter to generate the fields based on the model properties. If
         not set, ``ModelConverter`` is used.
     """
-    exclude = ([f for f in exclude] if exclude else []) + ['id']
-    field_dict = model_fields(model, fields, readonly_fields, exclude,
-                              field_args, converter)
-    return type(model._meta.object_name + 'Form', (base_class, ), field_dict)
-
+    exclude = ([f for f in exclude] if exclude else []) + ["id"]
+    field_dict = model_fields(
+        model, fields, readonly_fields, exclude, field_args, converter
+    )
+    return type(native_str(model._meta.object_name + "Form"), (base_class,), field_dict)

@@ -1,9 +1,12 @@
+from __future__ import unicode_literals
+
+
 def parse_like_term(term):
-    if term.startswith('^'):
-        stmt = '%s%%' % term[1:]
-    elif term.startswith('='):
+    if term.startswith("^"):
+        stmt = "%s%%" % term[1:]
+    elif term.startswith("="):
         stmt = term[1:]
     else:
-        stmt = '%%%s%%' % term
+        stmt = "%%%s%%" % term
 
     return stmt

@@ -9,44 +9,36 @@ def read(fname):
 
 
 def desc():
-    info = read('README.rst')
+    info = read("README.rst")
     try:
-        return info + '\n\n' + read('doc/changelog.rst')
+        return info + "\n\n" + read("doc/changelog.rst")
     except IOError:
         return info
 
+
 setup(
-    name='Flask-SuperAdmin',
-    version='1.7.1',
-    url='https://github.com/syrusakbary/flask-superadmin/',
-    license='BSD',
-    author='Syrus Akbary',
-    author_email='me@syrusakbary.com',
-    description='The best admin interface framework for Python. With scaffolding for MongoEngine, Django and SQLAlchemy.',
+    name="Flask-SuperAdmin",
+    version="1.7.1",
+    url="https://github.com/syrusakbary/flask-superadmin/",
+    license="BSD",
+    author="Syrus Akbary",
+    author_email="me@syrusakbary.com",
+    description="The best admin interface framework for Python. With scaffolding for MongoEngine, Django and SQLAlchemy.",
     long_description=desc(),
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    platforms='any',
-    install_requires=[
-        'Flask>=0.7',
-        'Flask-WTF>=0.9'
-    ],
-    tests_require=[
-        'nose>=1.0',
-        'Flask',
-        'flask-sqlalchemy',
-        'django',
-        'mongoengine'
-    ],
+    platforms="any",
+    install_requires=["Flask>=0.7", "Flask-WTF>=0.9"],
+    tests_require=["nose>=1.0", "Flask", "flask-sqlalchemy", "django", "mongoengine"],
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules'
+        "Development Status :: 3 - Alpha",
+        "Environment :: Web Environment",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    test_suite='nose.collector'
+    test_suite="nose.collector",
 )

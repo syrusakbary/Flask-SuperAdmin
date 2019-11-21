@@ -8,11 +8,11 @@ from flask_superadmin import Admin, model
 app = Flask(__name__)
 
 # Create dummy secrey key so we can use sessions
-app.config['SECRET_KEY'] = '123456790'
+app.config["SECRET_KEY"] = "123456790"
 
 # Create in-memory database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-app.config['SQLALCHEMY_ECHO'] = True
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.sqlite"
+app.config["SQLALCHEMY_ECHO"] = True
 db = SQLAlchemy(app)
 
 
@@ -28,10 +28,12 @@ class User(db.Model):
 
 
 # Create M2M table
-post_tags_table = db.Table('post_tags', db.Model.metadata,
-                           db.Column('post_id', db.Integer, db.ForeignKey('post.id')),
-                           db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'))
-                           )
+post_tags_table = db.Table(
+    "post_tags",
+    db.Model.metadata,
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id")),
+)
 
 
 class Post(db.Model):
@@ -41,9 +43,9 @@ class Post(db.Model):
     date = db.Column(db.DateTime)
 
     user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
-    user = db.relationship(User, backref='posts')
+    user = db.relationship(User, backref="posts")
 
-    tags = db.relationship('Tag', secondary=post_tags_table)
+    tags = db.relationship("Tag", secondary=post_tags_table)
 
     def __unicode__(self):
         return self.title
@@ -58,14 +60,14 @@ class Tag(db.Model):
 
 
 # Flask views
-@app.route('/')
+@app.route("/")
 def index():
     return '<a href="/admin/">Click me to get to Admin!</a>'
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Create admin
-    admin = Admin(app, 'Simple Models')
+    admin = Admin(app, "Simple Models")
 
     # Add views
     admin.register(User, session=db.session)
@@ -78,4 +80,4 @@ if __name__ == '__main__':
 
     # Start app
     app.debug = True
-    app.run('0.0.0.0', 8000)
+    app.run("0.0.0.0", 8000)

@@ -1,6 +1,9 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from builtins import str
 from sqlalchemy.sql.expression import desc, literal_column, or_
 
-from orm import model_form, AdminModelConverter
+from .orm import model_form, AdminModelConverter
 
 from flask_superadmin.model.base import BaseModelAdmin
 from sqlalchemy import schema
@@ -9,8 +12,7 @@ from sqlalchemy import schema
 class ModelAdmin(BaseModelAdmin):
     hide_backrefs = False
 
-    def __init__(self, model, session=None,
-                 *args, **kwargs):
+    def __init__(self, model, session=None, *args, **kwargs):
         super(ModelAdmin, self).__init__(model, *args, **kwargs)
         if session:
             self.session = session
@@ -18,7 +20,7 @@ class ModelAdmin(BaseModelAdmin):
 
     @staticmethod
     def model_detect(model):
-        return isinstance(getattr(model, 'metadata', None), schema.MetaData)
+        return isinstance(getattr(model, "metadata", None), schema.MetaData)
 
     def _get_model_iterator(self, model=None):
         """
@@ -32,7 +34,7 @@ class ModelAdmin(BaseModelAdmin):
     @property
     def pk_key(self):
         for p in self._get_model_iterator():
-            if hasattr(p, 'columns'):
+            if hasattr(p, "columns"):
                 for c in p.columns:
                     if c.primary_key:
                         return p.key
@@ -48,7 +50,9 @@ class ModelAdmin(BaseModelAdmin):
 
     @property
     def query(self):
-        return self.get_queryset()  # TODO remove eventually (kept for backwards compatibility)
+        return (
+            self.get_queryset()
+        )  # TODO remove eventually (kept for backwards compatibility)
 
     def get_queryset(self, filters=None):
         qs = self.session.query(self.model)
@@ -80,10 +84,10 @@ class ModelAdmin(BaseModelAdmin):
         return True
 
     def construct_search(self, field_name, op=None):
-        if op == '^':
+        if op == "^":
             return literal_column(field_name).startswith
-        elif op == '=':
-            return literal_column(field_name).op('=')
+        elif op == "=":
+            return literal_column(field_name).op("=")
         else:
             return literal_column(field_name).contains
 
@@ -92,10 +96,12 @@ class ModelAdmin(BaseModelAdmin):
         # treat spaces as if they were OR operators
         for word in search_query.split():
             op = word[:1]
-            if op in ['^', '=']:
+            if op in ["^", "="]:
                 word = word[1:]
-            orm_lookups = [self.construct_search(str(model_field), op)
-                           for model_field in self.search_fields]
+            orm_lookups = [
+                self.construct_search(str(model_field), op)
+                for model_field in self.search_fields
+            ]
             or_queries.extend([orm_lookup(word) for orm_lookup in orm_lookups])
         if or_queries:
             qs = qs.filter(or_(*or_queries))
@@ -103,15 +109,24 @@ class ModelAdmin(BaseModelAdmin):
 
     def apply_search(self, qs, search_query):
         if search_query:
-            orm_lookups = [self.construct_search(str(search_field))
-                           for search_field in self.search_fields]
+            orm_lookups = [
+                self.construct_search(str(search_field))
+                for search_field in self.search_fields
+            ]
             for bit in search_query.split():
                 or_queries = [orm_lookup(bit) for orm_lookup in orm_lookups]
                 qs = qs.filter(sum(or_queries))
         return qs
 
-    def get_list(self, page=0, sort=None, sort_desc=None, execute=False,
-                 search_query=None, filters=None):
+    def get_list(
+        self,
+        page=0,
+        sort=None,
+        sort_desc=None,
+        execute=False,
+        search_query=None,
+        filters=None,
+    ):
         qs = self.get_queryset(filters=filters)
 
         # Filter by search query

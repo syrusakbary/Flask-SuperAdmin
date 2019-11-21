@@ -1,8 +1,11 @@
 from flask import Flask, url_for, redirect, render_template, request
+
 try:
     from mongoengine import *
 except ImportError:
-    exit('You must have mongoengine installed. Install it with the command:\n\t$> easy_install mongoengine')
+    exit(
+        "You must have mongoengine installed. Install it with the command:\n\t$> easy_install mongoengine"
+    )
 
 import flask_superadmin as superadmin
 import flask_login as login
@@ -15,10 +18,10 @@ from wtforms.validators import Required, ValidationError
 app = Flask(__name__)
 
 # Create dummy secrey key so we can use sessions
-app.config['SECRET_KEY'] = '123456790'
+app.config["SECRET_KEY"] = "123456790"
 
 # Database name for Mongo
-app.config['DATABASE'] = 'dummy_db'
+app.config["DATABASE"] = "dummy_db"
 
 
 # Create user model. For simplicity, it will store passwords in plain text.
@@ -56,10 +59,10 @@ class LoginForm(wtf.Form):
         user = self.get_user()
 
         if user is None:
-            raise ValidationError('Invalid user')
+            raise ValidationError("Invalid user")
 
         if user.password != self.password.data:
-            raise ValidationError('Invalid password')
+            raise ValidationError("Invalid password")
 
     def get_user(self):
         return User.objects.get(login=self.login)
@@ -72,7 +75,7 @@ class RegistrationForm(wtf.Form):
 
     def validate_login(self, field):
         if len(User.objects(login=self.login.data)) > 0:
-            raise ValidationError('Duplicate username')
+            raise ValidationError("Duplicate username")
 
 
 # Initialize flask-login
@@ -99,23 +102,23 @@ class MyAdminIndexView(superadmin.AdminIndexView):
 
 
 # Flask views
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('index.html', user=login.current_user)
+    return render_template("index.html", user=login.current_user)
 
 
-@app.route('/login/', methods=('GET', 'POST'))
+@app.route("/login/", methods=("GET", "POST"))
 def login_view():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = form.get_user()
         login.login_user(user)
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
-    return render_template('form.html', form=form)
+    return render_template("form.html", form=form)
 
 
-@app.route('/register/', methods=('GET', 'POST'))
+@app.route("/register/", methods=("GET", "POST"))
 def register_view():
     form = RegistrationForm(request.form)
     if form.validate_on_submit():
@@ -126,25 +129,26 @@ def register_view():
         user.save()
         login.login_user(user)
 
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
-    return render_template('form.html', form=form)
+    return render_template("form.html", form=form)
 
 
-@app.route('/logout/')
+@app.route("/logout/")
 def logout_view():
     login.logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Initialize flask-login
     init_login()
 
     # Mongoengine connection
-    connect(app.config['DATABASE'])
+    connect(app.config["DATABASE"])
 
     # Create admin
-    admin = superadmin.Admin(app, 'Auth', index_view=MyAdminIndexView())
+    admin = superadmin.Admin(app, "Auth", index_view=MyAdminIndexView())
 
     # Add view
     admin.add_view(MyModelView(User))
@@ -152,4 +156,3 @@ if __name__ == '__main__':
     # Start app
     app.debug = True
     app.run()
-

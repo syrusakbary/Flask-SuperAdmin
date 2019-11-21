@@ -1,14 +1,20 @@
+from __future__ import unicode_literals
+from future import standard_library
+
+standard_library.install_aliases()
+from builtins import object
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from functools import wraps
 
 from flask import Blueprint, render_template, url_for, abort
 
 from flask_superadmin import babel
+from future.utils import with_metaclass
 
 
-def expose(url='/', methods=('GET',)):
+def expose(url="/", methods=("GET",)):
     """
         Use this decorator to expose views in your view classes.
 
@@ -17,8 +23,9 @@ def expose(url='/', methods=('GET',)):
         `methods`
             Allowed HTTP methods. By default only GET is allowed.
     """
+
     def wrap(f):
-        if not hasattr(f, '_urls'):
+        if not hasattr(f, "_urls"):
             f._urls = []
         f._urls.append((url, methods))
         return f
@@ -47,6 +54,7 @@ class AdminViewMeta(type):
         Does some precalculations (like getting list of view methods from the class) to avoid
         calculating them for each view class instance.
     """
+
     def __init__(cls, classname, bases, fields):
         type.__init__(cls, classname, bases, fields)
 
@@ -57,19 +65,19 @@ class AdminViewMeta(type):
         for p in dir(cls):
             attr = getattr(cls, p)
 
-            if hasattr(attr, '_urls'):
+            if hasattr(attr, "_urls"):
                 # Collect methods
                 for url, methods in attr._urls:
                     cls._urls.append((url, p, methods))
 
-                    if url == '/':
+                    if url == "/":
                         cls._default_view = p
 
                 # Wrap views
                 setattr(cls, p, _wrap_view(attr))
 
 
-class BaseView(object):
+class BaseView(with_metaclass(AdminViewMeta, object)):
     """
         Base administrative view.
 
@@ -80,9 +88,10 @@ class BaseView(object):
                 def index(self):
                     return 'Hello World!'
     """
-    __metaclass__ = AdminViewMeta
 
-    def __init__(self, name=None, category=None, endpoint=None, url=None, static_folder=None):
+    def __init__(
+        self, name=None, category=None, endpoint=None, url=None, static_folder=None
+    ):
         """
             Constructor.
 
@@ -113,7 +122,10 @@ class BaseView(object):
 
         # Default view
         if self._default_view is None:
-            raise Exception('Attempted to instantiate admin view %s without default view' % self.__class__.__name__)
+            raise Exception(
+                "Attempted to instantiate admin view %s without default view"
+                % self.__class__.__name__
+            )
 
     def create_blueprint(self, admin):
         """ Create Flask blueprint. """
@@ -127,26 +139,26 @@ class BaseView(object):
 
         # If url is not provided, generate it from endpoint name
         if self.url is None:
-            self.url = '%s/%s' % (self.admin.url, self.endpoint)
+            self.url = "%s/%s" % (self.admin.url, self.endpoint)
         else:
-            if not self.url.startswith('/'):
-                self.url = '%s/%s' % (self.admin.url, self.url)
+            if not self.url.startswith("/"):
+                self.url = "%s/%s" % (self.admin.url, self.url)
 
         # If name is not povided, use capitalized endpoint name
         if self.name is None:
             self.name = self._prettify_name(self.__class__.__name__)
 
         # Create blueprint and register rules
-        self.blueprint = Blueprint(self.endpoint, __name__,
-                                   url_prefix=self.url,
-                                   template_folder='templates',
-                                   static_folder=self.static_folder)
+        self.blueprint = Blueprint(
+            self.endpoint,
+            __name__,
+            url_prefix=self.url,
+            template_folder="templates",
+            static_folder=self.static_folder,
+        )
 
         for url, name, methods in self._urls:
-            self.blueprint.add_url_rule(url,
-                                        name,
-                                        getattr(self, name),
-                                        methods=methods)
+            self.blueprint.add_url_rule(url, name, getattr(self, name), methods=methods)
 
         return self.blueprint
 
@@ -160,12 +172,12 @@ class BaseView(object):
                 Template arguments
         """
         # Store self as admin_view
-        kwargs['admin_view'] = self
+        kwargs["admin_view"] = self
 
         # Provide i18n support even if flask-babel is not installed
         # or enabled.
-        kwargs['_gettext'] = babel.gettext
-        kwargs['_ngettext'] = babel.ngettext
+        kwargs["_gettext"] = babel.gettext
+        kwargs["_ngettext"] = babel.ngettext
 
         return render_template(template, **kwargs)
 
@@ -176,7 +188,7 @@ class BaseView(object):
             `name`
                 String to prettify
         """
-        return re.sub(r'(?<=.)([A-Z])', r' \1', name)
+        return re.sub(r"(?<=.)([A-Z])", r" \1", name)
 
     def is_accessible(self):
         """
@@ -214,16 +226,19 @@ class AdminIndexView(BaseView):
         * Default URL route is ``/admin``.
         * Automatically associates with static folder.
     """
-    def __init__(self, name=None, category=None, endpoint=None, url=None):
-        super(AdminIndexView, self).__init__(name or babel.lazy_gettext('Home'),
-                                             category,
-                                             'superadmin',
-                                             url or '/admin',
-                                             'static')
 
-    @expose('/')
+    def __init__(self, name=None, category=None, endpoint=None, url=None):
+        super(AdminIndexView, self).__init__(
+            name or babel.lazy_gettext("Home"),
+            category,
+            "superadmin",
+            url or "/admin",
+            "static",
+        )
+
+    @expose("/")
     def index(self):
-        return self.render('admin/index.html')
+        return self.render("superadmin/index.html")
 
 
 class MenuItem(object):
@@ -251,9 +266,11 @@ class MenuItem(object):
         if self._cached_url:
             return self._cached_url
 
-        self._cached_url = url_for('%s.%s' % (self._view.endpoint, self._view._default_view))
-        if getattr(self._view, 'default_filters', None):
-            self._cached_url += '?' + urllib.urlencode(self._view.default_filters)
+        self._cached_url = url_for(
+            "%s.%s" % (self._view.endpoint, self._view._default_view)
+        )
+        if getattr(self._view, "default_filters", None):
+            self._cached_url += "?" + urllib.parse.urlencode(self._view.default_filters)
 
         return self._cached_url
 
@@ -278,10 +295,12 @@ class MenuItem(object):
 
 class Admin(object):
     """ Collection of the views. Also manages menu structure. """
+
     app = None
 
-    def __init__(self, app=None, name=None, url=None, index_view=None,
-                 translations_path=None):
+    def __init__(
+        self, app=None, name=None, url=None, index_view=None, translations_path=None
+    ):
         """
             Constructor.
 
@@ -305,28 +324,31 @@ class Admin(object):
 
         try:
             from flask_superadmin.model.backends import mongoengine
+
             self.add_model_backend(mongoengine.ModelAdmin)
         except:
             pass
 
         try:
             from flask_superadmin.model.backends import sqlalchemy
+
             self.add_model_backend(sqlalchemy.ModelAdmin)
         except:
             pass
 
         try:
             from flask_superadmin.model.backends import django
+
             self.add_model_backend(django.ModelAdmin)
         except:
             pass
 
         if name is None:
-            name = 'Admin'
+            name = "Admin"
         self.name = name
 
         if url is None:
-            url = '/admin'
+            url = "/admin"
         self.url = url
 
         # Localizations
@@ -343,7 +365,7 @@ class Admin(object):
         for backend in self._model_backends:
             if backend.model_detect(model):
                 return backend
-        raise Exception('There is no backend for this model')
+        raise Exception("There is no backend for this model")
 
     def add_model_backend(self, backend):
         self._model_backends.append(backend)
@@ -410,7 +432,7 @@ class Admin(object):
                         return request.args.get('lang', 'en')
         """
         if self.locale_selector_func is not None:
-            raise Exception('Can not add locale_selector second time.')
+            raise Exception("Can not add locale_selector second time.")
 
         self.locale_selector_func = f
 
@@ -442,8 +464,8 @@ class Admin(object):
         """
         self.app = app
 
-        app.extensions = getattr(app, 'extensions', {})
-        app.extensions['superadmin'] = self
+        app.extensions = getattr(app, "extensions", {})
+        app.extensions["superadmin"] = self
 
         for view in self._views:
             app.register_blueprint(view.create_blueprint(self))

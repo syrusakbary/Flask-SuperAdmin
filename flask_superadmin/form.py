@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 import time
 import datetime
 
@@ -7,11 +9,13 @@ from wtforms import fields, widgets
 from flask_superadmin.babel import gettext
 from flask import request
 
+
 class BaseForm(wtf.Form):
     """
         Customized form class.
     """
-    def __init__(self, formdata=None, obj=None, prefix='', **kwargs):
+
+    def __init__(self, formdata=None, obj=None, prefix="", **kwargs):
         if formdata:
             super(BaseForm, self).__init__(formdata, obj, prefix, **kwargs)
         else:
@@ -37,6 +41,7 @@ class TimeField(fields.Field):
         A text field which stores a `datetime.time` object.
         Accepts time string in multiple formats: 20:10, 20:10:00, 10:00 am, 9:30pm, etc.
     """
+
     widget = widgets.TextInput()
 
     def __init__(self, label=None, validators=None, formats=None, **kwargs):
@@ -54,31 +59,36 @@ class TimeField(fields.Field):
         """
         super(TimeField, self).__init__(label, validators, **kwargs)
 
-        self.formats = formats or ('%H:%M:%S', '%H:%M',
-                                  '%I:%M:%S%p', '%I:%M%p',
-                                  '%I:%M:%S %p', '%I:%M %p')
+        self.formats = formats or (
+            "%H:%M:%S",
+            "%H:%M",
+            "%I:%M:%S%p",
+            "%I:%M%p",
+            "%I:%M:%S %p",
+            "%I:%M %p",
+        )
 
     def _value(self):
         if self.raw_data:
-            return u' '.join(self.raw_data)
+            return " ".join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.formats[0]) or u''
+            return self.data and self.data.strftime(self.formats[0]) or ""
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = u' '.join(valuelist)
+            date_str = " ".join(valuelist)
 
             for format in self.formats:
                 try:
                     timetuple = time.strptime(date_str, format)
-                    self.data = datetime.time(timetuple.tm_hour,
-                                              timetuple.tm_min,
-                                              timetuple.tm_sec)
+                    self.data = datetime.time(
+                        timetuple.tm_hour, timetuple.tm_min, timetuple.tm_sec
+                    )
                     return
                 except ValueError:
                     pass
 
-            raise ValueError(gettext('Invalid time format'))
+            raise ValueError(gettext("Invalid time format"))
 
 
 class ChosenSelectWidget(widgets.Select):
@@ -87,11 +97,12 @@ class ChosenSelectWidget(widgets.Select):
 
         You must include chosen.js and form.js for styling to work.
     """
+
     def __call__(self, field, **kwargs):
-        if getattr(field, 'allow_blank', False) and not self.multiple:
-            kwargs['data-role'] = u'chosenblank'
+        if getattr(field, "allow_blank", False) and not self.multiple:
+            kwargs["data-role"] = "chosenblank"
         else:
-            kwargs['data-role'] = u'chosen'
+            kwargs["data-role"] = "chosen"
 
         return super(ChosenSelectWidget, self).__call__(field, **kwargs)
 
@@ -102,27 +113,43 @@ class ChosenSelectField(fields.SelectField):
 
         You must include chosen.js and form.js for styling to work.
     """
+
     widget = ChosenSelectWidget
+
 
 class FileFieldWidget(object):
     # widget_file = widgets.FileInput()
     widget_checkbox = widgets.CheckboxInput()
+
     def __call__(self, field, **kwargs):
         from cgi import escape
-        input_file = '<input %s>' % widgets.html_params(name=field.name, type='file')
-        return widgets.HTMLString('%s<br />Current: %s<br />%s <label for="%s">Clear file</label>'%(input_file, escape(field._value()), self.widget_checkbox(field._clear), field._clear.id))
+
+        input_file = "<input %s>" % widgets.html_params(name=field.name, type="file")
+        return widgets.HTMLString(
+            '%s<br />Current: %s<br />%s <label for="%s">Clear file</label>'
+            % (
+                input_file,
+                escape(field._value()),
+                self.widget_checkbox(field._clear),
+                field._clear.id,
+            )
+        )
+
 
 class FileField(fields.FileField):
     widget = FileFieldWidget()
-    def __init__(self,*args,**kwargs):
-        self.clearable = kwargs.pop('clearable', True)
+
+    def __init__(self, *args, **kwargs):
+        self.clearable = kwargs.pop("clearable", True)
         super(FileField, self).__init__(*args, **kwargs)
-        self._prefix = kwargs.get('_prefix', '')
+        self._prefix = kwargs.get("_prefix", "")
         self.clear_field = fields.BooleanField(default=False)
         if self.clearable:
-            self._clear_name = '%s-clear'%self.short_name
-            self._clear_id = '%s-clear'%self.id
-            self._clear = self.clear_field.bind(form=None, name=self._clear_name, prefix=self._prefix, id=self._clear_id)
+            self._clear_name = "%s-clear" % self.short_name
+            self._clear_id = "%s-clear" % self.id
+            self._clear = self.clear_field.bind(
+                form=None, name=self._clear_name, prefix=self._prefix, id=self._clear_id
+            )
 
     def process(self, formdata, data=fields._unset_value):
         super(FileField, self).process(formdata, data)
@@ -152,8 +179,9 @@ class DatePickerWidget(widgets.TextInput):
 
         You must include bootstrap-datepicker.js and form.js for styling to work.
     """
+
     def __call__(self, field, **kwargs):
-        kwargs['data-role'] = u'datepicker'
+        kwargs["data-role"] = "datepicker"
         return super(DatePickerWidget, self).__call__(field, **kwargs)
 
 
@@ -163,9 +191,11 @@ class DateTimePickerWidget(widgets.TextInput):
 
         You must include bootstrap-datepicker.js and form.js for styling to work.
     """
+
     def __call__(self, field, **kwargs):
-        kwargs['data-role'] = u'datetimepicker'
+        kwargs["data-role"] = "datetimepicker"
         return super(DateTimePickerWidget, self).__call__(field, **kwargs)
+
 
 # def format_form(form):
 #     for field in form:

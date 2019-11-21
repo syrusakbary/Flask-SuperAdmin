@@ -1,7 +1,11 @@
+from __future__ import unicode_literals
+from future import standard_library
+
+standard_library.install_aliases()
 import os
 import os.path as op
 import platform
-import urlparse
+import urllib.parse
 import re
 import shutil
 
@@ -24,14 +28,17 @@ class NameForm(form.BaseForm):
 
         Validates if provided name is valid for *nix and Windows systems.
     """
+
     name = TextField()
 
-    regexp = re.compile(r'^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)'
-                        r'(\..+)?$)[^\x00-\x1f\\?*:\";|/]+$')
+    regexp = re.compile(
+        r"^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)"
+        r"(\..+)?$)[^\x00-\x1f\\?*:\";|/]+$"
+    )
 
     def validate_name(self, field):
         if not self.regexp.match(field.data):
-            raise ValidationError(gettext('Invalid directory name'))
+            raise ValidationError(gettext("Invalid directory name"))
 
 
 class UploadForm(form.BaseForm):
@@ -39,7 +46,8 @@ class UploadForm(form.BaseForm):
         File upload form. Works with FileAdmin instance to check if it
         is allowed to upload file with given extension.
     """
-    upload = FileField(lazy_gettext('File to upload'))
+
+    upload = FileField(lazy_gettext("File to upload"))
 
     def __init__(self, admin):
         self.admin = admin
@@ -48,12 +56,12 @@ class UploadForm(form.BaseForm):
 
     def validate_upload(self, field):
         if not self.upload.has_file():
-            raise ValidationError(gettext('File required.'))
+            raise ValidationError(gettext("File required."))
 
         filename = self.upload.data.filename
 
         if not self.admin.is_file_allowed(filename):
-            raise ValidationError(gettext('Invalid file type.'))
+            raise ValidationError(gettext("Invalid file type."))
 
 
 class FileAdmin(BaseView):
@@ -112,28 +120,29 @@ class FileAdmin(BaseView):
                 allowed_extensions = ('swf', 'jpg', 'gif', 'png')
     """
 
-    list_template = 'admin/file/list.html'
+    list_template = "admin/file/list.html"
     """
         File list template
     """
 
-    upload_template = 'admin/file/form.html'
+    upload_template = "admin/file/form.html"
     """
         File upload template
     """
 
-    mkdir_template = 'admin/file/form.html'
+    mkdir_template = "admin/file/form.html"
     """
         Directory creation (mkdir) template
     """
 
-    rename_template = 'admin/file/rename.html'
+    rename_template = "admin/file/rename.html"
     """
         Rename template
     """
 
-    def __init__(self, base_path, base_url,
-                 name=None, category=None, endpoint=None, url=None):
+    def __init__(
+        self, base_path, base_url, name=None, category=None, endpoint=None, url=None
+    ):
         """
             Constructor.
 
@@ -154,11 +163,10 @@ class FileAdmin(BaseView):
         self.base_path = base_path
         self.base_url = base_url
 
-        self._on_windows = platform.system() == 'Windows'
+        self._on_windows = platform.system() == "Windows"
 
         # Convert allowed_extensions to set for quick validation
-        if (self.allowed_extensions
-                and not isinstance(self.allowed_extensions, set)):
+        if self.allowed_extensions and not isinstance(self.allowed_extensions, set):
             self.allowed_extensions = set(self.allowed_extensions)
 
         super(FileAdmin, self).__init__(name, category, endpoint, url)
@@ -199,7 +207,7 @@ class FileAdmin(BaseView):
         """
         ext = op.splitext(filename)[1].lower()
 
-        if ext.startswith('.'):
+        if ext.startswith("."):
             ext = ext[1:]
 
         if self.allowed_extensions and ext not in self.allowed_extensions:
@@ -239,9 +247,9 @@ class FileAdmin(BaseView):
             return url_for(endpoint)
         else:
             if self._on_windows:
-                path = path.replace('\\', '/')
+                path = path.replace("\\", "/")
 
-            kwargs['path'] = path
+            kwargs["path"] = path
 
             return url_for(endpoint, **kwargs)
 
@@ -253,7 +261,7 @@ class FileAdmin(BaseView):
                 Static file path
         """
         base_url = self.get_base_url()
-        return urlparse.urljoin(base_url, path)
+        return urllib.parse.urljoin(base_url, path)
 
     def _normalize_path(self, path):
         """
@@ -268,7 +276,7 @@ class FileAdmin(BaseView):
 
         if path is None:
             directory = base_path
-            path = ''
+            path = ""
         else:
             path = op.normpath(path)
             directory = op.normpath(op.join(base_path, path))
@@ -287,8 +295,8 @@ class FileAdmin(BaseView):
     def get_readonly_fields(self, instance):
         return {}
 
-    @expose('/')
-    @expose('/b/<path:path>')
+    @expose("/")
+    @expose("/b/<path:path>")
     def index(self, path=None):
         """
             Index view method
@@ -305,11 +313,11 @@ class FileAdmin(BaseView):
 
         # Parent directory
         if directory != base_path:
-            parent_path = op.normpath(op.join(path, '..'))
-            if parent_path == '.':
+            parent_path = op.normpath(op.join(path, ".."))
+            if parent_path == ".":
                 parent_path = None
 
-            items.append(('..', parent_path, True, 0))
+            items.append(("..", parent_path, True, 0))
 
         for f in os.listdir(directory):
             fp = op.join(directory, f)
@@ -326,16 +334,18 @@ class FileAdmin(BaseView):
             accumulator.append(n)
             breadcrumbs.append((n, op.join(*accumulator)))
 
-        return self.render(self.list_template,
-                           dir_path=path,
-                           breadcrumbs=breadcrumbs,
-                           get_dir_url=self._get_dir_url,
-                           get_file_url=self._get_file_url,
-                           items=items,
-                           base_path=base_path)
+        return self.render(
+            self.list_template,
+            dir_path=path,
+            breadcrumbs=breadcrumbs,
+            get_dir_url=self._get_dir_url,
+            get_file_url=self._get_file_url,
+            items=items,
+            base_path=base_path,
+        )
 
-    @expose('/upload/', methods=('GET', 'POST'))
-    @expose('/upload/<path:path>', methods=('GET', 'POST'))
+    @expose("/upload/", methods=("GET", "POST"))
+    @expose("/upload/<path:path>", methods=("GET", "POST"))
     def upload(self, path=None):
         """
             Upload view method
@@ -348,32 +358,38 @@ class FileAdmin(BaseView):
         base_path, directory, path = self._normalize_path(path)
 
         if not self.can_upload:
-            flash(gettext('File uploading is disabled.'), 'error')
-            return redirect(self._get_dir_url('.index', path))
+            flash(gettext("File uploading is disabled."), "error")
+            return redirect(self._get_dir_url(".index", path))
 
         form = UploadForm(self)
         if form.validate_on_submit():
-            filename = op.join(directory,
-                               secure_filename(form.upload.data.filename))
+            filename = op.join(directory, secure_filename(form.upload.data.filename))
 
             if op.exists(filename):
-                flash(gettext('File "%(name)s" already exists.',
-                              name=form.upload.data.filename), 'error')
+                flash(
+                    gettext(
+                        'File "%(name)s" already exists.',
+                        name=form.upload.data.filename,
+                    ),
+                    "error",
+                )
             else:
                 try:
                     self.save_file(filename, form.upload.data)
-                    return redirect(self._get_dir_url('.index', path))
-                except Exception, ex:
-                    flash(gettext('Failed to save file: %(error)s', error=ex))
+                    return redirect(self._get_dir_url(".index", path))
+                except Exception as ex:
+                    flash(gettext("Failed to save file: %(error)s", error=ex))
 
-        return self.render(self.upload_template,
-                           form=form,
-                           base_path=base_path,
-                           path=path,
-                           msg=gettext(u'Upload a file'))
+        return self.render(
+            self.upload_template,
+            form=form,
+            base_path=base_path,
+            path=path,
+            msg=gettext("Upload a file"),
+        )
 
-    @expose('/mkdir/', methods=('GET', 'POST'))
-    @expose('/mkdir/<path:path>', methods=('GET', 'POST'))
+    @expose("/mkdir/", methods=("GET", "POST"))
+    @expose("/mkdir/<path:path>", methods=("GET", "POST"))
     def mkdir(self, path=None):
         """
             Directory creation view method
@@ -385,10 +401,10 @@ class FileAdmin(BaseView):
         # Get path and verify if it is valid
         base_path, directory, path = self._normalize_path(path)
 
-        dir_url = self._get_dir_url('.index', path)
+        dir_url = self._get_dir_url(".index", path)
 
         if not self.can_mkdir:
-            flash(gettext('Directory creation is disabled.'), 'error')
+            flash(gettext("Directory creation is disabled."), "error")
             return redirect(dir_url)
 
         form = NameForm(request.form)
@@ -397,82 +413,78 @@ class FileAdmin(BaseView):
             try:
                 os.mkdir(op.join(directory, form.name.data))
                 return redirect(dir_url)
-            except Exception, ex:
-                flash(gettext('Failed to create directory: %(error)s', ex),
-                      'error')
+            except Exception as ex:
+                flash(gettext("Failed to create directory: %(error)s", ex), "error")
 
-        return self.render(self.mkdir_template,
-                           form=form,
-                           dir_url=dir_url,
-                           base_path=base_path,
-                           path=path,
-                           msg=gettext(u'Create a new directory'))
+        return self.render(
+            self.mkdir_template,
+            form=form,
+            dir_url=dir_url,
+            base_path=base_path,
+            path=path,
+            msg=gettext("Create a new directory"),
+        )
 
-    @expose('/delete/', methods=('POST',))
+    @expose("/delete/", methods=("POST",))
     def delete(self):
         """
             Delete view method
         """
-        path = request.form.get('path')
+        path = request.form.get("path")
 
         if not path:
-            return redirect(url_for('.index'))
+            return redirect(url_for(".index"))
 
         # Get path and verify if it is valid
         base_path, full_path, path = self._normalize_path(path)
 
-        return_url = self._get_dir_url('.index', op.dirname(path))
+        return_url = self._get_dir_url(".index", op.dirname(path))
 
         if not self.can_delete:
-            flash(gettext('Deletion is disabled.'))
+            flash(gettext("Deletion is disabled."))
             return redirect(return_url)
 
         if op.isdir(full_path):
             if not self.can_delete_dirs:
-                flash(gettext('Directory deletion is disabled.'))
+                flash(gettext("Directory deletion is disabled."))
                 return redirect(return_url)
 
             try:
                 shutil.rmtree(full_path)
+                flash(gettext('Directory "%s" was successfully deleted.' % path))
+            except Exception as ex:
                 flash(
-                    gettext('Directory "%s" was successfully deleted.' % path)
-                )
-            except Exception, ex:
-                flash(
-                    gettext('Failed to delete directory: %(error)s', error=ex),
-                    'error'
+                    gettext("Failed to delete directory: %(error)s", error=ex), "error"
                 )
         else:
             try:
                 os.remove(full_path)
-                flash(gettext('File "%(name)s" was successfully deleted.',
-                              name=path))
-            except Exception, ex:
-                flash(gettext('Failed to delete file: %(name)s',
-                              name=ex), 'error')
+                flash(gettext('File "%(name)s" was successfully deleted.', name=path))
+            except Exception as ex:
+                flash(gettext("Failed to delete file: %(name)s", name=ex), "error")
 
         return redirect(return_url)
 
-    @expose('/rename/', methods=('GET', 'POST'))
+    @expose("/rename/", methods=("GET", "POST"))
     def rename(self):
         """
             Rename view method
         """
-        path = request.args.get('path')
+        path = request.args.get("path")
 
         if not path:
-            return redirect(url_for('.index'))
+            return redirect(url_for(".index"))
 
         base_path, full_path, path = self._normalize_path(path)
 
-        return_url = self._get_dir_url('.index', op.dirname(path))
+        return_url = self._get_dir_url(".index", op.dirname(path))
 
         if not self.can_rename:
-            flash(gettext('Renaming is disabled.'))
+            flash(gettext("Renaming is disabled."))
             return redirect(return_url)
 
         if not op.exists(full_path):
-            flash(gettext('Path does not exist.'))
+            flash(gettext("Path does not exist."))
             return redirect(return_url)
 
         form = NameForm(request.form, name=op.basename(path))
@@ -482,18 +494,23 @@ class FileAdmin(BaseView):
                 filename = secure_filename(form.name.data)
 
                 os.rename(full_path, op.join(dir_base, filename))
-                flash(gettext('Successfully renamed "%(src)s" to "%(dst)s"',
-                      src=op.basename(path),
-                      dst=filename))
-            except Exception, ex:
-                flash(gettext('Failed to rename: %(error)s',
-                              error=ex), 'error')
+                flash(
+                    gettext(
+                        'Successfully renamed "%(src)s" to "%(dst)s"',
+                        src=op.basename(path),
+                        dst=filename,
+                    )
+                )
+            except Exception as ex:
+                flash(gettext("Failed to rename: %(error)s", error=ex), "error")
 
             return redirect(return_url)
 
-        return self.render(self.rename_template,
-                           form=form,
-                           path=op.dirname(path),
-                           name=op.basename(path),
-                           dir_url=return_url,
-                           base_path=base_path)
+        return self.render(
+            self.rename_template,
+            form=form,
+            path=op.dirname(path),
+            name=op.basename(path),
+            dir_url=return_url,
+            base_path=base_path,
+        )

@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+
 try:
     try:
         from flask_babelex import Domain
@@ -8,13 +11,12 @@ try:
 
     class CustomDomain(Domain):
         def __init__(self):
-            super(CustomDomain, self).__init__(translations.__path__[0],
-                  domain='admin')
+            super(CustomDomain, self).__init__(translations.__path__[0], domain="admin")
 
         def get_translations_path(self, ctx):
-            print ctx
+            print(ctx)
 
-            dirname = ctx.app.extensions['admin'].translations_path
+            dirname = ctx.app.extensions["admin"].translations_path
             if dirname is not None:
                 return dirname
 
@@ -26,6 +28,7 @@ try:
     ngettext = domain.ngettext
     lazy_gettext = domain.lazy_gettext
 except ImportError:
+
     def gettext(string, **variables):
         return string % variables
 

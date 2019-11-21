@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from nose.tools import ok_, eq_, raises
 
 from flask import Flask
@@ -9,19 +10,19 @@ class MockView(base.BaseView):
     allow_call = True
     allow_access = True
 
-    @base.expose('/')
+    @base.expose("/")
     def index(self):
-        return 'Success!'
+        return "Success!"
 
-    @base.expose('/test/')
+    @base.expose("/test/")
     def test(self):
-        return self.render('mock.html')
+        return self.render("mock.html")
 
     def _handle_view(self, name, **kwargs):
         if self.allow_call:
             return super(MockView, self)._handle_view(name, **kwargs)
         else:
-            return 'Failure!'
+            return "Failure!"
 
     def is_accessible(self):
         if self.allow_access:
@@ -43,8 +44,8 @@ def test_baseview_defaults():
 
 def test_base_defaults():
     admin = base.Admin()
-    eq_(admin.name, 'Admin')
-    eq_(admin.url, '/admin')
+    eq_(admin.name, "Admin")
+    eq_(admin.url, "/admin")
     eq_(admin.app, None)
     ok_(admin.index_view is not None)
 
@@ -63,12 +64,12 @@ def test_base_registration():
 
 def test_admin_customizations():
     app = Flask(__name__)
-    admin = base.Admin(app, name='Test', url='/foobar')
-    eq_(admin.name, 'Test')
-    eq_(admin.url, '/foobar')
+    admin = base.Admin(app, name="Test", url="/foobar")
+    eq_(admin.name, "Test")
+    eq_(admin.url, "/foobar")
 
     client = app.test_client()
-    rv = client.get('/foobar/')
+    rv = client.get("/foobar/")
     eq_(rv.status_code, 200)
 
 
@@ -83,31 +84,31 @@ def test_baseview_registration():
     ok_(view.blueprint is not None)
 
     # Calculated properties
-    eq_(view.endpoint, 'mockview')
-    eq_(view.url, '/admin/mockview')
-    eq_(view.name, 'Mock View')
+    eq_(view.endpoint, "mockview")
+    eq_(view.url, "/admin/mockview")
+    eq_(view.name, "Mock View")
 
     # Verify generated blueprint properties
     eq_(bp.name, view.endpoint)
     eq_(bp.url_prefix, view.url)
-    eq_(bp.template_folder, 'templates')
+    eq_(bp.template_folder, "templates")
     eq_(bp.static_folder, view.static_folder)
 
     # Verify customizations
-    view = MockView(name='Test', endpoint='foobar')
+    view = MockView(name="Test", endpoint="foobar")
     view.create_blueprint(base.Admin())
 
-    eq_(view.name, 'Test')
-    eq_(view.endpoint, 'foobar')
-    eq_(view.url, '/admin/foobar')
+    eq_(view.name, "Test")
+    eq_(view.endpoint, "foobar")
+    eq_(view.url, "/admin/foobar")
 
-    view = MockView(url='test')
+    view = MockView(url="test")
     view.create_blueprint(base.Admin())
-    eq_(view.url, '/admin/test')
+    eq_(view.url, "/admin/test")
 
-    view = MockView(url='/test/test')
+    view = MockView(url="/test/test")
     view.create_blueprint(base.Admin())
-    eq_(view.url, '/test/test')
+    eq_(view.url, "/test/test")
 
 
 def test_baseview_urls():
@@ -134,19 +135,19 @@ def test_call():
     admin.add_view(view)
     client = app.test_client()
 
-    rv = client.get('/admin/')
+    rv = client.get("/admin/")
     eq_(rv.status_code, 200)
 
-    rv = client.get('/admin/mockview/')
-    eq_(rv.data, 'Success!')
+    rv = client.get("/admin/mockview/")
+    eq_(rv.data.decode(), "Success!")
 
-    rv = client.get('/admin/mockview/test/')
-    eq_(rv.data, 'Success!')
+    rv = client.get("/admin/mockview/test/")
+    eq_(rv.data.decode(), "Success!")
 
     # Check authentication failure
     view.allow_call = False
-    rv = client.get('/admin/mockview/')
-    eq_(rv.data, 'Failure!')
+    rv = client.get("/admin/mockview/")
+    eq_(rv.data.decode(), "Failure!")
 
 
 def test_permissions():
@@ -158,23 +159,23 @@ def test_permissions():
 
     view.allow_access = False
 
-    rv = client.get('/admin/mockview/')
+    rv = client.get("/admin/mockview/")
     eq_(rv.status_code, 403)
 
 
 def test_submenu():
     app = Flask(__name__)
     admin = base.Admin(app)
-    admin.add_view(MockView(name='Test 1', category='Test', endpoint='test1'))
+    admin.add_view(MockView(name="Test 1", category="Test", endpoint="test1"))
 
     # Second view is not normally accessible
-    view = MockView(name='Test 2', category='Test', endpoint='test2')
+    view = MockView(name="Test 2", category="Test", endpoint="test2")
     view.allow_access = False
     admin.add_view(view)
 
-    ok_('Test' in admin._menu_categories)
+    ok_("Test" in admin._menu_categories)
     eq_(len(admin._menu), 2)
-    eq_(admin._menu[1].name, 'Test')
+    eq_(admin._menu[1].name, "Test")
     eq_(len(admin._menu[1]._children), 2)
 
     # Categories don't have URLs and they're not accessible
@@ -192,8 +193,8 @@ def test_delayed_init():
 
     client = app.test_client()
 
-    rv = client.get('/admin/mockview/')
-    eq_(rv.data, 'Success!')
+    rv = client.get("/admin/mockview/")
+    eq_(rv.data.decode(), "Success!")
 
 
 @raises(Exception)
@@ -201,4 +202,3 @@ def test_double_init():
     app = Flask(__name__)
     admin = base.Admin(app)
     admin.init_app(app)
-

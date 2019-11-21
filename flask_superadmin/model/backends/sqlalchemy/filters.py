@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from flask_superadmin.babel import gettext
 
 from flask_superadmin.model import filters
@@ -8,6 +9,7 @@ class BaseSQLAFilter(filters.BaseFilter):
     """
         Base SQLAlchemy filter.
     """
+
     def __init__(self, column, name, options=None, data_type=None):
         """
             Constructor.
@@ -32,7 +34,7 @@ class FilterEqual(BaseSQLAFilter):
         return query.filter(self.column == value)
 
     def operation(self):
-        return gettext('equals')
+        return gettext("equals")
 
 
 class FilterNotEqual(BaseSQLAFilter):
@@ -40,7 +42,7 @@ class FilterNotEqual(BaseSQLAFilter):
         return query.filter(self.column != value)
 
     def operation(self):
-        return gettext('not equal')
+        return gettext("not equal")
 
 
 class FilterLike(BaseSQLAFilter):
@@ -49,7 +51,7 @@ class FilterLike(BaseSQLAFilter):
         return query.filter(self.column.ilike(stmt))
 
     def operation(self):
-        return gettext('contains')
+        return gettext("contains")
 
 
 class FilterNotLike(BaseSQLAFilter):
@@ -58,7 +60,7 @@ class FilterNotLike(BaseSQLAFilter):
         return query.filter(~self.column.ilike(stmt))
 
     def operation(self):
-        return gettext('not contains')
+        return gettext("not contains")
 
 
 class FilterGreater(BaseSQLAFilter):
@@ -66,7 +68,7 @@ class FilterGreater(BaseSQLAFilter):
         return query.filter(self.column > value)
 
     def operation(self):
-        return gettext('greater than')
+        return gettext("greater than")
 
 
 class FilterSmaller(BaseSQLAFilter):
@@ -74,7 +76,7 @@ class FilterSmaller(BaseSQLAFilter):
         return query.filter(self.column < value)
 
     def operation(self):
-        return gettext('smaller than')
+        return gettext("smaller than")
 
 
 # Customized type filters
@@ -97,23 +99,22 @@ class FilterConverter(filters.BaseFilterConverter):
 
         return None
 
-    @filters.convert('String', 'Unicode', 'Text', 'UnicodeText')
+    @filters.convert("String", "Unicode", "Text", "UnicodeText")
     def conv_string(self, column, name):
         return [f(column, name) for f in self.strings]
 
-    @filters.convert('Boolean')
+    @filters.convert("Boolean")
     def conv_bool(self, column, name):
-        return [BooleanEqualFilter(column, name),
-                BooleanNotEqualFilter(column, name)]
+        return [BooleanEqualFilter(column, name), BooleanNotEqualFilter(column, name)]
 
-    @filters.convert('Integer', 'SmallInteger', 'Numeric', 'Float')
+    @filters.convert("Integer", "SmallInteger", "Numeric", "Float")
     def conv_int(self, column, name):
         return [f(column, name) for f in self.numeric]
 
-    @filters.convert('Date')
+    @filters.convert("Date")
     def conv_date(self, column, name):
-        return [f(column, name, data_type='datepicker') for f in self.numeric]
+        return [f(column, name, data_type="datepicker") for f in self.numeric]
 
-    @filters.convert('DateTime')
+    @filters.convert("DateTime")
     def conv_datetime(self, column, name):
-        return [f(column, name, data_type='datetimepicker') for f in self.numeric]
+        return [f(column, name, data_type="datetimepicker") for f in self.numeric]

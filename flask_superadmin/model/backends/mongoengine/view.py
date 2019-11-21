@@ -1,20 +1,24 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from builtins import str
 from flask_superadmin.model.base import BaseModelAdmin, prettify
 
-from orm import model_form, AdminModelConverter
+from .orm import model_form, AdminModelConverter
 
 import operator
 import mongoengine
 
 from flask import request
+from functools import reduce
 
 SORTABLE_FIELDS = (
     mongoengine.BooleanField,
     mongoengine.DateTimeField,
-    #mongoengine.DecimalField,
+    # mongoengine.DecimalField,
     mongoengine.FloatField,
     mongoengine.IntField,
     mongoengine.StringField,
-    mongoengine.ReferenceField
+    mongoengine.ReferenceField,
 )
 
 
@@ -42,18 +46,20 @@ class ModelAdmin(BaseModelAdmin):
             field = self.model._fields.get(list_filter)
             if field:
                 if isinstance(field, mongoengine.fields.BooleanField):
-                    choices = (('True', 'Yes'), ('False', 'No'))
-                elif hasattr(field, 'choices'):
+                    choices = (("True", "Yes"), ("False", "No"))
+                elif hasattr(field, "choices"):
                     choices = field.choices
                 else:
                     pass  # TODO other field types and non-fields
 
-                filter_choices.append({
-                    'lookup': list_filter,
-                    'label': prettify(list_filter),
-                    'choices': choices,
-                    'selected': request.args.get(list_filter)
-                })
+                filter_choices.append(
+                    {
+                        "lookup": list_filter,
+                        "label": prettify(list_filter),
+                        "choices": choices,
+                        "selected": request.args.get(list_filter),
+                    }
+                )
 
         return filter_choices
 
@@ -66,15 +72,17 @@ class ModelAdmin(BaseModelAdmin):
                 # it more generically (like Django)
 
                 # fix boolean filters
-                if isinstance(self.model._fields.get(key), mongoengine.fields.BooleanField):
+                if isinstance(
+                    self.model._fields.get(key), mongoengine.fields.BooleanField
+                ):
                     val = filters[key]
-                    if val in ('True', 'False'):
-                        filters[key] = True if val == 'True' else False
+                    if val in ("True", "False"):
+                        filters[key] = True if val == "True" else False
                     else:
                         del filters[key]
 
                 # exclude the _debug keyword
-                filters.pop('_debug', None)
+                filters.pop("_debug", None)
 
             return qs.filter(**filters)
         return qs
@@ -99,25 +107,36 @@ class ModelAdmin(BaseModelAdmin):
         return True
 
     def construct_search(self, field_name):
-        if field_name.startswith('^'):
+        if field_name.startswith("^"):
             return "%s__istartswith" % field_name[1:]
-        elif field_name.startswith('='):
+        elif field_name.startswith("="):
             return "%s__iexact" % field_name[1:]
         else:
             return "%s__icontains" % field_name
 
     def apply_search(self, qs, search_query):
         if search_query:
-            orm_lookups = [self.construct_search(str(search_field))
-                           for search_field in self.search_fields]
+            orm_lookups = [
+                self.construct_search(str(search_field))
+                for search_field in self.search_fields
+            ]
             for bit in search_query.split():
-                or_queries = [mongoengine.queryset.Q(**{orm_lookup: bit})
-                              for orm_lookup in orm_lookups]
+                or_queries = [
+                    mongoengine.queryset.Q(**{orm_lookup: bit})
+                    for orm_lookup in orm_lookups
+                ]
                 qs = qs.filter(reduce(operator.or_, or_queries))
         return qs
 
-    def get_list(self, page=0, sort=None, sort_desc=None, execute=False,
-                 search_query=None, filters=None):
+    def get_list(
+        self,
+        page=0,
+        sort=None,
+        sort_desc=None,
+        execute=False,
+        search_query=None,
+        filters=None,
+    ):
 
         qs = self.get_queryset(filters=filters)
 
@@ -125,12 +144,12 @@ class ModelAdmin(BaseModelAdmin):
         if search_query and self.search_fields:
             qs = self.apply_search(qs, search_query)
 
-        #Calculate number of documents
+        # Calculate number of documents
         count = qs.count()
 
-        #Order queryset
+        # Order queryset
         if sort:
-            qs = qs.order_by('%s%s' % ('-' if sort_desc else '', sort))
+            qs = qs.order_by("%s%s" % ("-" if sort_desc else "", sort))
 
         # Pagination
         if page is not None:
@@ -138,11 +157,10 @@ class ModelAdmin(BaseModelAdmin):
         qs = qs.limit(self.list_per_page)
 
         if execute:
-            raise StandardError('This should never happen')
+            raise Exception("This should never happen")
             qs = qs.all()
 
         if self.select_related:
             qs = qs.select_related()
 
         return count, qs
-

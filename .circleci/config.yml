@@ -1,0 +1,53 @@
+version: 2
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - test-2.7
+      - test-3.5
+      - test-3.6
+      - black
+
+defaults: &defaults
+  working_directory: ~/code
+  environment:
+    # circleci exposes services on localhost
+    MONGODB_HOST: localhost
+  steps:
+  - checkout
+  - run:
+      name: Install dependencies
+      command: sudo pip install -r requirements.txt
+  - run:
+      name: Test
+      command: pytest
+
+jobs:
+  test-2.7:
+    <<: *defaults
+    docker:
+    - image: circleci/python:2.7
+    - image: mongo
+  test-3.5:
+    <<: *defaults
+    docker:
+    - image: circleci/python:3.5
+    - image: mongo
+  test-3.6:
+    <<: *defaults
+    docker:
+    - image: circleci/python:3.6
+    - image: mongo
+  black:
+    working_directory: ~/code
+    docker:
+    - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: sudo pip install black
+      - run:
+          name: Check formatting
+          command: black --check .

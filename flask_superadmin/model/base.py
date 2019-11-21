@@ -1,3 +1,7 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 import math
 import re
 
@@ -6,8 +10,13 @@ from flask import request, url_for, redirect, flash, abort
 
 from flask_superadmin.babel import gettext
 from flask_superadmin.base import BaseView, expose
-from flask_superadmin.form import (BaseForm, ChosenSelectWidget, FileField,
-                                   DatePickerWidget, DateTimePickerWidget)
+from flask_superadmin.form import (
+    BaseForm,
+    ChosenSelectWidget,
+    FileField,
+    DatePickerWidget,
+    DateTimePickerWidget,
+)
 
 import traceback
 
@@ -16,28 +25,27 @@ class AdminModelConverter(object):
     def convert(self, *args, **kwargs):
         field = super(AdminModelConverter, self).convert(*args, **kwargs)
         if field:
-            widget = field.kwargs.get('widget', field.field_class.widget)
+            widget = field.kwargs.get("widget", field.field_class.widget)
             if isinstance(widget, widgets.Select):
-                field.kwargs['widget'] = ChosenSelectWidget(
-                    multiple=widget.multiple)
+                field.kwargs["widget"] = ChosenSelectWidget(multiple=widget.multiple)
             elif issubclass(field.field_class, fields.DateTimeField):
-                field.kwargs['widget'] = DateTimePickerWidget()
+                field.kwargs["widget"] = DateTimePickerWidget()
             elif issubclass(field.field_class, fields.DateField):
-                field.kwargs['widget'] = DatePickerWidget()
+                field.kwargs["widget"] = DatePickerWidget()
             elif issubclass(field.field_class, fields.FileField):
                 field.field_class = FileField
         return field
 
 
-first_cap_re = re.compile('(.)([A-Z][a-z]+)')
+first_cap_re = re.compile("(.)([A-Z][a-z]+)")
 
 
 def camelcase_to_space(name):
-    return first_cap_re.sub(r'\1 \2', name)
+    return first_cap_re.sub(r"\1 \2", name)
 
 
 def prettify(str):
-    return str.replace('_', ' ').title()
+    return str.replace("_", " ").title()
 
 
 class BaseModelAdmin(BaseView):
@@ -79,10 +87,10 @@ class BaseModelAdmin(BaseView):
     can_create = True
     can_delete = True
 
-    list_template = 'superadmin/model/list.html'
-    edit_template = 'superadmin/model/edit.html'
-    add_template = 'superadmin/model/add.html'
-    delete_template = 'superadmin/model/delete.html'
+    list_template = "superadmin/model/list.html"
+    edit_template = "superadmin/model/edit.html"
+    add_template = "superadmin/model/add.html"
+    delete_template = "superadmin/model/delete.html"
 
     search_fields = tuple()
 
@@ -102,19 +110,18 @@ class BaseModelAdmin(BaseView):
     # Indicates whether the references for the objects in the list view should
     # be bulk-fetched (this might speed things up significantly by reducing
     # the number of queries for the list view)
-    select_related=False
+    select_related = False
 
     @staticmethod
     def model_detect(model):
         return False
 
-    def __init__(self, model=None, name=None, category=None, endpoint=None,
-                 url=None):
+    def __init__(self, model=None, name=None, category=None, endpoint=None, url=None):
         if name is None:
-            name = '%s' % camelcase_to_space(model.__name__)
+            name = "%s" % camelcase_to_space(model.__name__)
 
         if endpoint is None:
-            endpoint = ('%s' % model.__name__).lower()
+            endpoint = ("%s" % model.__name__).lower()
 
         super(BaseModelAdmin, self).__init__(name, category, endpoint, url)
 
@@ -131,7 +138,7 @@ class BaseModelAdmin(BaseView):
         return not self.model._meta.auto_increment
 
     def get_column(self, instance, name):
-        parts = name.split('.')
+        parts = name.split(".")
         value = instance
         for p in parts:
 
@@ -153,8 +160,10 @@ class BaseModelAdmin(BaseView):
     def get_reference(self, column_value):
         for model, model_view in self.admin._models:
             if type(column_value) == model:
-                return '/admin/%s/%s/' % (model_view.endpoint,
-                                          model_view.get_pk(column_value))
+                return "/admin/%s/%s/" % (
+                    model_view.endpoint,
+                    model_view.get_pk(column_value),
+                )
 
     def get_readonly_fields(self, instance):
         # if instance is undefined, just return a dict of readonly keys with None values
@@ -177,16 +186,19 @@ class BaseModelAdmin(BaseView):
                 # registered in the admin. If so, link to it.
                 reference = self.get_reference(val)
                 val = {
-                    'label': prettify(field),
-                    'value': val,
-                    'url': reference if reference else None
+                    "label": prettify(field),
+                    "value": val,
+                    "url": reference if reference else None,
                 }
             ret_vals[field] = val
         return ret_vals
 
     def get_extra_readonly(self, instance):
         if self.extra_readonly:
-            return [getattr(self, method_name)(instance) for method_name in self.extra_readonly]
+            return [
+                getattr(self, method_name)(instance)
+                for method_name in self.extra_readonly
+            ]
         return []
 
     def get_converter(self):
@@ -204,11 +216,15 @@ class BaseModelAdmin(BaseView):
         if isinstance(converter, type):
             converter = converter()
         base_class = self.form or BaseForm
-        form = model_form(self.model, base_class=base_class,
-                          fields=self.fields,
-                          readonly_fields=self.readonly_fields,
-                          exclude=self.exclude, field_args=self.field_args,
-                          converter=converter)
+        form = model_form(
+            self.model,
+            base_class=base_class,
+            fields=self.fields,
+            readonly_fields=self.readonly_fields,
+            exclude=self.exclude,
+            field_args=self.field_args,
+            converter=converter,
+        )
         return form
 
     def get_add_form(self):
@@ -244,71 +260,81 @@ class BaseModelAdmin(BaseView):
     def get_queryset(self, filters=None):
         raise NotImplemented()
 
-    def get_list(self, page=0, sort=None, sort_desc=None, execute=False,
-                 search_query=None, filters=None):
+    def get_list(
+        self,
+        page=0,
+        sort=None,
+        sort_desc=None,
+        execute=False,
+        search_query=None,
+        filters=None,
+    ):
         raise NotImplemented()
 
     def get_url_name(self, name):
-        URLS = {
-            'index': '.list',
-            'add': '.add',
-            'delete': '.delete',
-            'edit': '.edit'
-        }
+        URLS = {"index": ".list", "add": ".add", "delete": ".delete", "edit": ".edit"}
         return URLS[name]
 
     def dispatch_save_redirect(self, instance):
-        if '_edit' in request.form:
+        if "_edit" in request.form:
             return redirect(
-                url_for(self.get_url_name('edit'), pk=self.get_pk(instance))
+                url_for(self.get_url_name("edit"), pk=self.get_pk(instance))
             )
-        elif '_add_another' in request.form:
-            return redirect(url_for(self.get_url_name('add')))
+        elif "_add_another" in request.form:
+            return redirect(url_for(self.get_url_name("add")))
         else:
-            return redirect(url_for(self.get_url_name('index')))
+            return redirect(url_for(self.get_url_name("index")))
 
-    @expose('/add/', methods=('GET', 'POST'))
+    @expose("/add/", methods=("GET", "POST"))
     def add(self):
         if not self.can_create:
             abort(403)
 
         Form = self.get_add_form()
-        if request.method == 'POST':
+        if request.method == "POST":
             form = Form()
             if form.validate_on_submit():
                 try:
                     instance = self.save_model(self.model(), form, adding=True)
-                    flash(gettext('New %(model)s saved successfully',
-                          model=self.get_display_name()), 'success')
+                    flash(
+                        gettext(
+                            "New %(model)s saved successfully",
+                            model=self.get_display_name(),
+                        ),
+                        "success",
+                    )
                     return self.dispatch_save_redirect(instance)
-                except Exception, ex:
-                    print traceback.format_exc()
-                    if hasattr(self, 'session'):
+                except Exception as ex:
+                    print(traceback.format_exc())
+                    if hasattr(self, "session"):
                         self.session.rollback()
-                    flash(gettext('Failed to add model. %(error)s',
-                          error=str(ex)), 'error')
+                    flash(
+                        gettext("Failed to add model. %(error)s", error=str(ex)),
+                        "error",
+                    )
 
         else:
             try:
                 form = Form(obj=self.model())
             except TypeError:
-                raise Exception('The database model for %r should have an '
-                                '__init__ with all arguments set to defaults.'
-                                % self.model.__name__)
+                raise Exception(
+                    "The database model for %r should have an "
+                    "__init__ with all arguments set to defaults." % self.model.__name__
+                )
 
         return self.render(self.add_template, model=self.model, form=form)
 
     @property
     def page(self):
-        return request.args.get('page', 0, type=int)
+        return request.args.get("page", 0, type=int)
 
     def total_pages(self, count):
         return int(math.ceil(float(count) / self.list_per_page))
 
     @property
     def sort(self):
-        sort = request.args.get('sort', None)
-        if sort and sort.startswith('-'):
+        sort = request.args.get("sort", None)
+        if sort and sort.startswith("-"):
             desc = True
             sort = sort[1:]
         else:
@@ -317,18 +343,18 @@ class BaseModelAdmin(BaseView):
 
     @property
     def search(self):
-        return request.args.get('q', None)
+        return request.args.get("q", None)
 
     @property
     def filters(self):
-        args = dict(request.args)
+        args = request.args.to_dict()
 
         # pop everything that isn't a filter
-        args.pop('sort', None)
-        args.pop('page', None)
-        args.pop('q', None)
+        args.pop("sort", None)
+        args.pop("page", None)
+        args.pop("q", None)
 
-        args = { k: v[0] for k, v in args.items() if k and v and v[0] }
+        args = {k: v for k, v in list(args.items()) if k and v}
         return args
 
     def get_list_filters(self):
@@ -342,38 +368,39 @@ class BaseModelAdmin(BaseView):
         search_query = self.search
         sort, desc = self.sort
         if sort and desc:
-            sort = '-' + sort
+            sort = "-" + sort
         if page == 0:
             page = None
-        return url_for(self.get_url_name('index'), page=page, sort=sort,
-                       q=search_query, **filters)
+        return url_for(
+            self.get_url_name("index"), page=page, sort=sort, q=search_query, **filters
+        )
 
     def filter_url(self, filter, value):
         sort, desc = self.sort
         search_query = self.search
         filters = self.filters
         filters[filter] = value
-        return url_for(self.get_url_name('index'), sort=sort, q=search_query,
-                       **filters)
+        return url_for(self.get_url_name("index"), sort=sort, q=search_query, **filters)
 
     def sort_url(self, sort, desc=None):
         if sort and desc:
-            sort = '-' + sort
+            sort = "-" + sort
         search_query = self.search
         filters = self.filters
-        return url_for(self.get_url_name('index'), sort=sort, q=search_query,
-                       **filters)
+        return url_for(self.get_url_name("index"), sort=sort, q=search_query, **filters)
 
-    @expose('/', methods=('GET', 'POST',))
+    @expose("/", methods=("GET", "POST",))
     def list(self):
         """
             List view
         """
         # Grab parameters from URL
-        if request.method == 'POST':
-            id_list = request.form.getlist('_selected_action')
-            if id_list and (request.form.get('action-delete') or
-                            request.form.get('action', None) == 'delete'):
+        if request.method == "POST":
+            id_list = request.form.getlist("_selected_action")
+            if id_list and (
+                request.form.get("action-delete")
+                or request.form.get("action", None) == "delete"
+            ):
                 return self.delete(*id_list)
 
         sort, sort_desc = self.sort
@@ -381,16 +408,28 @@ class BaseModelAdmin(BaseView):
         search_query = self.search
         filters = self.filters
 
-        count, data = self.get_list(page=page, sort=sort, sort_desc=sort_desc,
-                                    search_query=search_query,
-                                    filters=filters)
+        count, data = self.get_list(
+            page=page,
+            sort=sort,
+            sort_desc=sort_desc,
+            search_query=search_query,
+            filters=filters,
+        )
 
-        return self.render(self.list_template, data=data, page=page,
-                           total_pages=self.total_pages(count), sort=sort,
-                           sort_desc=sort_desc, count=count, modeladmin=self,
-                           search_query=search_query, filters=filters)
+        return self.render(
+            self.list_template,
+            data=data,
+            page=page,
+            total_pages=self.total_pages(count),
+            sort=sort,
+            sort_desc=sort_desc,
+            count=count,
+            modeladmin=self,
+            search_query=search_query,
+            filters=filters,
+        )
 
-    @expose('/<pk>/', methods=('GET', 'POST'))
+    @expose("/<pk>/", methods=("GET", "POST"))
     def edit(self, pk):
         instance = self.get_object(pk)
         if not instance:
@@ -398,27 +437,34 @@ class BaseModelAdmin(BaseView):
 
         Form = self.get_form()
 
-        if request.method == 'POST':
+        if request.method == "POST":
             form = Form(obj=instance)
             form = self.manipulate_form_instance(form)
             if form.validate_on_submit():
                 try:
                     self.save_model(instance, form, adding=False)
                     flash(
-                        'Changes to %s saved successfully' % self.get_display_name(),
-                        'success'
+                        "Changes to %s saved successfully" % self.get_display_name(),
+                        "success",
                     )
                     return self.dispatch_save_redirect(instance)
-                except Exception, ex:
-                    print traceback.format_exc()
-                    flash(gettext('Failed to edit model. %(error)s',
-                                  error=str(ex)), 'error')
+                except Exception as ex:
+                    print(traceback.format_exc())
+                    flash(
+                        gettext("Failed to edit model. %(error)s", error=str(ex)),
+                        "error",
+                    )
         else:
             form = Form(obj=instance)
             form = self.manipulate_form_instance(form)
 
-        return self.render(self.edit_template, model=self.model, form=form,
-                           pk=self.get_pk(instance), instance=instance)
+        return self.render(
+            self.edit_template,
+            model=self.model,
+            form=form,
+            pk=self.get_pk(instance),
+            instance=instance,
+        )
 
     def manipulate_form_instance(self, form_instance):
         """ Handy method to manipulate the form instance before it's
@@ -427,23 +473,23 @@ class BaseModelAdmin(BaseView):
         """
         return form_instance
 
-    @expose('/<pk>/delete/', methods=('GET', 'POST'))
+    @expose("/<pk>/delete/", methods=("GET", "POST"))
     def delete(self, pk=None, *pks):
         if not self.can_delete:
             abort(403)
 
         if pk:
-            pks += pk,
+            pks += (pk,)
 
-        if request.method == 'POST' and 'confirm_delete' in request.form:
+        if request.method == "POST" and "confirm_delete" in request.form:
             count = len(pks)
             self.delete_models(*pks)
 
             flash(
-                'Successfully deleted %s %ss' % (count, self.get_display_name()),
-                'success'
+                "Successfully deleted %s %ss" % (count, self.get_display_name()),
+                "success",
             )
-            return redirect(url_for(self.get_url_name('index')))
+            return redirect(url_for(self.get_url_name("index")))
         else:
             instances = self.get_objects(*pks)
 

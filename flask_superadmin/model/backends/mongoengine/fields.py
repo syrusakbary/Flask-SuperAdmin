@@ -1,6 +1,9 @@
 """
 Useful form fields for use with the mongoengine.
 """
+from __future__ import unicode_literals
+from builtins import str
+from past.builtins import basestring
 import operator
 
 from wtforms import widgets
@@ -9,8 +12,10 @@ from wtforms.validators import ValidationError
 from wtforms.widgets import TextInput
 
 __all__ = (
-    'ModelSelectField', 'ModelSelectMultipleField', 'QuerySetSelectField',
-    'ListField',
+    "ModelSelectField",
+    "ModelSelectMultipleField",
+    "QuerySetSelectField",
+    "ListField",
 )
 
 
@@ -44,11 +49,19 @@ class QuerySelectField(SelectFieldBase):
     being `None`. The label for this blank choice can be set by specifying the
     `blank_text` parameter.
     """
+
     widget = widgets.Select()
 
-    def __init__(self, label=None, validators=None, query_factory=None,
-                 get_label=None, allow_blank=False,
-                 blank_text='', **kwargs):
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        query_factory=None,
+        get_label=None,
+        allow_blank=False,
+        blank_text="",
+        **kwargs
+    ):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
 
@@ -94,14 +107,14 @@ class QuerySelectField(SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield ('__None', self.blank_text, self.data is None)
+            yield ("__None", self.blank_text, self.data is None)
 
         for pk, obj in self._get_object_list():
             yield (pk, self.get_label(obj), obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
-            if self.allow_blank and valuelist[0] == '__None':
+            if self.allow_blank and valuelist[0] == "__None":
                 self.data = None
             else:
                 self._data = None
@@ -113,7 +126,7 @@ class QuerySelectField(SelectFieldBase):
                 if self.data == obj:
                     break
             else:
-                raise ValidationError(self.gettext('Not a valid choice'))
+                raise ValidationError(self.gettext("Not a valid choice"))
 
 
 class QuerySelectMultipleField(QuerySelectField):
@@ -125,13 +138,15 @@ class QuerySelectMultipleField(QuerySelectField):
     If any of the items in the data list or submitted form data cannot be
     found in the query, this will result in a validation error.
     """
+
     widget = widgets.Select(multiple=True)
 
     def __init__(self, label=None, validators=None, default=None, **kwargs):
         if default is None:
             default = []
-        super(QuerySelectMultipleField, self).__init__(label, validators,
-              default=default, **kwargs)
+        super(QuerySelectMultipleField, self).__init__(
+            label, validators, default=default, **kwargs
+        )
         self._invalid_formdata = False
 
     def _get_data(self):
@@ -164,18 +179,18 @@ class QuerySelectMultipleField(QuerySelectField):
 
     def pre_validate(self, form):
         if self._invalid_formdata:
-            raise ValidationError(self.gettext('Not a valid choice'))
+            raise ValidationError(self.gettext("Not a valid choice"))
         elif self.data:
             obj_list = list(x[1] for x in self._get_object_list())
             for v in self.data:
                 if v not in obj_list:
-                    raise ValidationError(self.gettext('Not a valid choice'))
+                    raise ValidationError(self.gettext("Not a valid choice"))
 
 
 def get_pk_from_identity(obj):
     # TODO: WTF
     cls, key = identity_key(instance=obj)
-    return ':'.join(str(x) for x in key)
+    return ":".join(str(x) for x in key)
 
 
 class ModelSelectField(QuerySelectField):
@@ -183,9 +198,11 @@ class ModelSelectField(QuerySelectField):
     Like a QuerySetSelectField, except takes a model class instead of a
     queryset and lists everything in it.
     """
-    def __init__(self, label=u'', validators=None, model=None, **kwargs):
-        super(ModelSelectField, self).__init__(label, validators,
-              query_factory=model.objects, **kwargs)
+
+    def __init__(self, label="", validators=None, model=None, **kwargs):
+        super(ModelSelectField, self).__init__(
+            label, validators, query_factory=model.objects, **kwargs
+        )
 
 
 class ModelSelectMultipleField(QuerySelectMultipleField):
@@ -193,27 +210,31 @@ class ModelSelectMultipleField(QuerySelectMultipleField):
     Like a QuerySetSelectField, except takes a model class instead of a
     queryset and lists everything in it.
     """
-    def __init__(self, label=u'', validators=None, model=None, **kwargs):
-        super(ModelSelectMultipleField, self).__init__(label, validators,
-              query_factory=model.objects, **kwargs)
+
+    def __init__(self, label="", validators=None, model=None, **kwargs):
+        super(ModelSelectMultipleField, self).__init__(
+            label, validators, query_factory=model.objects, **kwargs
+        )
 
 
 class ListField(FieldList):
     def new_generic(self, form):
-        assert not self.max_entries or len(self.entries) < self.max_entries, \
-            'You cannot have more than max_entries entries in this FieldList'
-        new_index = '__new__'
-        name = '%s-%s' % (self.short_name, new_index)
-        id = '%s-%s' % (self.id, new_index)
-        field = self.unbound_field.bind(form=form, name=name,
-                                        prefix=self._prefix, id=id)
+        assert (
+            not self.max_entries or len(self.entries) < self.max_entries
+        ), "You cannot have more than max_entries entries in this FieldList"
+        new_index = "__new__"
+        name = "%s-%s" % (self.short_name, new_index)
+        id = "%s-%s" % (self.id, new_index)
+        field = self.unbound_field.bind(
+            form=form, name=name, prefix=self._prefix, id=id
+        )
         field.process(None, None)
         return field
 
 
 class AutocompleteInput(TextInput):
     def __call__(self, field, **kwargs):
-        autocomplete_value = kwargs.get('value', field._value())
-        kwargs['value'] = ''
-        kwargs['data-autocomplete'] = autocomplete_value
+        autocomplete_value = kwargs.get("value", field._value())
+        kwargs["value"] = ""
+        kwargs["data-autocomplete"] = autocomplete_value
         return super(AutocompleteInput, self).__call__(field, **kwargs)

@@ -9,11 +9,11 @@ from flask_babelex import Babel
 app = Flask(__name__)
 
 # Create dummy secrey key so we can use sessions
-app.config['SECRET_KEY'] = '12345678'
+app.config["SECRET_KEY"] = "12345678"
 
 # Create in-memory database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-app.config['SQLALCHEMY_ECHO'] = True
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.sqlite"
+app.config["SQLALCHEMY_ECHO"] = True
 db = SQLAlchemy(app)
 
 # Initialize babel
@@ -22,12 +22,12 @@ babel = Babel(app)
 
 @babel.localeselector
 def get_locale():
-    override = request.args.get('lang')
+    override = request.args.get("lang")
 
     if override:
-        session['lang'] = override
+        session["lang"] = override
 
-    return session.get('lang', 'en')
+    return session.get("lang", "en")
 
 
 # Create models
@@ -48,20 +48,21 @@ class Post(db.Model):
     date = db.Column(db.DateTime)
 
     user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
-    user = db.relationship(User, backref='posts')
+    user = db.relationship(User, backref="posts")
 
     def __unicode__(self):
         return self.title
 
 
 # Flask views
-@app.route('/')
+@app.route("/")
 def index():
     return '<a href="/admin/">Click me to get to Admin!</a>'
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Create admin
-    admin = Admin(app, 'Simple Models')
+    admin = Admin(app, "Simple Models")
 
     admin.locale_selector(get_locale)
 
@@ -74,4 +75,4 @@ if __name__ == '__main__':
 
     # Start app
     app.debug = True
-    app.run('0.0.0.0', 8000)
+    app.run("0.0.0.0", 8000)

@@ -3,13 +3,14 @@ from flask_superadmin import Admin, BaseView, expose
 
 
 class MyView(BaseView):
-    @expose('/')
+    @expose("/")
     def index(self):
-        return self.render('index.html')
+        return self.render("index.html")
+
 
 app = Flask(__name__)
 
 admin = Admin(app)
-admin.add_view(MyView(name='Hello'))
+admin.add_view(MyView(name="Hello"))
 
 app.run()

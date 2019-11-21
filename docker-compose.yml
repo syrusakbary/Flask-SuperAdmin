@@ -1,0 +1,24 @@
+version: '3'
+services:
+  shell2:
+    build:
+        context: .
+        dockerfile: Dockerfile.python2
+    volumes:
+        - .:/src
+    depends_on:
+        - mongodb
+
+  shell3:
+    build:
+        context: .
+        dockerfile: Dockerfile.python3
+    volumes:
+        - .:/src
+    depends_on:
+        - mongodb
+
+  mongodb:
+    image: mongo
+    ports:
+        - "127.0.0.1:27017:27017"
