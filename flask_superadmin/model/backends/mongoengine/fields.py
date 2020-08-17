@@ -1,9 +1,6 @@
 """
 Useful form fields for use with the mongoengine.
 """
-from __future__ import unicode_literals
-from builtins import str
-from past.builtins import basestring
 import operator
 
 from wtforms import widgets
@@ -69,7 +66,7 @@ class QuerySelectField(SelectFieldBase):
 
         if get_label is None:
             self.get_label = lambda x: x
-        elif isinstance(get_label, (str, basestring)):
+        elif isinstance(get_label, str):
             self.get_label = operator.attrgetter(get_label)
         else:
             self.get_label = get_label

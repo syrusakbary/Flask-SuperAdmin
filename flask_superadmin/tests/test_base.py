@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from nose.tools import ok_, eq_, raises
 
 from flask import Flask

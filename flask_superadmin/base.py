@@ -1,8 +1,3 @@
-from __future__ import unicode_literals
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import object
 import re
 import urllib.request, urllib.parse, urllib.error
 
@@ -11,7 +6,6 @@ from functools import wraps
 from flask import Blueprint, render_template, url_for, abort
 
 from flask_superadmin import babel
-from future.utils import with_metaclass
 
 
 def expose(url="/", methods=("GET",)):
@@ -77,7 +71,7 @@ class AdminViewMeta(type):
                 setattr(cls, p, _wrap_view(attr))
 
 
-class BaseView(with_metaclass(AdminViewMeta, object)):
+class BaseView(metaclass=AdminViewMeta):
     """
         Base administrative view.
 

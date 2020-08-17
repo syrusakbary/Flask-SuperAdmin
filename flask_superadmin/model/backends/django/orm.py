@@ -1,10 +1,7 @@
 """
 Tools for generating forms based on Django Model schemas.
 """
-from __future__ import unicode_literals
 
-from builtins import object
-from future.utils import native_str
 from wtforms import fields as f
 from wtforms import Form
 from wtforms import validators
@@ -222,4 +219,4 @@ def model_form(
     field_dict = model_fields(
         model, fields, readonly_fields, exclude, field_args, converter
     )
-    return type(native_str(model._meta.object_name + "Form"), (base_class,), field_dict)
+    return type(str(model._meta.object_name + "Form"), (base_class,), field_dict)

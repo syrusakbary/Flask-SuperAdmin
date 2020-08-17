@@ -1,9 +1,7 @@
 """
 Tools for generating forms based on SQLAlchemy Model schemas.
 """
-from __future__ import unicode_literals
 
-from builtins import object
 from sqlalchemy import Column
 from sqlalchemy.orm.exc import NoResultFound
 

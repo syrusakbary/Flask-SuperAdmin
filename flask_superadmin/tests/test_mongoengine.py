@@ -1,7 +1,4 @@
-from __future__ import unicode_literals
-
 import os
-from builtins import str
 from nose.tools import eq_, ok_, raises
 
 import wtforms

@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-from builtins import object
 from nose.tools import eq_, ok_
 
 import wtforms
