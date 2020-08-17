@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from flask_superadmin.contrib import DeprecatedModelView
 
 from flask_superadmin.model.backends.mongoengine import ModelAdmin

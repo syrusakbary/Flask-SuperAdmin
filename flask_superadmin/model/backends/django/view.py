@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from builtins import str
 from flask_superadmin.model.base import BaseModelAdmin
 
 from .orm import model_form, AdminModelConverter

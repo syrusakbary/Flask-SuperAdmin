@@ -1,13 +1,7 @@
 """
 Tools for generating forms based on MongoEngine Document schemas.
 """
-from __future__ import absolute_import
-from __future__ import unicode_literals
 
-from builtins import str
-from builtins import object
-from future.utils import native_str
-from past.builtins import basestring
 import inspect
 from werkzeug import secure_filename
 from wtforms import Form, validators, fields as f
@@ -292,7 +286,7 @@ def data_to_field(field, data):
         return _unset_value
     elif isinstance(
         field, (fields.ReferenceField, fields.ObjectIdField)
-    ) and isinstance(data, basestring):
+    ) and isinstance(data, (str, bytes)):
         from bson.objectid import ObjectId
 
         return ObjectId(data)
@@ -359,7 +353,7 @@ def model_form(
 
     field_dict["populate_obj"] = populate_obj
 
-    return type(native_str(model.__name__ + "Form"), (base_class,), field_dict)
+    return type(str(model.__name__ + "Form"), (base_class,), field_dict)
 
 
 class AdminModelConverter(AdminModelConverter_, ModelConverter):

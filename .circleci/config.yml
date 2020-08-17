@@ -4,7 +4,6 @@ workflows:
   version: 2
   workflow:
     jobs:
-      - test-2.7
       - test-3.5
       - test-3.6
       - black
@@ -24,11 +23,6 @@ defaults: &defaults
       command: pytest
 
 jobs:
-  test-2.7:
-    <<: *defaults
-    docker:
-    - image: circleci/python:2.7
-    - image: mongo
   test-3.5:
     <<: *defaults
     docker:

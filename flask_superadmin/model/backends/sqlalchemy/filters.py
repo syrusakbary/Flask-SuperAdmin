@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from flask_superadmin.babel import gettext
 
 from flask_superadmin.model import filters

@@ -1,6 +1,3 @@
-from __future__ import unicode_literals
-
-
 def parse_like_term(term):
     if term.startswith("^"):
         stmt = "%s%%" % term[1:]

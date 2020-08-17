@@ -10,7 +10,6 @@ flask-mongoengine==0.9.5
 Flask-SQLAlchemy==2.4.1
 Flask-WTF==0.14.2
 funcsigs==1.0.2
-future==0.18.2
 importlib-metadata==0.23
 itsdangerous==1.1.0
 Jinja2==2.10.3
