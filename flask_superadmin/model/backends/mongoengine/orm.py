@@ -3,7 +3,7 @@ Tools for generating forms based on MongoEngine Document schemas.
 """
 
 import inspect
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from wtforms import Form, validators, fields as f
 
 from .fields import ModelSelectField, ModelSelectMultipleField, ListField
