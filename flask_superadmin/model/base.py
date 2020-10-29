@@ -45,7 +45,7 @@ def prettify(str):
 
 
 class BaseModelAdmin(BaseView):
-    """ BaseModelAdmin provides create/edit/delete functionality for an
+    """BaseModelAdmin provides create/edit/delete functionality for an
     abstract Model. The abstraction is further customized by the
     backend-specific model admin (see flask_superadmin/model/backends/) and
     by the user-defined admin classes inheriting from ModelAdmin.
@@ -201,7 +201,7 @@ class BaseModelAdmin(BaseView):
         raise NotImplemented()
 
     def get_model_form(self):
-        """ Returns the model form, should get overridden in backend-specific
+        """Returns the model form, should get overridden in backend-specific
         view.
         """
         raise NotImplemented()
@@ -354,7 +354,7 @@ class BaseModelAdmin(BaseView):
         return args
 
     def get_list_filters(self):
-        """ Checks the list_filters parameter and returns a title and choices
+        """Checks the list_filters parameter and returns a title and choices
         for each filter.
         """
         raise NotImplemented()
@@ -385,10 +385,10 @@ class BaseModelAdmin(BaseView):
         filters = self.filters
         return url_for(self.get_url_name("index"), sort=sort, q=search_query, **filters)
 
-    @expose("/", methods=("GET", "POST",))
+    @expose("/", methods=("GET", "POST"))
     def list(self):
         """
-            List view
+        List view
         """
         # Grab parameters from URL
         if request.method == "POST":
@@ -463,7 +463,7 @@ class BaseModelAdmin(BaseView):
         )
 
     def manipulate_form_instance(self, form_instance):
-        """ Handy method to manipulate the form instance before it's
+        """Handy method to manipulate the form instance before it's
         rendered/validated. You can override this method and change validators,
         field choices, etc.
         """

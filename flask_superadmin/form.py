@@ -10,7 +10,7 @@ from flask import request
 
 class BaseForm(wtf.Form):
     """
-        Customized form class.
+    Customized form class.
     """
 
     def __init__(self, formdata=None, obj=None, prefix="", **kwargs):
@@ -24,7 +24,7 @@ class BaseForm(wtf.Form):
     @property
     def has_file_field(self):
         """
-            Return True if form contains at least one FileField.
+        Return True if form contains at least one FileField.
         """
         # TODO: Optimize me
         for f in self:
@@ -36,24 +36,24 @@ class BaseForm(wtf.Form):
 
 class TimeField(fields.Field):
     """
-        A text field which stores a `datetime.time` object.
-        Accepts time string in multiple formats: 20:10, 20:10:00, 10:00 am, 9:30pm, etc.
+    A text field which stores a `datetime.time` object.
+    Accepts time string in multiple formats: 20:10, 20:10:00, 10:00 am, 9:30pm, etc.
     """
 
     widget = widgets.TextInput()
 
     def __init__(self, label=None, validators=None, formats=None, **kwargs):
         """
-            Constructor
+        Constructor
 
-            `label`
-                Label
-            `validators`
-                Field validators
-            `formats`
-                Supported time formats, as a enumerable.
-            `kwargs`
-                Any additional parameters
+        `label`
+            Label
+        `validators`
+            Field validators
+        `formats`
+            Supported time formats, as a enumerable.
+        `kwargs`
+            Any additional parameters
         """
         super(TimeField, self).__init__(label, validators, **kwargs)
 
@@ -91,9 +91,9 @@ class TimeField(fields.Field):
 
 class ChosenSelectWidget(widgets.Select):
     """
-        `Chosen <http://harvesthq.github.com/chosen/>`_ styled select widget.
+    `Chosen <http://harvesthq.github.com/chosen/>`_ styled select widget.
 
-        You must include chosen.js and form.js for styling to work.
+    You must include chosen.js and form.js for styling to work.
     """
 
     def __call__(self, field, **kwargs):
@@ -107,9 +107,9 @@ class ChosenSelectWidget(widgets.Select):
 
 class ChosenSelectField(fields.SelectField):
     """
-        `Chosen <http://harvesthq.github.com/chosen/>`_ styled select field.
+    `Chosen <http://harvesthq.github.com/chosen/>`_ styled select field.
 
-        You must include chosen.js and form.js for styling to work.
+    You must include chosen.js and form.js for styling to work.
     """
 
     widget = ChosenSelectWidget
@@ -173,9 +173,9 @@ class FileField(fields.FileField):
 
 class DatePickerWidget(widgets.TextInput):
     """
-        Date picker widget.
+    Date picker widget.
 
-        You must include bootstrap-datepicker.js and form.js for styling to work.
+    You must include bootstrap-datepicker.js and form.js for styling to work.
     """
 
     def __call__(self, field, **kwargs):
@@ -185,9 +185,9 @@ class DatePickerWidget(widgets.TextInput):
 
 class DateTimePickerWidget(widgets.TextInput):
     """
-        Datetime picker widget.
+    Datetime picker widget.
 
-        You must include bootstrap-datepicker.js and form.js for styling to work.
+    You must include bootstrap-datepicker.js and form.js for styling to work.
     """
 
     def __call__(self, field, **kwargs):

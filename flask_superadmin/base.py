@@ -10,12 +10,12 @@ from flask_superadmin import babel
 
 def expose(url="/", methods=("GET",)):
     """
-        Use this decorator to expose views in your view classes.
+    Use this decorator to expose views in your view classes.
 
-        `url`
-            Relative URL for the view
-        `methods`
-            Allowed HTTP methods. By default only GET is allowed.
+    `url`
+        Relative URL for the view
+    `methods`
+        Allowed HTTP methods. By default only GET is allowed.
     """
 
     def wrap(f):
@@ -43,10 +43,10 @@ def _wrap_view(f):
 
 class AdminViewMeta(type):
     """
-        View metaclass.
+    View metaclass.
 
-        Does some precalculations (like getting list of view methods from the class) to avoid
-        calculating them for each view class instance.
+    Does some precalculations (like getting list of view methods from the class) to avoid
+    calculating them for each view class instance.
     """
 
     def __init__(cls, classname, bases, fields):
@@ -73,36 +73,36 @@ class AdminViewMeta(type):
 
 class BaseView(metaclass=AdminViewMeta):
     """
-        Base administrative view.
+    Base administrative view.
 
-        Derive from this class to implement your administrative interface piece. For example::
+    Derive from this class to implement your administrative interface piece. For example::
 
-            class MyView(BaseView):
-                @expose('/')
-                def index(self):
-                    return 'Hello World!'
+        class MyView(BaseView):
+            @expose('/')
+            def index(self):
+                return 'Hello World!'
     """
 
     def __init__(
         self, name=None, category=None, endpoint=None, url=None, static_folder=None
     ):
         """
-            Constructor.
+        Constructor.
 
-            `name`
-                Name of this view. If not provided, will be defaulted to the class name.
-            `category`
-                View category. If not provided, will be shown as a top-level menu item. Otherwise, will
-                be in a submenu.
-            `endpoint`
-                Base endpoint name for the view. For example, if there's view method called "index" and
-                endpoint was set to "myadmin", you can use `url_for('myadmin.index')` to get URL to the
-                view method. By default, equals to the class name in lower case.
-            `url`
-                Base URL. If provided, affects how URLs are generated. For example, if url parameter
-                equals to "test", resulting URL will look like "/admin/test/". If not provided, will
-                use endpoint as a base url. However, if URL starts with '/', absolute path is assumed
-                and '/admin/' prefix won't be applied.
+        `name`
+            Name of this view. If not provided, will be defaulted to the class name.
+        `category`
+            View category. If not provided, will be shown as a top-level menu item. Otherwise, will
+            be in a submenu.
+        `endpoint`
+            Base endpoint name for the view. For example, if there's view method called "index" and
+            endpoint was set to "myadmin", you can use `url_for('myadmin.index')` to get URL to the
+            view method. By default, equals to the class name in lower case.
+        `url`
+            Base URL. If provided, affects how URLs are generated. For example, if url parameter
+            equals to "test", resulting URL will look like "/admin/test/". If not provided, will
+            use endpoint as a base url. However, if URL starts with '/', absolute path is assumed
+            and '/admin/' prefix won't be applied.
         """
         self.name = name
         self.category = category
@@ -158,12 +158,12 @@ class BaseView(metaclass=AdminViewMeta):
 
     def render(self, template, **kwargs):
         """
-            Render template
+        Render template
 
-            `template`
-                Template path to render
-            `kwargs`
-                Template arguments
+        `template`
+            Template path to render
+        `kwargs`
+            Template arguments
         """
         # Store self as admin_view
         kwargs["admin_view"] = self
@@ -177,21 +177,21 @@ class BaseView(metaclass=AdminViewMeta):
 
     def _prettify_name(self, name):
         """
-            Prettify class name by splitting name by capital characters. So, 'MySuperClass' will look like 'My Super Class'
+        Prettify class name by splitting name by capital characters. So, 'MySuperClass' will look like 'My Super Class'
 
-            `name`
-                String to prettify
+        `name`
+            String to prettify
         """
         return re.sub(r"(?<=.)([A-Z])", r" \1", name)
 
     def is_accessible(self):
         """
-            Override this method to add permission checks.
+        Override this method to add permission checks.
 
-            Flask-SuperAdmin does not make any assumptions about authentication system used in your application, so it is
-            up for you to implement it.
+        Flask-SuperAdmin does not make any assumptions about authentication system used in your application, so it is
+        up for you to implement it.
 
-            By default, it will allow access for the everyone.
+        By default, it will allow access for the everyone.
         """
         return True
 
@@ -202,23 +202,23 @@ class BaseView(metaclass=AdminViewMeta):
 
 class AdminIndexView(BaseView):
     """
-        Default administrative interface index page when visiting the ``/admin/`` URL.
+    Default administrative interface index page when visiting the ``/admin/`` URL.
 
-        It can be overridden by passing your own view class to the ``Admin`` constructor::
+    It can be overridden by passing your own view class to the ``Admin`` constructor::
 
-            class MyHomeView(AdminIndexView):
-                @expose('/')
-                def index(self):
-                    return render_template('adminhome.html')
+        class MyHomeView(AdminIndexView):
+            @expose('/')
+            def index(self):
+                return render_template('adminhome.html')
 
-            admin = Admin(index_view=MyHomeView)
+        admin = Admin(index_view=MyHomeView)
 
-        Default values for the index page are following:
+    Default values for the index page are following:
 
-        * If name is not provided, 'Home' will be used.
-        * If endpoint is not provided, will use ``admin``
-        * Default URL route is ``/admin``.
-        * Automatically associates with static folder.
+    * If name is not provided, 'Home' will be used.
+    * If endpoint is not provided, will use ``admin``
+    * Default URL route is ``/admin``.
+    * Automatically associates with static folder.
     """
 
     def __init__(self, name=None, category=None, endpoint=None, url=None):
@@ -296,17 +296,17 @@ class Admin(object):
         self, app=None, name=None, url=None, index_view=None, translations_path=None
     ):
         """
-            Constructor.
+        Constructor.
 
-            `app`
-                Flask application object
-            `name`
-                Application name. Will be displayed in main menu and as a page title. If not provided, defaulted to "Admin"
-            `index_view`
-                Home page view to use. If not provided, will use `AdminIndexView`.
-            `translations_path`
-                Location of the translation message catalogs. By default will use translations
-                shipped with the Flask-SuperAdmin.
+        `app`
+            Flask application object
+        `name`
+            Application name. Will be displayed in main menu and as a page title. If not provided, defaulted to "Admin"
+        `index_view`
+            Home page view to use. If not provided, will use `AdminIndexView`.
+        `translations_path`
+            Location of the translation message catalogs. By default will use translations
+            shipped with the Flask-SuperAdmin.
         """
         self.translations_path = translations_path
 
@@ -366,12 +366,12 @@ class Admin(object):
 
     def register(self, model, admin_class=None, *args, **kwargs):
         """
-            Register model to the collection.
+        Register model to the collection.
 
-            `model`
-                Model to add.
-            `admin_class`
-                ModelAdmin class corresponding to model.
+        `model`
+            Model to add.
+        `admin_class`
+            ModelAdmin class corresponding to model.
         """
         from flask_superadmin.model import ModelAdmin
 
@@ -386,10 +386,10 @@ class Admin(object):
 
     def add_view(self, view):
         """
-            Add view to the collection.
+        Add view to the collection.
 
-            `view`
-                View to add.
+        `view`
+            View to add.
         """
         # Add to views
         self._views.append(view)
@@ -401,29 +401,29 @@ class Admin(object):
 
     def locale_selector(self, f):
         """
-            Installs locale selector for current ``Admin`` instance.
+        Installs locale selector for current ``Admin`` instance.
 
-            Example::
+        Example::
 
-                def admin_locale_selector():
+            def admin_locale_selector():
+                return request.args.get('lang', 'en')
+
+            admin = Admin(app)
+            admin.locale_selector(admin_locale_selector)
+
+        It is also possible to use the ``@admin`` decorator::
+
+            admin = Admin(app)
+
+            @admin.locale_selector
+            def admin_locale_selector():
+                return request.args.get('lang', 'en')
+
+        Or by subclassing the ``Admin``::
+
+            class MyAdmin(Admin):
+                def locale_selector(self):
                     return request.args.get('lang', 'en')
-
-                admin = Admin(app)
-                admin.locale_selector(admin_locale_selector)
-
-            It is also possible to use the ``@admin`` decorator::
-
-                admin = Admin(app)
-
-                @admin.locale_selector
-                def admin_locale_selector():
-                    return request.args.get('lang', 'en')
-
-            Or by subclassing the ``Admin``::
-
-                class MyAdmin(Admin):
-                    def locale_selector(self):
-                        return request.args.get('lang', 'en')
         """
         if self.locale_selector_func is not None:
             raise Exception("Can not add locale_selector second time.")
@@ -432,10 +432,10 @@ class Admin(object):
 
     def _add_view_to_menu(self, view):
         """
-            Add view to the menu tree
+        Add view to the menu tree
 
-            `view`
-                View to add
+        `view`
+            View to add
         """
         if view.category:
             category = self._menu_categories.get(view.category)
@@ -451,10 +451,10 @@ class Admin(object):
 
     def init_app(self, app):
         """
-            Register all views with Flask application.
+        Register all views with Flask application.
 
-            `app`
-                Flask application instance
+        `app`
+            Flask application instance
         """
         self.app = app
 

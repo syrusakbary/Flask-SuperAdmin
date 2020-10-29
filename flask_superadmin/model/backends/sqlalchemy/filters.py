@@ -6,21 +6,21 @@ from flask_superadmin.contrib.sqlamodel import tools
 
 class BaseSQLAFilter(filters.BaseFilter):
     """
-        Base SQLAlchemy filter.
+    Base SQLAlchemy filter.
     """
 
     def __init__(self, column, name, options=None, data_type=None):
         """
-            Constructor.
+        Constructor.
 
-            `column`
-                Model field
-            `name`
-                Display name
-            `options`
-                Fixed set of options
-            `data_type`
-                Client data type
+        `column`
+            Model field
+        `name`
+            Display name
+        `options`
+            Fixed set of options
+        `data_type`
+            Client data type
         """
         super(BaseSQLAFilter, self).__init__(name, options, data_type)
 

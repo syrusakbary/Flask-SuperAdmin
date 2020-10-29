@@ -1,18 +1,9 @@
 version: '3'
 services:
-  shell2:
+  shell:
     build:
         context: .
-        dockerfile: Dockerfile.python2
-    volumes:
-        - .:/src
-    depends_on:
-        - mongodb
-
-  shell3:
-    build:
-        context: .
-        dockerfile: Dockerfile.python3
+        dockerfile: Dockerfile
     volumes:
         - .:/src
     depends_on:

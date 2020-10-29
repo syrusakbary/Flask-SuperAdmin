@@ -21,7 +21,7 @@ class ModelAdmin(BaseModelAdmin):
 
     def _get_model_iterator(self, model=None):
         """
-            Return property iterator for the model
+        Return property iterator for the model
         """
         if model is None:
             model = self.model

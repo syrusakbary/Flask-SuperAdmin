@@ -55,7 +55,7 @@ class Unique(object):
 
 class AdminModelConverter(ModelConverter):
     """
-        SQLAlchemy model to form converter
+    SQLAlchemy model to form converter
     """
 
     def __init__(self, view):

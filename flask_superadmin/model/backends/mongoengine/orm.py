@@ -15,7 +15,7 @@ __all__ = ("model_fields", "model_form")
 
 
 def converts(*args):
-    """ A convenient decorator for the ModelConverter used to mark which
+    """A convenient decorator for the ModelConverter used to mark which
     method should be used to convert which MongoEngine field.
     """
 
@@ -27,8 +27,7 @@ def converts(*args):
 
 
 class ModelConverter(object):
-    """ Manages the way MongoEngine fields are converted into WTForms fields
-    """
+    """Manages the way MongoEngine fields are converted into WTForms fields"""
 
     def __init__(self, converters=None):
 

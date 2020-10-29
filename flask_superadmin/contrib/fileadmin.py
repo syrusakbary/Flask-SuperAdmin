@@ -20,9 +20,9 @@ from wtforms import TextField, ValidationError
 
 class NameForm(form.BaseForm):
     """
-        Form with a filename input field.
+    Form with a filename input field.
 
-        Validates if provided name is valid for *nix and Windows systems.
+    Validates if provided name is valid for *nix and Windows systems.
     """
 
     name = TextField()
@@ -39,8 +39,8 @@ class NameForm(form.BaseForm):
 
 class UploadForm(form.BaseForm):
     """
-        File upload form. Works with FileAdmin instance to check if it
-        is allowed to upload file with given extension.
+    File upload form. Works with FileAdmin instance to check if it
+    is allowed to upload file with given extension.
     """
 
     upload = FileField(lazy_gettext("File to upload"))
@@ -62,23 +62,23 @@ class UploadForm(form.BaseForm):
 
 class FileAdmin(BaseView):
     """
-        Simple file-management interface.
+    Simple file-management interface.
 
-        Requires two parameters:
+    Requires two parameters:
 
-        `path`
-            Path to the directory which will be managed
-        `url`
-            Base URL for the directory. Will be used to generate
-            static links to the files.
+    `path`
+        Path to the directory which will be managed
+    `url`
+        Base URL for the directory. Will be used to generate
+        static links to the files.
 
-        Sample usage::
+    Sample usage::
 
-            admin = Admin()
+        admin = Admin()
 
-            path = op.join(op.dirname(__file__), 'static')
-            admin.add_view(FileAdmin(path, '/static/', name='Static Files'))
-            admin.setup_app(app)
+        path = op.join(op.dirname(__file__), 'static')
+        admin.add_view(FileAdmin(path, '/static/', name='Static Files'))
+        admin.setup_app(app)
     """
 
     can_upload = True
@@ -140,21 +140,21 @@ class FileAdmin(BaseView):
         self, base_path, base_url, name=None, category=None, endpoint=None, url=None
     ):
         """
-            Constructor.
+        Constructor.
 
-            `base_path`
-                Base file storage location
-            `base_url`
-                Base URL for the files
-            `name`
-                Name of this view. If not provided,
-                will be defaulted to the class name.
-            `category`
-                View category
-            `endpoint`
-                Endpoint name for the view
-            `url`
-                URL for view
+        `base_path`
+            Base file storage location
+        `base_url`
+            Base URL for the files
+        `name`
+            Name of this view. If not provided,
+            will be defaulted to the class name.
+        `category`
+            View category
+        `endpoint`
+            Endpoint name for the view
+        `url`
+            URL for view
         """
         self.base_path = base_path
         self.base_url = base_url
@@ -169,37 +169,37 @@ class FileAdmin(BaseView):
 
     def is_accessible_path(self, path):
         """
-            Verify if path is accessible for current user.
+        Verify if path is accessible for current user.
 
-            Override to customize behavior.
+        Override to customize behavior.
 
-            `path`
-                Relative path to the root
+        `path`
+            Relative path to the root
         """
         return True
 
     def get_base_path(self):
         """
-            Return base path. Override to customize behavior (per-user
-            directories, etc)
+        Return base path. Override to customize behavior (per-user
+        directories, etc)
         """
         return op.normpath(self.base_path)
 
     def get_base_url(self):
         """
-            Return base URL. Override to customize behavior (per-user
-            directories, etc)
+        Return base URL. Override to customize behavior (per-user
+        directories, etc)
         """
         return self.base_url
 
     def is_file_allowed(self, filename):
         """
-            Verify if file can be uploaded.
+        Verify if file can be uploaded.
 
-            Override to customize behavior.
+        Override to customize behavior.
 
-            `filename`
-                Source file name
+        `filename`
+            Source file name
         """
         ext = op.splitext(filename)[1].lower()
 
@@ -213,31 +213,31 @@ class FileAdmin(BaseView):
 
     def is_in_folder(self, base_path, directory):
         """
-            Verify if `directory` is in `base_path` folder
+        Verify if `directory` is in `base_path` folder
         """
         return op.normpath(directory).startswith(base_path)
 
     def save_file(self, path, file_data):
         """
-            Save uploaded file to the disk
+        Save uploaded file to the disk
 
-            `path`
-                Path to save to
-            `file_data`
-                Werkzeug `FileStorage` object
+        `path`
+            Path to save to
+        `file_data`
+            Werkzeug `FileStorage` object
         """
         file_data.save(path)
 
     def _get_dir_url(self, endpoint, path, **kwargs):
         """
-            Return prettified URL
+        Return prettified URL
 
-            `endpoint`
-                Endpoint name
-            `path`
-                Directory path
-            `kwargs`
-                Additional arguments
+        `endpoint`
+            Endpoint name
+        `path`
+            Directory path
+        `kwargs`
+            Additional arguments
         """
         if not path:
             return url_for(endpoint)
@@ -251,22 +251,22 @@ class FileAdmin(BaseView):
 
     def _get_file_url(self, path):
         """
-            Return static file url
+        Return static file url
 
-            `path`
-                Static file path
+        `path`
+            Static file path
         """
         base_url = self.get_base_url()
         return urllib.parse.urljoin(base_url, path)
 
     def _normalize_path(self, path):
         """
-            Verify and normalize path.
+        Verify and normalize path.
 
-            If path is not relative to the base directory,
-            will throw 404 exception.
+        If path is not relative to the base directory,
+        will throw 404 exception.
 
-            If path does not exist, will also throw 404 exception.
+        If path does not exist, will also throw 404 exception.
         """
         base_path = self.get_base_path()
 
@@ -295,11 +295,11 @@ class FileAdmin(BaseView):
     @expose("/b/<path:path>")
     def index(self, path=None):
         """
-            Index view method
+        Index view method
 
-            `path`
-                Optional directory path. If not provided,
-                will use base directory
+        `path`
+            Optional directory path. If not provided,
+            will use base directory
         """
         # Get path and verify if it is valid
         base_path, directory, path = self._normalize_path(path)
@@ -344,11 +344,11 @@ class FileAdmin(BaseView):
     @expose("/upload/<path:path>", methods=("GET", "POST"))
     def upload(self, path=None):
         """
-            Upload view method
+        Upload view method
 
-            `path`
-                Optional directory path. If not provided,
-                will use base directory
+        `path`
+            Optional directory path. If not provided,
+            will use base directory
         """
         # Get path and verify if it is valid
         base_path, directory, path = self._normalize_path(path)
@@ -388,11 +388,11 @@ class FileAdmin(BaseView):
     @expose("/mkdir/<path:path>", methods=("GET", "POST"))
     def mkdir(self, path=None):
         """
-            Directory creation view method
+        Directory creation view method
 
-            `path`
-                Optional directory path. If not provided,
-                will use base directory
+        `path`
+            Optional directory path. If not provided,
+            will use base directory
         """
         # Get path and verify if it is valid
         base_path, directory, path = self._normalize_path(path)
@@ -424,7 +424,7 @@ class FileAdmin(BaseView):
     @expose("/delete/", methods=("POST",))
     def delete(self):
         """
-            Delete view method
+        Delete view method
         """
         path = request.form.get("path")
 
@@ -464,7 +464,7 @@ class FileAdmin(BaseView):
     @expose("/rename/", methods=("GET", "POST"))
     def rename(self):
         """
-            Rename view method
+        Rename view method
         """
         path = request.args.get("path")
 
