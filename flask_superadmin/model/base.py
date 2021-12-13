@@ -1,3 +1,4 @@
+from enum import Enum
 import math
 import re
 
@@ -148,6 +149,9 @@ class BaseModelAdmin(BaseView):
                 if callable(value):
                     value = value()
 
+            if isinstance(value, Enum):
+                value = value.value
+
             if not value:
                 break
 
@@ -181,6 +185,8 @@ class BaseModelAdmin(BaseView):
                 # Check if the value is a reference field to a doc/model
                 # registered in the admin. If so, link to it.
                 reference = self.get_reference(val)
+                if isinstance(val, Enum):
+                    val = val.value
                 val = {
                     "label": prettify(field),
                     "value": val,

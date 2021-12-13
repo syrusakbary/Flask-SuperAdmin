@@ -122,7 +122,7 @@ class BaseView(metaclass=AdminViewMeta):
             )
 
     def create_blueprint(self, admin):
-        """ Create Flask blueprint. """
+        """Create Flask blueprint."""
 
         # Store admin instance
         self.admin = admin
@@ -236,7 +236,7 @@ class AdminIndexView(BaseView):
 
 
 class MenuItem(object):
-    """ Simple menu tree hierarchy. """
+    """Simple menu tree hierarchy."""
 
     def __init__(self, name, view=None):
         self.name = name
@@ -288,7 +288,7 @@ class MenuItem(object):
 
 
 class Admin(object):
-    """ Collection of the views. Also manages menu structure. """
+    """Collection of the views. Also manages menu structure."""
 
     app = None
 
@@ -466,5 +466,5 @@ class Admin(object):
             self._add_view_to_menu(view)
 
     def menu(self):
-        """ Return menu hierarchy. """
+        """Return menu hierarchy."""
         return self._menu
