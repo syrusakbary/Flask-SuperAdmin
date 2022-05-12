@@ -14,7 +14,7 @@ Flask-Superadmin is the **best** admin interface framework for `Flask <http://fl
 Batteries included:
 
 * Admin interface
-* **Scaffolding for MongoEngine, Django and SQLAlchemy**
+* **Scaffolding for MongoEngine and SQLAlchemy**
 * File administrator (optional)
 
 Requirements:
@@ -27,7 +27,7 @@ Admin interface
 ---------------
 
 Influenced heavily by the Django admin, **provides easy create/edit/delete functionality** for your 
-project's models (MongoEngine, Django or SQLAlchemy).
+project's models (MongoEngine or SQLAlchemy).
 
 
 .. image:: https://raw.github.com/SyrusAkbary/Flask-SuperAdmin/master/screenshots/model-list.png
@@ -44,7 +44,7 @@ Introduction
 
 This is library for building administrative interface on top of Flask framework.
 
-Instead of providing simple scaffolding for SQLAlchemy, MongoEngine or Django models, Flask-SuperAdmin
+Instead of providing simple scaffolding for SQLAlchemy or MongoEngine models, Flask-SuperAdmin
 provides tools that can be used to build administrative interface of any complexity,
 using consistent look and feel.
 
@@ -60,9 +60,6 @@ Small example (Flask initialization omitted)::
     admin.register(User, session=db.session) 
 
     # For MongoEngine Documents (User is a MongoEngine Document)
-    admin.register(User)
-
-    # For Django Models (User is a Django Model)
     admin.register(User)
 
 
@@ -91,7 +88,6 @@ Library comes with a lot of examples, you can find them in `examples <https://gi
 
 - `MongoEngine <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/mongoengine>`_
 - `SQLAlchemy <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/sqlalchemy>`_
-- `Django <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/django>`_
 - `Flask-Login integration <https://github.com/SyrusAkbary/Flask-SuperAdmin/tree/master/examples/auth>`_
 
 

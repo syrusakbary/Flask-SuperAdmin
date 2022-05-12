@@ -27,7 +27,7 @@ Here is absolutely valid administrative piece::
 So, how does it help structuring administrative interface? With such building blocks, you're
 implementing reusable functional pieces that are highly customizable.
 
-For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy, Mongoengine and Django model interface.
+For example, Flask-SuperAdmin provides ready-to-use SQLAlchemy and Mongoengine model interfaces.
 For SQLAlchemy it is implemented as a
 class which accepts two parameters: model and a database session, otherwise just the model parameter.
 

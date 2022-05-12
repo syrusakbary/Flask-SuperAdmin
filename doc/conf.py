@@ -45,8 +45,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"flask-superadmin"
-copyright = u"2012, Syrus Akbary"
+project = "flask-superadmin"
+copyright = "2012, Syrus Akbary"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -194,8 +194,8 @@ latex_documents = [
     (
         "index",
         "flask-superadmin",
-        u"Flask-SuperAdmin documentation",
-        u"Syrus Akbary",
+        "Flask-SuperAdmin documentation",
+        "Syrus Akbary",
         "manual",
     ),
 ]
@@ -229,8 +229,8 @@ man_pages = [
     (
         "index",
         "flask-superadmin",
-        u"Flask-SuperAdmin documentation",
-        [u"Syrus Akbary"],
+        "Flask-SuperAdmin documentation",
+        ["Syrus Akbary"],
         1,
     )
 ]
@@ -248,8 +248,8 @@ texinfo_documents = [
     (
         "index",
         "flask-superadmin",
-        u"Flask-SuperAdmin documentation",
-        u"Syrus Akbary",
+        "Flask-SuperAdmin documentation",
+        "Syrus Akbary",
         "Flask-SuperAdmin",
         "One line description of project.",
         "Miscellaneous",
@@ -272,13 +272,13 @@ intersphinx_mapping = {"http://docs.python.org/": None}
 # fall back if theme is not there
 try:
     __import__("flask_theme_support")
-except ImportError, e:
-    print "-" * 74
-    print "Warning: Flask themes unavailable. Building with default theme"
-    print "If you want the Flask themes, run this command and build again:"
-    print
-    print " git submodule update --init"
-    print "-" * 74
+except ImportError as e:
+    print("-" * 74)
+    print("Warning: Flask themes unavailable. Building with default theme")
+    print("If you want the Flask themes, run this command and build again:")
+    print()
+    print(" git submodule update --init")
+    print("-" * 74)
 
     pygments_style = "tango"
     html_theme = "default"

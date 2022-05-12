@@ -3,7 +3,6 @@ attrs==19.3.0
 Click==7.0
 configparser==4.0.2
 contextlib2==0.6.0.post1
-Django==1.11.26
 fancycompleter==0.8
 Flask==1.1.1
 flask-mongoengine==0.9.5
@@ -21,12 +20,12 @@ packaging==19.2
 pathlib2==2.3.5
 pdbpp==0.10.2
 pluggy==0.13.0
-py==1.8.0
+py==1.8.2
 Pygments==2.4.2
 pymongo==3.7.0
 pyparsing==2.4.5
 pyrepl==0.9.0
-pytest==4.6.6
+pytest==7.1.2
 pytz==2019.3
 scandir==1.10.0
 six==1.13.0

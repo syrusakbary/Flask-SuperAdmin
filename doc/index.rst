@@ -6,7 +6,7 @@ Flask-Superadmin he **best** admin interface framework for `Flask <http://flask.
 Batteries included:
 
 * Admin interface
-* **Scaffolding for MongoEngine, Django and SQLAlchemy**
+* **Scaffolding for MongoEngine and SQLAlchemy**
 * File administrator (optional)
 
 Requirements:

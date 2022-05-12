@@ -330,13 +330,6 @@ class Admin(object):
         except:
             pass
 
-        try:
-            from flask_superadmin.model.backends import django
-
-            self.add_model_backend(django.ModelAdmin)
-        except:
-            pass
-
         if name is None:
             name = "Admin"
         self.name = name
