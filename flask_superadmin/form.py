@@ -8,7 +8,7 @@ from flask_superadmin.babel import gettext
 from flask import request
 
 
-class BaseForm(wtf.Form):
+class BaseForm(wtf.FlaskForm):
     """
     Customized form class.
     """
